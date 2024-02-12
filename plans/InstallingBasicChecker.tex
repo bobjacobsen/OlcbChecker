@@ -24,13 +24,13 @@ This document describes how to obtain and run a set of basic checks for
 OpenLCB nodes.  
 
 The checks are based on the Python `openlch' module.
-More information on that can be obtains from its
+More information on that can be obtained from its
 \href{https://github.com/bobjacobsen/PythonOlcbNode}{GitHub project site.}
 
 For more information on the checks, see the
-\href{https://github.com/bobjacobsen/PythonOlcbNode/blob/main/olcbchecker/README.md}{package documentation}
+\href{https://github.com/bobjacobsen/OlcbChecker/blob/main/README.md}{package documentation}
 or the 
-\href{https://github.com/bobjacobsen/PythonOlcbNode/tree/main/olcbchecker/plans/}{directory of checking plans}.
+\href{https://github.com/bobjacobsen/OlcbChecker/tree/main/plans/}{directory of checking plans}.
 
 \section{Obtaining the Software}
 
@@ -41,22 +41,22 @@ The software is distributed as a set of inter-connected Python source files.
 If you're using Git, 
 \begin{verbatim}
 cd (where you want to put this)
-git clone https://github.com/bobjacobsen/PythonOlcbNode.git
+git clone https://github.com/bobjacobsen/OlcbChecker.git
 \end{verbatim}
-will create a PythonOlcbNode directory containing the most recent version of the software.
+will create a OlcbChecker directory containing the most recent version of the software.
 This also contains git tags for the released versions.
 
 \subsection{Obtaining by Downloading a .zip File}
 
 You can get a download of the most recent released version by going to the project's 
-\href{https://github.com/bobjacobsen/PythonOlcbNode/tags}{Github releases web page tag section}
-\footnote{Linked above or see \href{https://github.com/bobjacobsen/PythonOlcbNode/tags}{https://github.com/bobjacobsen/PythonOlcbNode/tags}}
+\href{https://github.com/bobjacobsen/OlcbChecker/tags}{Github releases web page tag section}
+\footnote{Linked above or see \href{https://github.com/bobjacobsen/OlcbChecker/tags}{https://github.com/bobjacobsen/OlcbChecker/tags}}
 and clicking the .zip or .tgz icon on the most recent release.
 
 To get the very most recent version,
 \footnote{But if you want to stay current with development of the tools, you should probably be using Git.}
 go to the project's
-\href{https://github.com/bobjacobsen/PythonOlcbNode}{Github main web page tag section},
+\href{https://github.com/bobjacobsen/OlcbChecker}{Github main web page tag section},
 click the green Code button, and select "Download Zip".
 
 Expand the downloaded file in a suitable place.
@@ -96,7 +96,6 @@ cd (where you put the PythonOlcbNode directory)
 export PYTHONPATH=$PWD
 \end{verbatim}
 
-while in the distribution directory (where you installed the code)
 or you can place the equivalent line in your shell configuration file.
 
 If you don't add this to your shell configuration file, you'll have to do 
@@ -104,7 +103,7 @@ this each time you start a terminal session.
 
 Next
 \begin{verbatim}
-cd olcbchecker
+cd (where you put the OlcbChecker directory)
 \end{verbatim}
 to get to the right directory for running the code. 
 
@@ -242,7 +241,7 @@ If a direct CAN connection will be used,
 a supported USB-CAN adapter is required
 \footnote{The checker has been checked with the
 \href{https://www.rr-cirkits.com/description/LCC-usb-flyer.pdf}{RR-CirKits LCC buffer-USB},
-but others with similar operation characteristics will probably work.
+but others with similar operational characteristics will probably work.
 }. 
 Connect the adapter to your computer as indicated in its instructions.
 Connect the adapter to the DBC using a single UTP cable
@@ -264,7 +263,6 @@ The original values are stored in the defaults.py file.
 
 Should something corrupt the localoverrides.py file,
 you can delete it, restart the program, and re-enter your configuration.
-
 
 
 \end{document}  
