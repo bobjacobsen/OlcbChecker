@@ -45,7 +45,7 @@ def check():
                 print("Passed - due to Event Exchange not in PIP")
             return(0)
 
-    # send an Identify Events Global  message to provoke response
+    # send an Identify Events Global  message to provoke response - previously checked to work
     message = Message(MTI.Identify_Events_Global , NodeID(olcbchecker.ownnodeid()), None)
     olcbchecker.sendMessage(message)
 
@@ -74,7 +74,7 @@ def check():
             if received.mti in consumerIdMTIs :
                     consumerReplys.add(received)
 
-            # if PCER, check that event ID has been produced
+            # if PCER, check that event ID has been sent
             if received.mti is MTI.Producer_Consumer_Event_Report :
                 eventID = EventID(received.data)
                 # TODO:  the following does not properly check against a Producer Range Identified
@@ -90,9 +90,11 @@ def check():
         return(3)
         
     # now check if addressed gets the same as global. First, get addressed.
-    # this was checked by a previous check
     message = Message(MTI.Identify_Events_Addressed , NodeID(olcbchecker.ownnodeid()), destination)
     olcbchecker.sendMessage(message)
+    
+    producerSeen = set(())
+    consumerSeen = set(())
     
     while True :
         try :
@@ -108,14 +110,14 @@ def check():
 
             if received.mti in producerIdMTIs :
                 if received in producerReplys :
-                    producerReplys.remove(received)
+                    producerSeen.add(received)
                     continue
                 else :
                     print ("Failure - Identify Producer not in global result {} {}".format(received, EventID(received.data)))
                     
             if received.mti in consumerIdMTIs :
                 if received in consumerReplys :
-                    consumerReplys.remove(received)
+                    consumerSeen.add(received)
                     continue
                 else :
                     print ("Failure - Identify Consumer not in global result {} {}".format(received, EventID(received.data)))
@@ -124,7 +126,7 @@ def check():
             # stopped getting messages, proceed
             break
 
-    if len(producerReplys) != 0 and len(consumerReplys) != 0 :
+    if len(producerReplys) != len(producerSeen) or len(consumerReplys) !=len(consumerSeen) :
         print ("Failure - missing identify messages")
         return(3)
     
