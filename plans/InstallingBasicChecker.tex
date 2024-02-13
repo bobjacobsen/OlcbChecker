@@ -21,20 +21,18 @@
 \section{Introduction}
 
 This document describes how to obtain and run a set of basic checks for 
-OpenLCB nodes.  
+OpenLCB node implementations.  
 
-The checks are based on the Python `openlch' module.
+The checks are based on the Python `openlcb' module.
 More information on that can be obtained from its
 \href{https://github.com/bobjacobsen/PythonOlcbNode}{GitHub project site.}
 
 For more information on the checks, see the
-\href{https://github.com/bobjacobsen/OlcbChecker/blob/main/README.md}{package documentation}
-or the 
 \href{https://github.com/bobjacobsen/OlcbChecker/tree/main/plans/}{directory of checking plans}.
 
 \section{Obtaining the Software}
 
-The software is distributed as a set of inter-connected Python source files.
+The checker software is distributed as a set of inter-connected Python source files.
 
 \subsection{Obtaining and Using via Git}
 
@@ -74,34 +72,21 @@ To do this:
 \begin{verbatim}
 cd (where you want to put it)
 git clone https://github.com/bobjacobsen/PythonOlcbNode.git
+python3.10 -m pip install --editable PythonOlcbNode
 \end{verbatim}
-will create a PythonOlcbNode directory containing the most recent version of the software.
+This will create a PythonOlcbNode directory containing the most recent version of the software
+and make that available as a `openlcb` Python module.
 
 To run the CDI checks, the `xmlschema' Python module must be installed. To do that, 
 enter\footnote{This is the command for Linux nad MacOS; the Windows command may be different.}
 
 \begin{verbatim}
-python3 -m pip install xmlschema
+python3.10 -m pip install xmlschema
 \end{verbatim}
 
-\section{Configuring for Running}
+\section{Starting the Program}
 
-You need to have PYTHONPATH defined to include the PythonOlcbNode directory.
-\footnote{Eventually, this will no longer be necessary, but not quite yet.}
-In the Linux and macOS
-terminals, you can do this with
-
-\begin{verbatim}
-cd (your PythonOlcbNode directory)
-export PYTHONPATH=$PWD
-\end{verbatim}
-
-or you can place the equivalent line in your shell configuration file.
-
-If you don't add this to your shell configuration file, you'll have to do 
-that each time you start a terminal session.
-
-Next
+First, do
 \begin{verbatim}
 cd (your OlcbChecker directory)
 \end{verbatim}
@@ -274,7 +259,6 @@ OpenLCB checking program
  4 Datagram Transport checking
  5 Memory Configuration checking
  6 CDI checking
-
 \end{verbatim}
 
 It's generally best to run them in order, as issues flagged by earlier

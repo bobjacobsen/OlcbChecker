@@ -26,13 +26,12 @@ These checks require the `openlcb` Python module. That's not yet available via P
 ```
 cd (somewhere)
 git clone https://github.com/bobjacobsen/PythonOlcbNode.git
-cd PythonOlcbNode
-export PYTHONPATH=$PWD
+python3.10 -m pip install --editable PythonOlcbNode
 cd (where you put OlcbChecker)
 ```
-The `export PYTHONPATH=$PWD` from the directory needs to be done each time you open a new window, or you can put the equivalent in your shell setup files.  Someday, there will be a `python3.10 -m pip install --editable openlcb` command to do this, but not yet.
 
 The CDI check requires the `xmlschema` module.  If you don't have that already, do
+
 ```
 python3 -m pip install xmlschema
 ```
