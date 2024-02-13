@@ -65,9 +65,10 @@ def check():
                 alias = reply1.header&0xFFF
                 break  
             if NodeID(targetnodeid) != NodeID(reply1.data) :
-                # but this wasn't the right one
+                # but this wasn't the right one, get another
                 continue
                 
+            # got the right one, so now have it's alias
             alias = reply1.header&0xFFF
             break
  
@@ -83,7 +84,7 @@ def check():
             print ("Failure - frame was not RID frame in second part")
             return 3
 
-        # collision in CID properly responded to, lets try an AMD collision
+        # collision in CID properly responded to, lets try an AMD alias collision
         amd = CanFrame(ControlFrame.AMD.value, alias, NodeID(targetnodeid).toArray())
         olcbchecker.framelayer.sendCanFrame(amd)
 

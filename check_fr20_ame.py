@@ -31,6 +31,8 @@ def check():
     # set up the infrastructure
 
     trace = olcbchecker.framelayer.trace # just to be shorter
+    ownnodeid = olcbchecker.framelayer.configure.ownnodeid
+    targetnodeid = olcbchecker.framelayer.configure.targetnodeid
 
     timeout = 0.3
     
@@ -40,22 +42,35 @@ def check():
     # checking sequence starts here
     ###############################
 
-    # send the AME frame to start the exchange
+    # send the global AME frame to start the exchange
     frame = CanFrame(ControlFrame.AME.value, 0x001)  # bogus alias
     olcbchecker.framelayer.sendCanFrame(frame)
     
     try :
-        # check for AMD frame
-        frame = getFrame(1.0)
-        if (frame.header & 0xFF_FFF_000) != 0x10_701_000 :
-            print ("Failure - frame was not AMD frame in first part")
-            return 3
+        # loop for an AMD from DBC or at least not from us
+        while True :
+            # check for AMD frame
+            frame = getFrame(1.0)
+            if (frame.header & 0xFF_FFF_000) != 0x10_701_000 :
+                print ("Failure - frame was not AMD frame in first part")
+                return 3
         
-        # check it carries a node ID
-        if len(frame.data) < 6 :
-            print ("Failure - first AMD frame did not carry node ID")
-            return 3
+            # check it carries a node ID
+            if len(frame.data) < 6 :
+                print ("Failure - first part AMD frame did not carry node ID")
+                return 3
         
+            if targetnodeid is None :
+                # we'll take the first one not from us
+                if NodeID(frame.data) != NodeID(ownnodeid) :
+                    break
+            else :  # here we have a node ID to match
+                if NodeID(frame.data) == NodeID(targetnodeid) :
+                    break
+            
+            # loop to try again
+
+
         purgeFrames()
         
         # get that node ID, create and send an AMD using it
