@@ -11,7 +11,7 @@ import check_fr40_highbit
 
 def prompt() :
     print("\nFrame Transport Standard checking")
-    print(" 0 Run all in sequence")
+    print(" a Run all in sequence")
     print(" 1 Initialization checking")
     print(" 2 AME checking")
     print(" 3 Collision checking")
@@ -65,7 +65,7 @@ def main() :
                 print("\nReserved bit checking")
                 check_fr40_highbit.check()
            
-            case  "0" :
+            case  "a" :
                 checkAll()
             
             case "q" | "Q" : return

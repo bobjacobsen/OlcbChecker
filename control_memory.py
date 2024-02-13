@@ -12,7 +12,7 @@ import check_mc50_restart
 
 def prompt() :
     print("\nMemory Configuration Standard checking")
-    print(" 0 Run all in sequence")
+    print(" a Run all in sequence")
     print(" 1 Configuration Options checking")
     print(" 2 Address Space Information checking")
     print(" 3 Read checking")
@@ -74,7 +74,7 @@ def main() :
                 print("\nRestart checking")
                 check_mc50_restart.check()
            
-            case  "0" :
+            case  "a" :
                 checkAll()
             
             case "q" | "Q" : return

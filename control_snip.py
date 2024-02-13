@@ -8,7 +8,7 @@ import check_sn10_snip
 
 def prompt() :
     print("\nSNIP Standard checking")
-    print(" 0 Run all in sequence")
+    print(" a Run all in sequence")
     print(" 1 SNIP reply checking")
     print("  ")
     print(" q go back")
@@ -38,7 +38,7 @@ def main() :
                 print("\nSNIP reply checking")
                 check_sn10_snip.check()
            
-            case  "0" :
+            case  "a" :
                 checkAll()
             
             case "q" | "Q" : return

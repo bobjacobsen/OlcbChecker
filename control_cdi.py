@@ -8,7 +8,7 @@ import check_cd10_read
 
 def prompt() :
     print("\nCDI Standard checking")
-    print(" 0 Run all in sequence")
+    print(" a Run all in sequence")
     print(" 1 Validation checking")
     print("  ")
     print(" q go back")
@@ -38,7 +38,7 @@ def main() :
                 print("\nValidation checking")
                 check_cd10_read.check()
                            
-            case  "0" :
+            case  "a" :
                 checkAll()
             
             case "q" | "Q" : return

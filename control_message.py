@@ -12,7 +12,7 @@ import check_me50_dup
 
 def prompt() :
     print("\nMessage Network Standard checking")
-    print(" 0 Run all in sequence")
+    print(" a Run all in sequence")
     print(" 1 Node Initialized checking")
     print(" 2 Verify Node checking")
     print(" 3 Protocol Support Inquiry checking")
@@ -70,7 +70,7 @@ def main() :
                 print("\nDuplicate Node ID Discovery checking")
                 check_me50_dup.check()
            
-            case  "0" :
+            case  "a" :
                 checkAll()
             
             case "q" | "Q" : return

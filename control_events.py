@@ -11,7 +11,7 @@ import check_ev40_ic
 
 def prompt() :
     print("\nEvent Exchange Standard checking")
-    print(" 0 Run all in sequence")
+    print(" a Run all in sequence")
     print(" 1 Identify Event Addressed checking")
     print(" 2 Identify Event Global checking")
     print(" 3 Identify Producer checking")
@@ -62,7 +62,7 @@ def main() :
                 print("\nIdentify Consumer checking")
                 check_ev40_ic.check()
            
-            case  "0" :
+            case  "a" :
                 checkAll()
             
             case "q" | "Q" : return
