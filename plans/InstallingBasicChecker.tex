@@ -92,18 +92,18 @@ In the Linux and macOS
 terminals, you can do this with
 
 \begin{verbatim}
-cd (where you put the PythonOlcbNode directory)
+cd (your PythonOlcbNode directory)
 export PYTHONPATH=$PWD
 \end{verbatim}
 
 or you can place the equivalent line in your shell configuration file.
 
 If you don't add this to your shell configuration file, you'll have to do 
-this each time you start a terminal session.
+that each time you start a terminal session.
 
 Next
 \begin{verbatim}
-cd (where you put the OlcbChecker directory)
+cd (your OlcbChecker directory)
 \end{verbatim}
 to get to the right directory for running the code. 
 
@@ -132,12 +132,13 @@ OpenLCB checking program
  3 Event Transport checking
  4 Datagram Transport checking
  5 Memory Configuration checking
+ 6 CDI checking
   
  q  Quit
 >> 
 \end{verbatim}
 
-Type 0 and hit return to get the setup menu:
+Type s and hit return to get the setup menu:
 
 \begin{verbatim}
 The current settings are:
@@ -203,7 +204,9 @@ for connecting.
 You must specify one or the other of hostname and device name, but not both.
 When you enter one, the other will be set to None.
 
-When done with setup, select return.  You'll be asked if you want to save changes.  
+When done with setup, select r for return.  
+
+You'll be asked if you want to save changes.  
 Select y to save and n to skip saving.
 
 \begin{verbatim}
@@ -223,6 +226,7 @@ OpenLCB checking program
  3 Event Transport checking
  4 Datagram Transport checking
  5 Memory Configuration checking
+ 6 CDI checking
   
  q  Quit
 >> 
@@ -250,11 +254,53 @@ and attach two CAN terminators.
 If a TCP/IP GridConnect connection will be used, 
 configure the DBC to connect to the TCP/IP hub when restarted. Note that if 
 the DBC is providing the hub for the connection and restarting the DBC
-breaks connections to that hub, several restarting checks will indicate problems
-when the connection breaks.
+breaks connections to that hub, several of the checks will indicate problems
+due to the connection breaking.
 
 Provide power to the DBC using its recommended equipment and connections.
 
+\subsection{The Checking Sequence}
+
+The checks are categorized by the Standard they primarily check:
+
+\begin{verbatim}
+OpenLCB checking program
+ s Setup
+
+ 0 Frame Transport checking
+ 1 Message Network checking
+ 2 SNIP checking
+ 3 Event Transport checking
+ 4 Datagram Transport checking
+ 5 Memory Configuration checking
+ 6 CDI checking
+
+\end{verbatim}
+
+It's generally best to run them in order, as issues flagged by earlier
+checks may prevent later ones from running properly.
+
+Once you select a section, you'll be presented with a sub-menu of the
+actual checks.  These match the sections in the relevant plan document.
+For example:
+
+\begin{verbatim}
+Frame Transport Standard checking
+ 0 Run all in sequence
+ 1 Initialization checking
+ 2 AME checking
+ 3 Collision checking
+ 4 reserved bit checking
+\end{verbatim}
+
+"Run all in sequence" is usually a good starting point.
+
+The checker may prompt you to reset/restart the node or to 
+compare something to the node documentation. For example, 
+the Initialization checking requests that you restart the node
+so that its start-up sequence can be checked for validity.
+It waits for about 30 seconds, and if it still hasn't seen anything, the
+check fails.
 
 \section{Technical Information}
 
