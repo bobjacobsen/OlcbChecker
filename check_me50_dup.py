@@ -34,7 +34,7 @@ def check() :
     ###############################
     
     # send a message with bogus MTI to provoke response
-    message = Message(MTI.Verified_NodeID, destination, None) # send from destination node
+    message = Message(MTI.Verified_NodeID, destination, None, destination.toArray()) # send from destination node
     olcbchecker.sendMessage(message)
 
     while True :
