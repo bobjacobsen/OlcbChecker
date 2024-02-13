@@ -49,7 +49,7 @@ canPhysicalLayerGridConnect = CanPhysicalLayerGridConnect(sendToSocket)
 canPhysicalLayerGridConnect.registerFrameReceivedListener(receiveFrame)
 
 def processMessage(msg):
-    if trace >= 20 : print("RM: {} from {}".format(msg, msg.source))
+    if trace >= 20 : print("RM: {} from {} {}".format(msg, msg.source, msg.data))
     readQueue.put(msg)
 
 canLink = CanLink(NodeID(configure.ownnodeid))
