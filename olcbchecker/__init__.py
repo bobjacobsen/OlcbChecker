@@ -11,7 +11,7 @@ def trace() :
     return setup.configure.trace
 
 def sendMessage(message) :
-    if trace() >= 20 : print("SM: {}".format(message))
+    if trace() >= 20 : print("SM: {} {}".format(message, message.data))
     setup.canLink.sendMessage(message)
     
 def getMessage(timeout=0.8) :
