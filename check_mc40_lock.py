@@ -46,7 +46,7 @@ def getReplyDatagram(destination) :
                 break
             else : # must be datagram rejected
                 # can't proceed
-                raise Exception("Failure - Original Datagram rejected")
+                raise Exception("Failure - Request Datagram rejected")
 
         except Empty:
             raise Exception("Failure - no reply to original request")
@@ -135,41 +135,41 @@ def check():
     nodeB = [6,5,4,3,2,1]
     zero =  [0,0,0,0,0,0]
     
-    sendLockCommand(destination, nodeA)
+    sendLockCommand(destination, zero)
     reply = checkLockReply(destination, zero)
-    if reply != 0 : print ("Failure - step 1 doesn't match"); return reply    
+    if reply != 0 : print ("Failure - step 1 failed"); return reply    
       
-    sendLockCommand(destination, nodeB)
-    reply = checkLockReply(destination, nodeA)
-    if reply != 0 : print ("Failure - step 2 doesn't match"); return reply     
-        
-    sendLockCommand(destination, nodeB)
-    reply = checkLockReply(destination, nodeA)
-    if reply != 0 : print ("Failure - step 3 doesn't match"); return reply   
-        
-    sendLockCommand(destination, zero)
-    reply = checkLockReply(destination, nodeA)
-    if reply != 0 : print ("Failure - step 4 doesn't match"); return reply   
-        
-    sendLockCommand(destination, nodeB)
-    reply = checkLockReply(destination, zero)
-    if reply != 0 : print ("Failure - step 5 doesn't match"); return reply 
-        
     sendLockCommand(destination, nodeA)
-    reply = checkLockReply(destination, nodeB)
-    if reply != 0 : print ("Failure - step 6 doesn't match"); return reply 
-        
-    sendLockCommand(destination, nodeA)
-    reply = checkLockReply(destination, nodeB)
-    if reply != 0 : print ("Failure - step 7 doesn't match"); return reply 
-        
-    sendLockCommand(destination, zero)
-    reply = checkLockReply(destination, nodeB)
-    if reply != 0 : print ("Failure - step 8 doesn't match"); return reply 
+    reply = checkLockReply(destination, nodeA)
+    if reply != 0 : print ("Failure - step 2 failed"); return reply     
+
+    sendLockCommand(destination, nodeB)
+    reply = checkLockReply(destination, nodeA)
+    if reply != 0 : print ("Failure - step 3 failed"); return reply     
         
     sendLockCommand(destination, zero)
     reply = checkLockReply(destination, zero)
-    if reply != 0 : print ("Failure - step 9 doesn't match"); return reply 
+    if reply != 0 : print ("Failure - step 4 failed"); return reply   
+        
+    sendLockCommand(destination, nodeB)
+    reply = checkLockReply(destination, nodeB)
+    if reply != 0 : print ("Failure - step 5 failed"); return reply 
+        
+    sendLockCommand(destination, nodeA)
+    reply = checkLockReply(destination, nodeB)
+    if reply != 0 : print ("Failure - step 6 failed"); return reply 
+        
+    sendLockCommand(destination, nodeA)
+    reply = checkLockReply(destination, nodeB)
+    if reply != 0 : print ("Failure - step 7 failed"); return reply 
+        
+    sendLockCommand(destination, zero)
+    reply = checkLockReply(destination, zero)
+    if reply != 0 : print ("Failure - step 8 failed"); return reply 
+        
+    sendLockCommand(destination, zero)
+    reply = checkLockReply(destination, zero)
+    if reply != 0 : print ("Failure - step 9 failed"); return reply 
         
     
     if trace >= 10 : print("Passed")

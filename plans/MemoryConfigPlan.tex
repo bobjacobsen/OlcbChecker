@@ -64,17 +64,19 @@ The checker sends a Get Configuration Options Command datagram.  It then checks:
 
 This section checks the messages and interaction in Standard sections 4.15 and 4.16.
 
-For each of the required\footnote{See section 4.2}
+For each of the common\footnote{See section 4.2}
 0xFF, 0xFE and 0xFD memory spaces, the
 checker sends a Get Configuration Options Command datagram.  It then checks:
 \begin{enumerate}
 \item That the datagram reply is received.
 \item That a Get Address Space Information Reply datagram is received,
-\item The reply datagram i sat least eight bytes long,
+\item The reply datagram is at least eight bytes long,
 \item That the reply datagram refers to the same memory space as the request,
-\item That the reply datagram shows the space is present,
 \item That the reserved bits in byte 7 are zero.
 \end{enumerate}
+
+If the reply comes back indicating that that space is not present, 
+a warning is issued, but the test is assumed to pass.
 
 \subsection{Read Operations checking}
 
@@ -109,22 +111,24 @@ This section checks the messages and interaction in Standard section 4.17 and 4.
 The checker requests that the node be reset/restarted then 
 
 \begin{enumerate}
-\item Sends a Lock/Reserve Command with node id A
+\item Sends a Lock/Reserve Command with node id zero
     and checks that a Lock/Reserve Reply is received with contents zero.
+\item Sends a Lock/Reserve Command with node id A
+    and checks that a Lock/Reserve Reply is received with contents A.
 \item Sends a Lock/Reserve Command with node id B
     and checks that a Lock/Reserve Reply is received with contents A.
 \item Sends a Lock/Reserve Command with node id B
     and checks that a Lock/Reserve Reply is received with contents A.
 \item Sends a Lock/Reserve Command with zero 
-    and checks that a Lock/Reserve Reply is received with contents A.
-\item Sends a Lock/Reserve Command with node id B
     and checks that a Lock/Reserve Reply is received with contents zero.
+\item Sends a Lock/Reserve Command with node id B
+    and checks that a Lock/Reserve Reply is received with contents B.
 \item Sends a Lock/Reserve Command with node id A
     and checks that a Lock/Reserve Reply is received with contents B.
 \item Sends a Lock/Reserve Command with node id A
     and checks that a Lock/Reserve Reply is received with contents B.
 \item Sends a Lock/Reserve Command with zero 
-    and checks that a Lock/Reserve Reply is received with contents B.
+    and checks that a Lock/Reserve Reply is received with contents zero.
 \item Sends a Lock/Reserve Command with zero 
     and checks that a Lock/Reserve Reply is received with contents zero.
 
