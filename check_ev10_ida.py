@@ -86,8 +86,10 @@ def check():
             break
 
     if len(producerReplys) == 0 and len(consumerReplys) == 0 :
-        print ("Failure - Did not received any identify messages")
-        return(3)
+        print ("Warning - Did not receive any Identify messages.")
+        print ("          Check node documentation to see if it")
+        print("           should be producing or consuming events.")
+        return(1)
         
     if trace >= 10 : print("Passed")
     return 0
