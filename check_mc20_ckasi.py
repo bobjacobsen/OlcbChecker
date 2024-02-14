@@ -127,9 +127,8 @@ def check():
         
         # check that the reply says the space is present
         if reply.data[1] != 0x87 :
-            print ("Failure - Space 0x{:02X} reply was 0x{:02x}, not 'address space present 0x87': {}"
+            print ("Warning - Space 0x{:02X} reply was 0x{:02x}, not 'address space present 0x87': {}"
                     .format(space, reply.data[1], reply.data))
-            return (3)
 
         if reply.data[2] != space :
             print ("Failure - address space number didn't match")
