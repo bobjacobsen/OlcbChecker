@@ -45,11 +45,12 @@ def check():
     # send the global AME frame to start the exchange
     frame = CanFrame(ControlFrame.AME.value, 0x001)  # bogus alias
     olcbchecker.framelayer.sendCanFrame(frame)
-    
+        
     try :
         # loop for an AMD from DBC or at least not from us
         while True :
             # check for AMD frame
+            waitFor = "waiting for initial AMD frame from "+str(NodeID(targetnodeid))+" after global AME"
             frame = getFrame(1.0)
             if (frame.header & 0xFF_FFF_000) != 0x10_701_000 :
                 print ("Failure - frame was not AMD frame in first part")
@@ -78,6 +79,7 @@ def check():
         olcbchecker.framelayer.sendCanFrame(frame)
 
         # check for AMD frame
+        waitFor = "waiting for AMD frame after AME with address "+str(NodeID(frame.data))
         frame = getFrame(1.0)
         if (frame.header & 0xFF_FFF_000) != 0x10_701_000 :
             print ("Failure - frame was not AMD frame in second part")
@@ -90,7 +92,7 @@ def check():
         
         
     except Empty:
-        print ("Failure - did not receive expected frame")
+        print ("Failure - no frame received while "+waitFor)
         return 3
 
     if trace >= 10 : print("Passed")
