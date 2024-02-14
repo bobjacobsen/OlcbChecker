@@ -36,7 +36,7 @@ if trace >= 20 :
     print("RR, SR are raw socket interface receive and send; RL, SL are link (frame) interface")
 
 def sendToSocket(string) :
-    if trace >= 40 : print("   SR: "+string)
+    if trace >= 40 : print("   SR: "+string.strip())
     s.send(string)
 
 def sendCanFrame(frame) :
@@ -61,7 +61,7 @@ def receiveLoop() :
             # connection broken, have to stop processing
             print("\nLCC Connection Broken\n")
             break
-        if trace >= 40 : print("   RR: "+input)
+        if trace >= 40 : print("   RR: "+input.strip())
         # pass to link processor
         canPhysicalLayerGridConnect.receiveString(input)
 import threading

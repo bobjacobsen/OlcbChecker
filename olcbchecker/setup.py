@@ -36,11 +36,15 @@ else :
     s.connect(configure.devicename)
     
 if trace >= 20 :
-    print("RR, SR are raw socket interface receive and send; RL, SL are link (frame) interface")
+    print("RM, SM are message level receive and send; RL, SL are link (frame) interface; RR, SR are raw socket interface")
 
 def sendToSocket(string) :
-    if trace >= 40 : print("   SR: "+string)
+    if trace >= 40 : print("   SR: "+string.strip())
     s.send(string)
+
+def sendCanFrame(frame) :
+    if trace >= 30 : print("SL: "+str(frame) )
+    canPhysicalLayerGridConnect.sendCanFrame(frame)
 
 def receiveFrame(frame) : 
     if trace >= 30 : print("RL: "+str(frame) )
@@ -70,7 +74,7 @@ def receiveLoop() :
             # connection broken, have to stop processing
             print("\nLCC Connection Broken\n")
             break
-        if trace >= 40 : print("   RR: "+input)
+        if trace >= 40 : print("   RR: "+input.strip())
         # pass to link processor
         canPhysicalLayerGridConnect.receiveString(input)
 
