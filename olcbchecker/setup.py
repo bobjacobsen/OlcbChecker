@@ -39,23 +39,27 @@ if trace >= 20 :
     print("RM, SM are message level receive and send; RL, SL are link (frame) interface; RR, SR are raw socket interface")
 
 def sendToSocket(string) :
-    if trace >= 40 : print("   SR: "+string.strip())
+    if trace >= 40 : print("      SR: "+string.strip())
     s.send(string)
 
 def sendCanFrame(frame) :
-    if trace >= 30 : print("SL: "+str(frame) )
     canPhysicalLayerGridConnect.sendCanFrame(frame)
 
 def receiveFrame(frame) : 
-    if trace >= 30 : print("RL: "+str(frame) )
+    if trace >= 30 : print("   RL: "+str(frame) )
+
+class ReportingCanLink (CanPhysicalLayerGridConnect) :
+    def sendCanFrame(self, frame): 
+        if trace >= 30 : print("   SL: "+str(frame) )
+        super().sendCanFrame(frame)
  
-canPhysicalLayerGridConnect = CanPhysicalLayerGridConnect(sendToSocket)
+canPhysicalLayerGridConnect = ReportingCanLink(sendToSocket)
 canPhysicalLayerGridConnect.registerFrameReceivedListener(receiveFrame)
 
 def processMessage(msg):
     if trace >= 20 : print("RM: {} from {} {}".format(msg, msg.source, msg.data))
     readQueue.put(msg)
-
+   
 canLink = CanLink(NodeID(configure.ownnodeid))
 canLink.linkPhysicalLayer(canPhysicalLayerGridConnect)
 canLink.registerMessageReceivedListener(processMessage)
@@ -74,7 +78,7 @@ def receiveLoop() :
             # connection broken, have to stop processing
             print("\nLCC Connection Broken\n")
             break
-        if trace >= 40 : print("   RR: "+input.strip())
+        if trace >= 40 : print("      RR: "+input.strip())
         # pass to link processor
         canPhysicalLayerGridConnect.receiveString(input)
 
