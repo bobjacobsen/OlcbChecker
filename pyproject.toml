@@ -1,0 +1,19 @@
+# You can follow the readme (to install openlcb in editable mode)
+# if you are helping develop OlcbChecker and/or openlcb,
+# but this file is here in case you are installing
+# OlcbChecker using pip (This file documents the repo structure & requirements
+# in Python's standard way).
+
+[project]
+name = "openlcb-checker"
+version = "0.1.0"
+requires-python = ">= 3.10"
+# For requirements, you can specify a git repo (as opposed to a release you've submitted to pypi.org),
+# such as PythonOlcbNode in this case. You can also use ssh:
+#     "openlcb@git+ssh://git@github.com/bobjacobsen/PythonOlcbNode"
+# or use a certain branch:
+#     "openlcb@git+https://github.com/bobjacobsen/PythonOlcbNode.git@main"
+dependencies = [
+    "openlcb@git+https://github.com/bobjacobsen/PythonOlcbNode",
+    "xmlschema",
+]
