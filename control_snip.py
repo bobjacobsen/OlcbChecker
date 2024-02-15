@@ -32,7 +32,7 @@ def main() :
     '''
     while True :
         prompt()
-        selection = input(">> ")
+        selection = input(">> ").lower()
         match selection :
             case "1" : 
                 print("\nSNIP reply checking")
@@ -41,7 +41,7 @@ def main() :
             case  "a" :
                 checkAll()
             
-            case "q" | "Q" : return
+            case "q" | "quit" : return
             
             case _ : continue
                    

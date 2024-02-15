@@ -34,7 +34,7 @@ def main() :
         if ('devicename' not in local_variables or local_variables['devicename'] == None) and ('hostname' not in local_variables or local_variables['hostname'] == None) :
             print("\nPlease provide either hostname or devicename")
         print ("\nc change setting\nh help\nr return\n")
-        match input(">> ") :
+        match input(">> ").lower() :
             case "c" :
                 variable = input("enter variable name\n>> ")
                 if variable == "" : continue # if you don't enter a variable, go back and avoid error
@@ -49,7 +49,7 @@ def main() :
                 # special case of "only one"
                 
                                     
-            case "r" | "q":
+            case "r" | "return" | "q" | "quit":
                 if settings_changed: 
                     if input("\nDo you want to save the new settings? (y/n)\n >> ") == "y" :
                         f = open("localoverrides.py", "w")

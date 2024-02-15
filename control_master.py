@@ -28,7 +28,7 @@ def main() :
     '''
     while True :
         prompt()
-        selection = input(">> ")
+        selection = input(">> ").lower()
         match selection :
             case "s" : 
                 import control_setup
@@ -62,7 +62,7 @@ def main() :
                 import control_cdi
                 control_cdi.main()
                        
-            case "q" | "Q" : return
+            case "q" | "quit" : return
                    
             case _ : continue
             
