@@ -50,7 +50,7 @@ def check():
         # loop for an AMD from DBC or at least not from us
         while True :
             # check for AMD frame
-            waitFor = "waiting for initial AMD frame from "+str(NodeID(targetnodeid))+" after global AME"
+            waitFor = "waiting for initial AMD frame after global AME"
             frame = getFrame(1.0)
             if (frame.header & 0xFF_FFF_000) != 0x10_701_000 :
                 print ("Failure - frame was not AMD frame in first part")
