@@ -33,8 +33,8 @@ def check() :
     # checking sequence starts here
     ###############################
     
-    # send a message with bogus MTI to provoke response
-    message = Message(MTI.Verified_NodeID, destination, None, destination.toArray()) # send from destination node
+    # send a message with our alias but target's NodeID to see if it provokes a response
+    message = Message(MTI.Verified_NodeID, NodeID(olcbchecker.ownnodeid()), None, destination.toArray()) # send from destination node
     olcbchecker.sendMessage(message)
 
     while True :
