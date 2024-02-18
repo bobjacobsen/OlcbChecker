@@ -10,6 +10,8 @@
 
 \DeclareGraphicsRule{.tif}{png}{.png}{`convert #1 `dirname #1`/`basename #1 .tif`.png}
 
+\newcommand*{\xml}[1]{\texttt{<#1>}}
+
 \title{Checking the OpenLCB Configuration Description Information Standard}
 \author{The OpenLCB Group}
 %\date{}                                         % Activate to display a given date or no date
@@ -22,7 +24,7 @@
 
 This note documents the procedure for checking an OpenLCB implementation against the 
 \href{https://nbviewer.org/github/openlcb/documents/blob/master/standards/ConfigurationDescriptionInformationS.pdf}
-    {Configuration Description Information Standard}.
+    {Configuration Description Information (CDI) Standard}.
 
 \input{includeHeader}
 
@@ -31,17 +33,105 @@ This note documents the procedure for checking an OpenLCB implementation against
 Select ``CDI checking" in the program, 
 then select each section below in turn.
 
-A node which does not self-identify in PIP that it supports
-Configuration Description Information will be deemed to have passed these checks.
-\footnote{Using the -p option or setting the checkpip default value False will skip this check.}
-
 This plan assumes that the Datagram Transport Protocol and the Memory Configuration Protocol 
 have been separately checked. It uses those, but does not do any detailed checking of them.
 
+\subsection{CDI Memory Present checking}
+
+This section checks that the CDI memory defined in section 4.2 of the Memory
+Configuration Protocol Standard is present.
+
+A node which does not self-identify in PIP that it supports
+Configuration Description Information passes this check.
+
+The Get Address Space Information Command from the Memory Configuration Protocol
+is used to validate that space 0xFF is present and read-only.
+
 \subsection{Validation checking}
 
-This section checks the content of the CDI to make sure that it is valid XML. 
-It reads the information from the 0xFF memory space, 
-then validates it against the 1.3 XML Schema which is stored in a local ”schema.xsd” file.
+This section checks the content of the CDI against the XML Schema 
+defined in Section 5 of the Standard to make sure that it is valid XML. 
+
+A node which does not self-identify in PIP that it supports
+Configuration Description Information passes this check.
+
+A node which has the CDI bit set in PIP, but does
+has the Memory Configuration bit reset in PIP, fails this check.
+\footnote{Using the -p option or setting the checkpip default value False will 
+skip these checks of PIP bits.}
+
+This check reads the information from the 0xFF memory space.
+If the space is not available, or there are no bytes of content in it, the check fails.
+ 
+The check then validates the content against the 1.3 XML Schema
+which is stored in a local ”schema.xsd” file.
+
+\subsection{ACDI checking}
+
+This checks against the statements in section 5.1.2 of the Standard.
+
+A node which has neither the ACDI bit nor the CDI bit set in PIP passes this check.
+
+Depending on the bits set in the PIP information, there are several 
+possible configurations to check. Each of these is checked in turn, if relevant.
+
+\begin{enumerate}
+\item ACDI bit and Memory Configuration bit set
+
+The 251 (0xFB) and 252 (0xFC) memory spaces are checked for
+being present in the Memory Configuration Protocol.
+
+The two version numbers in the 251 (0xFB) and 252 (0xFC) memory spaces
+are read and checked against their required values.
+
+The six ACDI-defined strings are read from their respective memory spaces
+and checked that they have at least one zero byte.
+
+\item SNIP bit, ACDI bit and Memory Configuration bit set
+
+The SNIP data is acquired. The two SNIP version numbers are checked for equality 
+to those found in the step above.  
+The six SNIP strings are checked for equality, up to the first zero byte, to the
+strings acquired from memory in the step above.
+
+\item Memory Configuration bit and CDI bit set
+
+The check reads the first 320 bytes of the CDI information in space 255 (0xFF) to 
+determine if an \xml{acdi} element is present
+\footnote{The proper placement of the \xml{acdi} element was checked in the Validation 
+checking step above}.  
+
+If the \xml{acdi} element is present and the ACDI bit is not set in PIP, or
+if the \xml{acdi} element is not present and the ACDI bit is set in PIP,
+the check fails.
+
+\end{enumerate}
+
+\subsection{Identification Element checking}
+
+This checks against the statements in section 5.1.1 of the Standard.
+
+A node which does not self-identify in PIP that it supports
+Configuration Description Information passes this check.
+
+A node which has the CDI bit not set in PIP passes this check.
+\footnote{Using the -p option or setting the checkpip default value False will 
+skip this check of PIP bits.}
+
+The check reads the first 320 bytes of the CDI information in space 255 (0xFF) to 
+determine if an \xml{identification} element is present
+\footnote{The proper placement and contents of the \xml{identification} element
+was checked in the Validation checking step above}.  
+
+If the \xml{identification} element is not present, this check pases.
+
+If the SNIP bit is set in PIP, the contents of the \xml{identification}
+sub-elements are checked against the SNIP contents
+up to the first zero byte.
+
+If the \xml{acdi} element is present, the contents of the 
+\xml{identification} sub-elements are checked against the ACDI-defined
+contents of the 251 (0xFB) memory space up to the first zero byte.
+
 
 \end{document}  

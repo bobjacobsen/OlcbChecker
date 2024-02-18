@@ -104,7 +104,7 @@ def check():
             return(0)
 
     # For each of these spaces, will sent a "Get Address Space Information Command" and check reply
-    spaces = [0xFF,0xFD, 0xFE]  # spaces required by standard
+    spaces = [0xFD]  # space required by memory _configuration_ standard; CDI checked later
 
     for space in spaces: 
 

@@ -64,9 +64,11 @@ The checker sends a Get Configuration Options Command datagram.  It then checks:
 
 This section checks the messages and interaction in Standard sections 4.15 and 4.16.
 
-For each of the common\footnote{See section 4.2}
-0xFF, 0xFE and 0xFD memory spaces, the
-checker sends a Get Configuration Options Command datagram.  It then checks:
+Using the common\footnote{See section 4.2}
+0xFD memory configuration space,
+\footnote{Note that 0xFE, the all-memory space, is considered optional here. The 0xFF CDI 
+space is checked in the CDI-checking plan}, 
+the checker sends a Get Configuration Options Command datagram.  It then checks:
 \begin{enumerate}
 \item That the datagram reply is received.
 \item That a Get Address Space Information Reply datagram is received,
