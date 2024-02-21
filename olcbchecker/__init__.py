@@ -11,9 +11,10 @@ def trace() :
     return setup.configure.trace
 
 def sendMessage(message) :
-    if trace() >= 20 : print("SM: {} {}".format(message, message.data))
+    if trace() >= 20 :
+        print("SM: {} {}".format(message, message.data))
     setup.canLink.sendMessage(message)
-    
+
 def getMessage(timeout=0.8) :
     return setup.readQueue.get(True, timeout)
 
@@ -22,14 +23,14 @@ def purgeMessages(timeout=0.3):
         try :
             received = getMessage(timeout) # timeout if no entries
         except Empty:
-             break
+            break
 
 def ownnodeid() :
     return setup.configure.ownnodeid
 
 def targetnodeid() :
     return setup.configure.targetnodeid
-    
+
 def getTargetID(timeout=0.3) :
     '''
     If it hasn't already been specified, use a
@@ -54,10 +55,11 @@ def getTargetID(timeout=0.3) :
         while True :
             try :
                 received = getMessage(timeout) # timeout if no entries
-        
-                if received.mti != MTI.Verified_NodeID and received.mti != MTI.Verified_NodeID_Simple :
+
+                if received.mti != MTI.Verified_NodeID and \
+                        received.mti != MTI.Verified_NodeID_Simple :
                     continue # ignore other messages
-                if destination is None : 
+                if destination is None :
                     destination = received.source
             except Empty:
                 break
@@ -72,13 +74,13 @@ def isCheckPip() :
     Should this check against the PIP values?
     '''
     return setup.configure.checkpip
-    
+
 def gatherPIP(destination, timeout=0.3) :
     '''
     Get the PIP information from the DUT.
     If the result is None, the PIP values should not be checked.
     Otherwise, the result is a set of PIP enum values.
-    '''    
+    '''
     from openlcb.nodeid import NodeID
     from openlcb.message import Message
     from openlcb.mti import MTI
@@ -88,11 +90,11 @@ def gatherPIP(destination, timeout=0.3) :
 
     # Should we skip these checks?
     if not isCheckPip() : return None
-    
+
     # Get the PIP information from the destination.
     # This is somewhat redundant with what we're trying to check in some cases.
 
-    # Send a PIP Request 
+    # Send a PIP Request
     message = Message(MTI.Protocol_Support_Inquiry, NodeID(ownnodeid()), destination)
     sendMessage(message)
 
@@ -112,10 +114,9 @@ def gatherPIP(destination, timeout=0.3) :
                 list = PIP.contentsNamesFromInt(result)
                 for e in list :
                     print (" ",e)
-            
+
             purgeMessages()
             return PIP.setContentsFromList(received.data)
         except Empty:
             print ("Failure - no reply to PIP request")
             return None
-
