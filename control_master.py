@@ -20,6 +20,8 @@ def prompt() :
     print(" 5 Memory Configuration checking")
     print(" 6 CDI checking")
     print("  ")
+    print(" a run all in sequence")
+    print("  ")
     print(" q  Quit")
     
 def main() :
@@ -61,6 +63,30 @@ def main() :
             case "6" : 
                 import control_cdi
                 control_cdi.main()
+                       
+            case "a" : 
+                total = 0
+                import control_frame
+                total += control_frame.checkAll()
+                import control_message
+                total += control_message.checkAll()
+                import control_snip
+                total += control_snip.checkAll()
+                import control_events
+                total += control_events.checkAll()
+                import control_datagram
+                total += control_datagram.checkAll()
+                import control_memory
+                total += control_memory.checkAll()
+                import control_cdi
+                total += control_cdi.checkAll()
+                import control_cdi
+                total += control_cdi.checkAll()
+                
+                if total > 0 :
+                    print ("{} sections had failures".format(total))
+                else
+                    print ("All sections passed")
                        
             case "q" | "quit" : return
                    

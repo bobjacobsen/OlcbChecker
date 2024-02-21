@@ -32,8 +32,12 @@ def check():
     ###############################
     # checking sequence starts here
     ###############################
-    
-    #prompt operator to restart node
+
+    if olcbchecker.setup.configure.skip_interactive :
+        print ("Interactive test skipped")
+        return 0  
+
+    # prompt operator to restart node
     print("Please reset/restart the DUT now")
 
     while True :

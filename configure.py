@@ -36,6 +36,8 @@ def options() :
     print ("-o, --ownnode followed by a nodeID for the checking device in 01.23.45.67.89.0A form")
     print ("-p do not check results against PIP bits")
     print ("-P do check results against PIP bits")
+    print ("-I execute interactive tests")
+    print ("-i skip interactive tests")
     print ("")
 
 # First get the defaults.py file,
@@ -53,6 +55,7 @@ targetnodeid = defaults.targetnodeid
 ownnodeid = defaults.ownnodeid
 checkpip = defaults.checkpip
 trace = defaults.trace
+skip_interactive = defaults.skip_interactive
 
 # Next override with local definitions.
 if os.path.isfile("./localoverrides.py") :
@@ -67,6 +70,7 @@ if os.path.isfile("./localoverrides.py") :
         if 'ownnodeid' in dir(localoverrides) :     ownnodeid = localoverrides.ownnodeid
         if 'checkpip' in dir(localoverrides) :      checkpip = localoverrides.checkpip
         if 'trace' in dir(localoverrides) :         trace = localoverrides.trace
+        if 'skip_interactive' in dir(localoverrides) : skip_interactive = localoverrides.skip_interactive
 
     except:
         pass  # no local overrides is a normal condition
@@ -76,7 +80,7 @@ if os.path.isfile("./localoverrides.py") :
 import getopt, sys
 
 try:
-    opts, remainder = getopt.getopt(sys.argv[1:], "d:n:o:t:T:a:pPh", ["host=", "device=", "ownnode=", "targetnode=", "trace=", "help"])
+    opts, remainder = getopt.getopt(sys.argv[1:], "d:n:o:t:T:a:pPhiI", ["host=", "device=", "ownnode=", "targetnode=", "trace=", "help"])
 except getopt.GetoptError as err:
     # print help information and exit:
     print (str(err)) # will print something like "option -a not recognized"
@@ -90,6 +94,10 @@ for opt, arg in opts:
         checkpip = False
     elif opt == "-P":
         checkpip = True
+    elif opt == "-i":
+        skip_interactive = True
+    elif opt == "-I":
+        skip_interactive = False
     elif opt in ("-t", "--targetnode"):
         targetnodeid = arg
     elif opt in ("-d", "--device"):

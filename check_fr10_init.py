@@ -38,7 +38,11 @@ def check():
     ###############################
     # checking sequence starts here
     ###############################
-
+    
+    if olcbchecker.framelayer.configure.skip_interactive :
+        print ("Interactive test skipped")
+        return 0
+        
     # prompt operator to restart node to start process
     print("Please reset/restart the DUT now")
 

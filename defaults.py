@@ -17,6 +17,9 @@ checkpip = True
 # True means checks are not run and are marked passed if PIP does not include the Standard being checked.
 # False means the checks are run regardless of whether the protocol is included in PIP or not
 
+skip_interactive = False
+# True means that tests that _require_ human interaction are skipped when running all
+
 trace = 10
 # higher numbers are more output:
 #    0 only failures and errors
