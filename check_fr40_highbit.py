@@ -17,16 +17,6 @@ from queue import Empty
 
 import olcbchecker.setup
 
-def getFrame(timeout=0.3) :
-    return olcbchecker.setup.frameQueue.get(True, timeout)
-
-def purgeFrames(timeout=0.3):
-    while True :
-        try :
-            received = getFrame(timeout) # timeout if no entries
-        except Empty:
-             break
-
 def check():
     # set up the infrastructure
 
@@ -36,7 +26,7 @@ def check():
 
     timeout = 0.3
     
-    purgeFrames()
+    olcbchecker.purgeFrames()
 
     ###############################
     # checking sequence starts here
@@ -53,7 +43,7 @@ def check():
        # loop for an AMD from DBC or at least not from us
         while True :
             # check for AMD frame
-            frame = getFrame(1.0)
+            frame = olcbchecker.getFrame(1.0)
             if (frame.header & 0xFF_FFF_000) != 0x10_701_000 :
                 print ("Failure - frame was not AMD frame in first part")
                 return 3

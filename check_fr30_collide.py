@@ -17,23 +17,13 @@ from queue import Empty
 
 import olcbchecker.setup
 
-def getFrame(timeout=0.3) :
-    return olcbchecker.setup.frameQueue.get(True, timeout)
-
-def purgeFrames(timeout=0.3):
-    while True :
-        try :
-            received = getFrame(timeout) # timeout if no entries
-        except Empty:
-             break
-
 def check():
     # set up the infrastructure
 
     trace = olcbchecker.setup.trace # just to be shorter
     timeout = 0.3
     
-    purgeFrames()
+    olcbchecker.purgeFrames()
 
     ###############################
     # checking sequence starts here
@@ -47,7 +37,7 @@ def check():
         # check for AMD frame from expected node (might be more than one AMD frame)
         while True: 
             waitFor = "waiting for AMD frame in first part"
-            reply1 = getFrame()
+            reply1 = olcbchecker.getFrame()
             if (reply1.header & 0xFF_FFF_000) != 0x10_701_000 :
                 print ("Failure - frame was not AMD frame in first part")
                 return 3
@@ -72,7 +62,7 @@ def check():
             originalAlias = reply1.header&0xFFF
             break
  
-        purgeFrames()
+        olcbchecker.purgeFrames()
         
         # Send a CID using that alias
         cid = CanFrame(ControlFrame.CID.value, originalAlias, [])
@@ -80,7 +70,7 @@ def check():
 
         # check for RID frame
         waitFor = "waiting for RID in response to CID frame"
-        reply = getFrame()
+        reply = olcbchecker.getFrame()
         if (reply.header & 0xFF_FFF_000) != 0x10_700_000 :
             print ("Failure - frame was not RID frame in second part")
             return 3
@@ -91,7 +81,7 @@ def check():
 
         # check for AMR frame
         waitFor = "waiting for AMR in response to AMD frame"
-        reply = getFrame()
+        reply = olcbchecker.getFrame()
         if (reply.header & 0xFF_FFF_000) != 0x10_703_000 :
             print ("Failure - frame was not AMR frame in second part")
             return 3
@@ -99,7 +89,7 @@ def check():
         # check for _optional_ CID 7 frame with different alias
         newAlias = 0  # zero indicates invalid, not allocated
         try :
-            replyCIDp = getFrame()
+            replyCIDp = olcbchecker.getFrame()
             if (replyCIDp.header & 0xFF_000_000) != 0x17_000_000 :
                 print ("Failure - frame was not CID frame in second part")
                 return 3
@@ -120,7 +110,7 @@ def check():
             # check for AMD frame from expected node (might be more AMD frames from others)
             while True: 
                 waitFor = "waiting for AMD frame in second part"
-                reply2 = getFrame()
+                reply2 = olcbchecker.getFrame()
                 if (reply2.header & 0xFF_FFF_000) != 0x10_701_000 :
                     # wasn't AMD
                     continue
@@ -154,7 +144,7 @@ def check():
             pass
         
         # wait for traffic to subside
-        purgeFrames()
+        olcbchecker.purgeFrames()
 
         # finally, send an AME and check results against above
         ame = CanFrame(ControlFrame.AME.value, 0x001)  # bogus alias
@@ -164,7 +154,7 @@ def check():
         try :
             # check for AMD frame from expected node (might be more AMD frames from others)
             while True: 
-                reply3 = getFrame()
+                reply3 = olcbchecker.getFrame()
                 if (reply3.header & 0xFF_FFF_000) != 0x10_701_000 :
                     # wasn't AMD, skip
                     continue

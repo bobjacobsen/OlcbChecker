@@ -16,16 +16,6 @@ from queue import Empty
 
 import olcbchecker.setup
 
-def getFrame(timeout=0.3) :
-    return olcbchecker.setup.frameQueue.get(True, timeout)
-
-def purgeFrames(timeout=0.3):
-    while True :
-        try :
-            received = getFrame(timeout) # timeout if no entries
-        except Empty:
-             break
-
 def check():
     # set up the infrastructure
 
@@ -33,7 +23,7 @@ def check():
 
     timeout = 0.3
 
-    purgeFrames()
+    olcbchecker.purgeFrames()
   
     ###############################
     # checking sequence starts here
@@ -48,7 +38,7 @@ def check():
 
     try :
         # check for four CID
-        frame = getFrame(30)  # wait for operator to start check
+        frame = olcbchecker.getFrame(30)  # wait for operator to start check
         if (frame.header & 0xFF_000_000) != 0x170_00_000 :
             print ("Failure - frame was not 1st CID frame")
             return 3
@@ -59,7 +49,7 @@ def check():
             print("Failure - Zero alias not permitted")
             return 3
     
-        frame = getFrame()
+        frame = olcbchecker.getFrame()
         if (frame.header & 0xFF_000_000) != 0x16_000_000 :
             print ("Failure - frame was not 2nd CID frame")
             return 3
@@ -68,7 +58,7 @@ def check():
             return 3
         cid2 = (frame.header & 0xFFF000) >> 12
     
-        frame = getFrame()
+        frame = olcbchecker.getFrame()
         if (frame.header & 0xFF_000_000) != 0x15_000_000 :
             print ("Failure - frame was not 3rd CID frame")
             return 3
@@ -77,7 +67,7 @@ def check():
             return 3
         cid3 = (frame.header & 0xFFF000) >> 12
     
-        frame = getFrame()
+        frame = olcbchecker.getFrame()
         if (frame.header & 0xFF_000_000) != 0x14_000_000 :
             print ("Failure - frame was not 4th CID frame")
             return 3
@@ -87,7 +77,7 @@ def check():
         cid4 = (frame.header & 0xFFF000) >> 12
     
         # check for RID frame
-        frame = getFrame(0.7)  # might be delayed
+        frame = olcbchecker.getFrame(0.7)  # might be delayed
         if (frame.header & 0xFF_FFF_000) != 0x10_700_000 :
             print ("Failure - frame was not RID frame")
             return 3
@@ -96,7 +86,7 @@ def check():
             return 3
     
         # check for AMD frame
-        frame = getFrame(0.7) # might be delayed
+        frame = olcbchecker.getFrame(0.7) # might be delayed
         if (frame.header & 0xFF_FFF_000) != 0x10_701_000 :
             print ("Failure - frame was not AMD frame")
             return 3

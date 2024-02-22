@@ -35,6 +35,16 @@ def purgeMessages(timeout=0.3):
         except Empty:
             break
 
+def getFrame(timeout=0.3) :
+    return setup.frameQueue.get(True, timeout)
+
+def purgeFrames(timeout=0.3):
+    while True :
+        try :
+            received = getFrame(timeout) # timeout if no entries
+        except Empty:
+             break
+
 def ownnodeid() :
     return setup.configure.ownnodeid
 

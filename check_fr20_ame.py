@@ -17,16 +17,6 @@ from queue import Empty
 
 import olcbchecker.setup
 
-def getFrame(timeout=0.3) :
-    return olcbchecker.setup.frameQueue.get(True, timeout)
-
-def purgeFrames(timeout=0.3):
-    while True :
-        try :
-            received = getFrame(timeout) # timeout if no entries
-        except Empty:
-             break
-
 def check():
     # set up the infrastructure
 
@@ -36,7 +26,7 @@ def check():
 
     timeout = 0.3
     
-    purgeFrames()
+    olcbchecker.purgeFrames()
 
     ###############################
     # checking sequence starts here
@@ -51,7 +41,7 @@ def check():
         while True :
             # check for AMD frame
             waitFor = "waiting for initial AMD frame after global AME"
-            frame = getFrame(1.0)
+            frame = olcbchecker.getFrame(1.0)
             if (frame.header & 0xFF_FFF_000) != 0x10_701_000 :
                 print ("Failure - frame was not AMD frame in first part")
                 return 3
@@ -72,7 +62,7 @@ def check():
             # loop to try again
 
 
-        purgeFrames()
+        olcbchecker.purgeFrames()
         
         # get that node ID, create and send an AMD using it
         frame = CanFrame(ControlFrame.AME.value, 0x001, frame.data)  # bogus alias
@@ -80,7 +70,7 @@ def check():
 
         # check for AMD frame
         waitFor = "waiting for AMD frame after AME with address "+str(NodeID(frame.data))
-        frame = getFrame(1.0)
+        frame = olcbchecker.getFrame(1.0)
         if (frame.header & 0xFF_FFF_000) != 0x10_701_000 :
             print ("Failure - frame was not AMD frame in second part")
             return 3
