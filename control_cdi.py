@@ -20,9 +20,9 @@ def checkAll() :
     result += check_cd10_read.check()
 
     if result == 0 :
-        print("\nSuccess - all passed")
+        print("\nSuccess - all CDI checks passed")
     else:
-        print("\nAt least one check failed")
+        print("\nAt least one CDI check failed")
         
     return result
     

@@ -20,9 +20,9 @@ def checkAll() :
     result += check_da30_dr.check()
 
     if result == 0 :
-        print("\nSuccess - all passed")
+        print("\nSuccess - all datagram checks passed")
     else:
-        print("\nAt least one check failed")
+        print("\nAt least one datagram check failed")
         
     return result
     

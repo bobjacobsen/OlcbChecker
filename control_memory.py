@@ -40,9 +40,9 @@ def checkAll() :
     result += check_mc50_restart.check()
 
     if result == 0 :
-        print("\nSuccess - all passed")
+        print("\nSuccess - all memory checks passed")
     else:
-        print("\nAt least one check failed")
+        print("\nAt least one memory check failed")
         
     return result
     

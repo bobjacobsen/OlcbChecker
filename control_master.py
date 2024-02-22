@@ -67,26 +67,24 @@ def main() :
             case "a" : 
                 total = 0
                 import control_frame
-                total += control_frame.checkAll()
+                total += min(control_frame.checkAll(),1)
                 import control_message
-                total += control_message.checkAll()
+                total += min(control_message.checkAll(),1)
                 import control_snip
-                total += control_snip.checkAll()
+                total += min(control_snip.checkAll(),1)
                 import control_events
-                total += control_events.checkAll()
+                total += min(control_events.checkAll(),1)
                 import control_datagram
-                total += control_datagram.checkAll()
+                total += min(control_datagram.checkAll(),1)
                 import control_memory
-                total += control_memory.checkAll()
+                total += min(control_memory.checkAll(),1)
                 import control_cdi
-                total += control_cdi.checkAll()
-                import control_cdi
-                total += control_cdi.checkAll()
+                total += min(control_cdi.checkAll(),1)
                 
                 if total > 0 :
-                    print ("{} sections had failures".format(total))
-                else
-                    print ("All sections passed")
+                    print ("\n{} sections had failures".format(total))
+                else :
+                    print ("\nAll sections passed")
                        
             case "q" | "quit" : return
                    

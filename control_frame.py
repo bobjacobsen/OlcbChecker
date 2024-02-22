@@ -9,6 +9,8 @@ import check_fr20_ame
 import check_fr30_collide
 import check_fr40_highbit
 
+import subprocess
+
 def prompt() :
     print("\nFrame Transport Standard checking")
     print(" a Run all in sequence")
@@ -35,9 +37,9 @@ def checkAll() :
     result += check_fr40_highbit.check()
 
     if result == 0 :
-        print("\nSuccess - all passed")
+        print("\nSuccess - all frame checks passed")
     else:
-        print("\nAt least one check failed")
+        print("\nAt least one frame check failed")
         
     return result
     

@@ -14,10 +14,10 @@ from openlcb.nodeid import NodeID
 
 from queue import Empty
 
-import olcbchecker.framelayer
+import olcbchecker.setup
 
 def getFrame(timeout=0.3) :
-    return olcbchecker.framelayer.readQueue.get(True, timeout)
+    return olcbchecker.setup.frameQueue.get(True, timeout)
 
 def purgeFrames(timeout=0.3):
     while True :
@@ -29,7 +29,7 @@ def purgeFrames(timeout=0.3):
 def check():
     # set up the infrastructure
 
-    trace = olcbchecker.framelayer.trace # just to be shorter
+    trace = olcbchecker.setup.trace # just to be shorter
 
     timeout = 0.3
 
@@ -39,7 +39,7 @@ def check():
     # checking sequence starts here
     ###############################
     
-    if olcbchecker.framelayer.configure.skip_interactive :
+    if olcbchecker.setup.configure.skip_interactive :
         print ("Interactive test skipped")
         return 0
         

@@ -11,9 +11,6 @@ from openlcb.canbus.canlink import CanLink
 from openlcb.canbus.controlframe import ControlFrame
 
 from openlcb.nodeid import NodeID
-from openlcb.message import Message
-from openlcb.mti import MTI
-from openlcb.pip import PIP
 
 from queue import Queue
 from queue import Empty
@@ -47,24 +44,27 @@ def sendCanFrame(frame) :
 
 def receiveFrame(frame) : 
     if trace >= 30 : print("   RL: "+str(frame) )
+    frameQueue.put(frame)
 
 class ReportingCanLink (CanPhysicalLayerGridConnect) :
     def sendCanFrame(self, frame): 
         if trace >= 30 : print("   SL: "+str(frame) )
         super().sendCanFrame(frame)
- 
+
+
 canPhysicalLayerGridConnect = ReportingCanLink(sendToSocket)
 canPhysicalLayerGridConnect.registerFrameReceivedListener(receiveFrame)
 
 def processMessage(msg):
     if trace >= 20 : print("RM: {} from {} {}".format(msg, msg.source, msg.data))
-    readQueue.put(msg)
+    messageQueue.put(msg)
    
 canLink = CanLink(NodeID(configure.ownnodeid))
 canLink.linkPhysicalLayer(canPhysicalLayerGridConnect)
 canLink.registerMessageReceivedListener(processMessage)
 
-readQueue = Queue()
+messageQueue = Queue()
+frameQueue = Queue()
 
 # put the read on a separate thread
 def receiveLoop() :

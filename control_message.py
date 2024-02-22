@@ -40,9 +40,9 @@ def checkAll() :
     result += check_me50_dup.check()
 
     if result == 0 :
-        print("\nSuccess - all passed")
+        print("\nSuccess - all message checks passed")
     else:
-        print("\nAt least one check failed")
+        print("\nAt least one message check failed")
 
     return result
     

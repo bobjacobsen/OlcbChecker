@@ -20,9 +20,9 @@ def checkAll() :
     result += check_sn10_snip.check()
 
     if result == 0 :
-        print("\nSuccess - all passed")
+        print("\nSuccess - all SNIP checks passed")
     else:
-        print("\nAt least one check failed")
+        print("\nAt least one SNIP check failed")
         
     return result
     

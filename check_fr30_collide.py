@@ -15,10 +15,10 @@ from openlcb.canbus.canframe import CanFrame
 from openlcb.canbus.controlframe import ControlFrame
 from queue import Empty
 
-import olcbchecker.framelayer
+import olcbchecker.setup
 
 def getFrame(timeout=0.3) :
-    return olcbchecker.framelayer.readQueue.get(True, timeout)
+    return olcbchecker.setup.frameQueue.get(True, timeout)
 
 def purgeFrames(timeout=0.3):
     while True :
@@ -30,7 +30,7 @@ def purgeFrames(timeout=0.3):
 def check():
     # set up the infrastructure
 
-    trace = olcbchecker.framelayer.trace # just to be shorter
+    trace = olcbchecker.setup.trace # just to be shorter
     timeout = 0.3
     
     purgeFrames()
@@ -41,7 +41,7 @@ def check():
 
     # send the AME frame to start the exchange
     ame = CanFrame(ControlFrame.AME.value, 0x001)  # bogus alias
-    olcbchecker.framelayer.sendCanFrame(ame)
+    olcbchecker.setup.sendCanFrame(ame)
     
     try :
         # check for AMD frame from expected node (might be more than one AMD frame)
@@ -58,7 +58,7 @@ def check():
                 return 3
         
             # and it's the right node ID
-            targetnodeid = olcbchecker.framelayer.configure.targetnodeid
+            targetnodeid = olcbchecker.setup.configure.targetnodeid
             if targetnodeid == None :
                 # take first one we get 
                 targetnodeid = str(NodeID(reply1.data))
@@ -76,7 +76,7 @@ def check():
         
         # Send a CID using that alias
         cid = CanFrame(ControlFrame.CID.value, originalAlias, [])
-        olcbchecker.framelayer.sendCanFrame(cid)
+        olcbchecker.setup.sendCanFrame(cid)
 
         # check for RID frame
         waitFor = "waiting for RID in response to CID frame"
@@ -87,7 +87,7 @@ def check():
 
         # collision in CID properly responded to, lets try an AMD alias collision
         amd = CanFrame(ControlFrame.AMD.value, originalAlias, NodeID(targetnodeid).toArray())
-        olcbchecker.framelayer.sendCanFrame(amd)
+        olcbchecker.setup.sendCanFrame(amd)
 
         # check for AMR frame
         waitFor = "waiting for AMR in response to AMD frame"
@@ -158,7 +158,7 @@ def check():
 
         # finally, send an AME and check results against above
         ame = CanFrame(ControlFrame.AME.value, 0x001)  # bogus alias
-        olcbchecker.framelayer.sendCanFrame(ame)
+        olcbchecker.setup.sendCanFrame(ame)
         
         countAMDs = 0
         try :

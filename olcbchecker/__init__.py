@@ -16,9 +16,19 @@ def sendMessage(message) :
     setup.canLink.sendMessage(message)
 
 def getMessage(timeout=0.8) :
-    return setup.readQueue.get(True, timeout)
+    return setup.messageQueue.get(True, timeout)
 
 def purgeMessages(timeout=0.3):
+    while True:
+        try:
+            setup.messageQueue.get_nowait()
+        except Empty:
+            break
+    while True:
+        try:
+            setup.frameQueue.get_nowait()
+        except Empty:
+            break
     while True :
         try :
             received = getMessage(timeout) # timeout if no entries

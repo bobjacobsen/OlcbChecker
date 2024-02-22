@@ -35,9 +35,9 @@ def checkAll() :
     result += check_ev40_ic.check()
 
     if result == 0 :
-        print("\nSuccess - all passed")
+        print("\nSuccess - all event checks passed")
     else:
-        print("\nAt least one check failed")
+        print("\nAt least one event check failed")
 
     return result
     

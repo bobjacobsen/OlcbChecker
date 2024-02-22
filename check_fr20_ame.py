@@ -15,10 +15,10 @@ from openlcb.canbus.canframe import CanFrame
 from openlcb.canbus.controlframe import ControlFrame
 from queue import Empty
 
-import olcbchecker.framelayer
+import olcbchecker.setup
 
 def getFrame(timeout=0.3) :
-    return olcbchecker.framelayer.readQueue.get(True, timeout)
+    return olcbchecker.setup.frameQueue.get(True, timeout)
 
 def purgeFrames(timeout=0.3):
     while True :
@@ -30,9 +30,9 @@ def purgeFrames(timeout=0.3):
 def check():
     # set up the infrastructure
 
-    trace = olcbchecker.framelayer.trace # just to be shorter
-    ownnodeid = olcbchecker.framelayer.configure.ownnodeid
-    targetnodeid = olcbchecker.framelayer.configure.targetnodeid
+    trace = olcbchecker.setup.trace # just to be shorter
+    ownnodeid = olcbchecker.setup.configure.ownnodeid
+    targetnodeid = olcbchecker.setup.configure.targetnodeid
 
     timeout = 0.3
     
@@ -44,7 +44,7 @@ def check():
 
     # send the global AME frame to start the exchange
     frame = CanFrame(ControlFrame.AME.value, 0x001)  # bogus alias
-    olcbchecker.framelayer.sendCanFrame(frame)
+    olcbchecker.setup.sendCanFrame(frame)
         
     try :
         # loop for an AMD from DBC or at least not from us
@@ -76,7 +76,7 @@ def check():
         
         # get that node ID, create and send an AMD using it
         frame = CanFrame(ControlFrame.AME.value, 0x001, frame.data)  # bogus alias
-        olcbchecker.framelayer.sendCanFrame(frame)
+        olcbchecker.setup.sendCanFrame(frame)
 
         # check for AMD frame
         waitFor = "waiting for AMD frame after AME with address "+str(NodeID(frame.data))
