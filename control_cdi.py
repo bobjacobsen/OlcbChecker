@@ -45,7 +45,7 @@ def main() :
         selection = input(">> ").lower()
         match selection :
             case "1" : 
-                print("\CDI Memory Present checking")
+                print("\nCDI Memory Present checking")
                 check_cd10_valid.check()
                            
             case "2" : 
@@ -53,7 +53,7 @@ def main() :
                 check_cd20_read.check()
                            
             case "3" : 
-                print("\ACDI checking")
+                print("\nACDI checking")
                 check_cd30_acdi.check()
                            
             case  "a" :
