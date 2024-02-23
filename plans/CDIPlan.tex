@@ -70,12 +70,16 @@ which is stored in a local ”schema.xsd” file.
 
 This checks against the statements in section 5.1.2 of the Standard.
 
-A node which has neither the ACDI bit nor the CDI bit set in PIP passes this check.
-
 Depending on the bits set in the PIP information, there are several 
 possible configurations to check. Each of these is checked in turn, if relevant.
 
 \begin{enumerate}
+
+\item ACDI bit and Memory Configuration bit not set
+
+This configuration fails the test.  ACDI set implies that certain information 
+is available in the configuration memory.
+
 \item ACDI bit and Memory Configuration bit set
 
 The 251 (0xFB) and 252 (0xFC) memory spaces are checked for
@@ -85,18 +89,18 @@ The two version numbers in the 251 (0xFB) and 252 (0xFC) memory spaces
 are read and checked against their required values.
 
 The six ACDI-defined strings are read from their respective memory spaces
-and checked that they have at least one zero byte.
+to make sure that can be done without error.
 
 \item SNIP bit, ACDI bit and Memory Configuration bit set
 
-The SNIP data is acquired. The two SNIP version numbers are checked for equality 
-to those found in the step above.  
+The SNIP data is acquired.
+ 
 The six SNIP strings are checked for equality, up to the first zero byte, to the
 strings acquired from memory in the step above.
 
 \item Memory Configuration bit and CDI bit set
 
-The check reads the first 320 bytes of the CDI information in space 255 (0xFF) to 
+The check reads the first 820 bytes of the CDI information in space 255 (0xFF) to 
 determine if an \xml{acdi} element is present
 \footnote{The proper placement of the \xml{acdi} element was checked in the Validation 
 checking step above}.  
