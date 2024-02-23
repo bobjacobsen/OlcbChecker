@@ -120,7 +120,7 @@ def check():
     acdi_in_pip = PIP.ADCDI_PROTOCOL  in pipSet
 
     #####
-    # ACDI bit and Memory Configuration bit not set
+    # ACDI bit set and Memory Configuration bit not set
     #####
 
     if acdi_in_pip and not memory_config_present :  
@@ -234,48 +234,50 @@ def check():
     #  Memory Configuration bit and CDI bit set
     #####
 
-    # read CDI to check for ACDI
+    if memory_config_present and acdi_in_pip :
     
-    address = 0
-    LENGTH = 64
-    content = []
+        # read CDI to check for ACDI
     
-    while not 0x00 in content and address < 820 : 
+        address = 0
+        LENGTH = 64
+        content = []
     
-        ad1 = (address >> 24) & 0xFF
-        ad2 = (address >> 16) & 0xFF
-        ad3 = (address >> 8) & 0xFF
-        ad4 = address & 0xFF
+        while not 0x00 in content and address < 820 : 
+    
+            ad1 = (address >> 24) & 0xFF
+            ad2 = (address >> 16) & 0xFF
+            ad3 = (address >> 8) & 0xFF
+            ad4 = address & 0xFF
         
-        # send an read datagran
-        request = [0x20, 0x43, ad1,ad2,ad3,ad4, LENGTH]
-        message = Message(MTI.Datagram, NodeID(olcbchecker.ownnodeid()), destination, request)
-        olcbchecker.sendMessage(message)
+            # send an read datagran
+            request = [0x20, 0x43, ad1,ad2,ad3,ad4, LENGTH]
+            message = Message(MTI.Datagram, NodeID(olcbchecker.ownnodeid()), destination, request)
+            olcbchecker.sendMessage(message)
 
-        try :
-            reply = getReplyDatagram(destination)
-        except Exception as e:
-            print (e)
-            return (3)
+            try :
+                reply = getReplyDatagram(destination)
+            except Exception as e:
+                print (e)
+                return (3)
         
-        content.extend(reply.data[6:]) 
-        address = address+LENGTH
+            content.extend(reply.data[6:]) 
+            address = address+LENGTH
          
-    # here have front of CDI
-    # convert to string for convenience
-    result = ""
-    for one in content:  
-        if one == 0 : break
-        result = result+chr(one)
-    acdi_in_cdi = "<acdi" in result # could be <acdi/> or <acdi></acdi>
+        # here have front of CDI
+        # convert to string for convenience
+        result = ""
+        for one in content:  
+            if one == 0 : break
+            result = result+chr(one)
+        acdi_in_cdi = "<acdi" in result # could be <acdi/> or <acdi></acdi>
 
-    if acdi_in_cdi and not acdi_in_pip :
-        print ("Failure - ACDI in CDI but not in PIP")
-        return 3
+        if acdi_in_cdi and not acdi_in_pip :
+            print ("Failure - ACDI in CDI but not in PIP")
+            return 3
 
-    if not acdi_in_cdi and acdi_in_pip :
-        print ("Failure - ACDI in PIP but not in CDI")
-        return 3
+        if not acdi_in_cdi and acdi_in_pip :
+            print ("Failure - ACDI in PIP but not in CDI")
+            return 3
 
     
     

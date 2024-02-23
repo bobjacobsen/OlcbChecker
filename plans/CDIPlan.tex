@@ -75,12 +75,12 @@ possible configurations to check. Each of these is checked in turn, if relevant.
 
 \begin{enumerate}
 
-\item ACDI bit and Memory Configuration bit not set
+\item ACDI bit set and Memory Configuration bit not set
 
 This configuration fails the test.  ACDI set implies that certain information 
 is available in the configuration memory.
 
-\item ACDI bit and Memory Configuration bit set
+\item ACDI bit set and Memory Configuration bit set
 
 The 251 (0xFB) and 252 (0xFC) memory spaces are checked for
 being present in the Memory Configuration Protocol.
@@ -91,7 +91,7 @@ are read and checked against their required values.
 The six ACDI-defined strings are read from their respective memory spaces
 to make sure that can be done without error.
 
-\item SNIP bit, ACDI bit and Memory Configuration bit set
+\item SNIP bit, ACDI bit and Memory Configuration bit all set
 
 The SNIP data is acquired.
  
