@@ -104,9 +104,18 @@ DBC's documentation.
 
 This section checks the interaction in Standard section 3.5.1 Reject Addressed Optional Interaction.
 
-It does this by sending an unallocated MTI
+First it sends a global unallocated MTI
+\footnote{Initially 0x030. Others may be added in the future for an eventual
+    check of all possible unallocated MTIs}
+and checks for no reply.
+
+It then sends an unallocated MTI
 \footnote{Initially 0x048. Others may be added in the future for an eventual
     check of all possible unallocated MTIs}
+addressed to a checker node (i.e. not the DBC)
+and checks for no reply.
+
+Finally, it sends an unallocated MTI
 addressed to the DBC and checking for the Optional Interaction Rejected 
 message in reply.
 

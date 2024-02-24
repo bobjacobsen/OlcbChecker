@@ -32,7 +32,33 @@ def check() :
     # checking sequence starts here
     ###############################
     
-    # send a message with bogus MTI to provoke response
+    # send a global message which should get no response
+    
+    message = Message(MTI.Link_Layer_Down, NodeID(olcbchecker.ownnodeid()), destination) # MTI selected to be global
+    olcbchecker.sendMessage(message)
+
+    try :
+        received = olcbchecker.getMessage() # timeout if no replies
+        print ("Failure - Unexpected reply to global unknown MTU: {} {}".format(received, received.source))
+        return(3)
+    except:
+        # this is normal
+        pass
+        
+    # send an addressed message to own node which should get no response
+    message = Message(MTI.New_Node_Seen, NodeID(olcbchecker.ownnodeid()),  NodeID(olcbchecker.ownnodeid()) ) # MTI selected to be addressed
+    olcbchecker.sendMessage(message)
+
+    try :
+        received = olcbchecker.getMessage() # timeout if no replies
+        print ("Failure - Unexpected reply to global unknown MTU: {} {}".format(received, received.source))
+        return(3)
+    except:
+        # this is normal
+        pass
+        
+            
+    # send a message to DBC to provoke response
     message = Message(MTI.New_Node_Seen, NodeID(olcbchecker.ownnodeid()), destination) # MTI selected to be addressed
     olcbchecker.sendMessage(message)
 
