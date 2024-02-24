@@ -25,12 +25,14 @@ def check():
     
     olcbchecker.purgeFrames()
 
+    localAlias = olcbchecker.setup.canLink.localAlias # just to be shorter
+    
     ###############################
     # checking sequence starts here
     ###############################
 
     # send the AME frame to start the exchange
-    ame = CanFrame(ControlFrame.AME.value, 0x001)  # bogus alias
+    ame = CanFrame(ControlFrame.AME.value, localAlias)
     olcbchecker.setup.sendCanFrame(ame)
     
     try :
@@ -68,7 +70,7 @@ def check():
         cid = CanFrame(ControlFrame.CID.value, originalAlias, [])
         olcbchecker.setup.sendCanFrame(cid)
 
-        # check for RID frame
+        # check for RID frame in response
         waitFor = "waiting for RID in response to CID frame"
         reply = olcbchecker.getFrame()
         if (reply.header & 0xFF_FFF_000) != 0x10_700_000 :
@@ -76,7 +78,7 @@ def check():
             return 3
 
         # collision in CID properly responded to, lets try an AMD alias collision
-        amd = CanFrame(ControlFrame.AMD.value, originalAlias, NodeID(targetnodeid).toArray())
+        amd = CanFrame(ControlFrame.AMD.value, originalAlias, NodeID(olcbchecker.setup.configure.ownnodeid).toArray())
         olcbchecker.setup.sendCanFrame(amd)
 
         # check for AMR frame
@@ -85,32 +87,29 @@ def check():
         if (reply.header & 0xFF_FFF_000) != 0x10_703_000 :
             print ("Failure - frame was not AMR frame in second part")
             return 3
-        
-        # check for _optional_ CID 7 frame with different alias
+                
+        # loop for _optional_ CID 7 frame and eventual AMD with different alias
         newAlias = 0  # zero indicates invalid, not allocated
-        try :
-            replyCIDp = olcbchecker.getFrame()
-            if (replyCIDp.header & 0xFF_000_000) != 0x17_000_000 :
-                print ("Failure - frame was not CID frame in second part")
-                return 3
-            # check for _different_ alias
-            if (replyCIDp.header & 0x00_000_FFF) == originalAlias :
-                print ("Failure - did not receive different alias on CID in second part")
-                return 3
-            # OK, remember this alias
-            newAlias = replyCIDp.header & 0x00_000_FFF
-
-        except Empty : 
-            # this is an OK case too
-            pass
-        
-         # loop for pause or AMD
         amdReceived = False
+        first = True  # controls check for CID 7 in first pass
         try :
-            # check for AMD frame from expected node (might be more AMD frames from others)
             while True: 
-                waitFor = "waiting for AMD frame in second part"
                 reply2 = olcbchecker.getFrame()
+
+                if first :
+                    first = False
+                    
+                    # is this start of a CID sequence
+                    if (reply2.header & 0xFF_000_000) == 0x17_000_000 :
+                        # check for _different_ alias
+                        if (reply2.header & 0x00_000_FFF) == originalAlias :
+                            print ("Failure - did not receive different alias on CID 7 in second part")
+                            return 3
+                        # OK, remember this alias
+                        newAlias = reply2.header & 0x00_000_FFF
+                        continue
+       
+                # check for AMD frame from expected node (might be more AMD frames from others)
                 if (reply2.header & 0xFF_FFF_000) != 0x10_701_000 :
                     # wasn't AMD
                     continue
@@ -147,7 +146,7 @@ def check():
         olcbchecker.purgeFrames()
 
         # finally, send an AME and check results against above
-        ame = CanFrame(ControlFrame.AME.value, 0x001)  # bogus alias
+        ame = CanFrame(ControlFrame.AME.value, localAlias)
         olcbchecker.setup.sendCanFrame(ame)
         
         countAMDs = 0
