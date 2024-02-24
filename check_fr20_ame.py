@@ -28,12 +28,14 @@ def check():
     
     olcbchecker.purgeFrames()
 
+    localAlias = olcbchecker.setup.canLink.localAlias # just to be shorter
+
     ###############################
     # checking sequence starts here
     ###############################
 
     # send the global AME frame to start the exchange
-    frame = CanFrame(ControlFrame.AME.value, 0x001)  # bogus alias
+    frame = CanFrame(ControlFrame.AME.value, localAlias)
     olcbchecker.setup.sendCanFrame(frame)
         
     try :
@@ -65,7 +67,7 @@ def check():
         olcbchecker.purgeFrames()
         
         # get that node ID, create and send an AMD using it
-        frame = CanFrame(ControlFrame.AME.value, 0x001, frame.data)  # bogus alias
+        frame = CanFrame(ControlFrame.AME.value, localAlias, frame.data)
         olcbchecker.setup.sendCanFrame(frame)
 
         # check for AMD frame

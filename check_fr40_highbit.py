@@ -28,12 +28,14 @@ def check():
     
     olcbchecker.purgeFrames()
 
+    localAlias = olcbchecker.setup.canLink.localAlias # just to be shorter
+
     ###############################
     # checking sequence starts here
     ###############################
 
     # send the AME frame to start the exchange
-    frame = CanFrame(ControlFrame.AME.value, 0x001)  # bogus alias
+    frame = CanFrame(ControlFrame.AME.value, localAlias)
     # remove the high bit from the header
     frame.header = frame.header & 0xF_FFF_FFF
     # and send the modified frame
