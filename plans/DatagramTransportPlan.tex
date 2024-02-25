@@ -1,43 +1,25 @@
-\documentclass[11pt]{article}
-\usepackage{geometry}                % See geometry.pdf to learn the layout options. There are lots.
-\geometry{letterpaper}                   % ... or a4paper or a5paper or ... 
-%\geometry{landscape}                % Activate for for rotated page geometry
-\usepackage[parfill]{parskip}    % Activate to begin paragraphs with an empty line rather than an indent
-\usepackage{graphicx}
-\usepackage{amssymb}
-\usepackage{epstopdf}
-\usepackage{hyperref}
-
-\DeclareGraphicsRule{.tif}{png}{.png}{`convert #1 `dirname #1`/`basename #1 .tif`.png}
+\input{formattingHeader}
 
 \title{Checking the OpenLCB Datagram Transport Protocol}
-\author{The OpenLCB Group}
-%\date{}                                         % Activate to display a given date or no date
 
 \begin{document}
 \maketitle
 
-
-\section{Introduction}
-
-This note documents the procedure for checking an OpenLCB implementation against the 
-\href{https://nbviewer.org/github/openlcb/documents/blob/master/standards/DatagramTransportS.pdf}{Datagram Transport Standard}.
-
-\input{includeHeader}
+\introductionCaveats
+{https://nbviewer.org/github/openlcb/documents/blob/master/standards/DatagramTransportS.pdf}
+{Datagram Transport Standard}.
 
 \section{Datagram Transport Procedure}
 
-Select ``Datagram checking" in the checkere program, 
-then select each section below in turn.  Follow the prompts
-for when to check outputs against the node documentation.
+\checkProcedure{Datagram Checking}
 
 Note that this process is unable to check datagrams from the DBC to the checker.
 There is no standard way to elicit those.  They will be checked as part of the 
 Memory Configuration Protocol checking, if applicable.
 
 A node which does not self-identify in PIP that it supports
-datagram transfer will be deemed to have passed these checks.
-\footnote{Using the -p option or setting the checkpip default value False will skip this check.}
+datagram transfer will be considered to have passed these checks.
+\pipsetFootnote
 
 \subsection{Datagram Reception}
 

@@ -1,37 +1,17 @@
-\documentclass[11pt]{article}
-\usepackage{geometry}                % See geometry.pdf to learn the layout options. There are lots.
-\geometry{letterpaper}                   % ... or a4paper or a5paper or ... 
-%\geometry{landscape}                % Activate for for rotated page geometry
-\usepackage[parfill]{parskip}    % Activate to begin paragraphs with an empty line rather than an indent
-\usepackage{graphicx}
-\usepackage{amssymb}
-\usepackage{epstopdf}
-\usepackage{hyperref}
-
-\DeclareGraphicsRule{.tif}{png}{.png}{`convert #1 `dirname #1`/`basename #1 .tif`.png}
+\input{formattingHeader}
 
 \title{Checking the OpenLCB Message Network Standard}
-\author{The OpenLCB Group}
-%\date{}                                         % Activate to display a given date or no date
 
 \begin{document}
 \maketitle
 
-
-\section{Introduction}
-
-This note documents the procedure for checking an OpenLCB implementation against the 
-\href{https://nbviewer.org/github/openlcb/documents/blob/master/standards/MessageNetworkS.pdf}
-    {OpenLCB Message Network Standard}.
-
-\input{includeHeader}
+\introductionCaveats
+    {https://nbviewer.org/github/openlcb/documents/blob/master/standards/MessageNetworkS.pdf}
+    {OpenLCB Message Network Standard}
 
 \section{Message Network Procedure}
 
-Select ``Message Network checking" in the program, 
-then select each section below in turn.  Follow the prompts
-for when to reset/restart the node and when to check 
-outputs against the node documentation.
+\checkProcedure{Message Network checking}
 
 \subsection{Node Initialized checking}
 

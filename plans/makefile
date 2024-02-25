@@ -16,7 +16,7 @@ clean:
 	-rm -f *.blg
 	-rm -f *.out
 
-%.pdf : %.tex includeHeader.tex
+%.pdf : %.tex formattingHeader.tex
 	pdflatex $<  
 
 	
