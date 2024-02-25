@@ -68,6 +68,18 @@ def check():
             print ("Failure - no reply to PIP request")
             return(3)
 
+    # send a pip message to another node (our node) and expect no reply
+    message = Message(MTI.Protocol_Support_Inquiry, NodeID(olcbchecker.ownnodeid()), NodeID(olcbchecker.ownnodeid()))
+    olcbchecker.sendMessage(message)
+    try :
+            received = olcbchecker.getMessage() # timeout if no entries
+            # error, we received a reply
+            print ("Failure - Unexpected reply to PIP request addressed to a different node")
+            return(3)
+    except:
+        # this is normal, success
+        pass
+                    
     if trace >= 10 : print("Passed")
     return 0
 
