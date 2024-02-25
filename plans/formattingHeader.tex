@@ -1,0 +1,38 @@
+\documentclass[11pt]{article}
+\usepackage{geometry}                % See geometry.pdf to learn the layout options. There are lots.
+\geometry{letterpaper}                   % ... or a4paper or a5paper or ... 
+%\geometry{landscape}                % Activate for for rotated page geometry
+\usepackage[parfill]{parskip}    % Activate to begin paragraphs with an empty line rather than an indent
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{epstopdf}
+\usepackage{hyperref}
+
+\DeclareGraphicsRule{.tif}{png}{.png}{`convert #1 `dirname #1`/`basename #1 .tif`.png}
+
+% macro for inserting common introduction text
+% takes hyperlink to a stadnard and the standard name as arguments
+\newcommand{\introductionCaveats}[2]{
+
+    \section{Introduction}
+
+    This note documents the procedure for checking an OpenLCB implementation against the 
+    \href{#1}
+    {#2}.
+
+    The checks are traceable to specific sections of the Standard.
+
+    The checking assumes that the Device Being Checked (DBC) is being exercised by other
+    nodes on the message network, 
+    e.g. is responding to enquiries from other parts of the message network.
+}
+
+% macro for inserting the procedure section
+\newcommand{\checkProcedure}[1]{
+
+    Select ``#1" in the program, 
+    then select each section below in turn.  Follow the prompts
+    for when to reset/restart the node and when to check 
+    outputs against the node documentation.
+}
+
