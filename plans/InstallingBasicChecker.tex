@@ -285,13 +285,13 @@ There are several kinds of Python scripts in the package.
 \begin{enumerate}
 \item Scripts named check\_*.py, which hold the checks for each specific step.
     The naming contention is e.g. check\_fr20\_ame.py which is the 2nd (20)
-    test of the frame level (fr) and somes some AME checking (ame).
+    check of the frame level (fr) and somes some AME checking (ame).
     \footnote{The numbers are spaced by 10 to allow us to add new scripts in between.}
     These can be individually run e.g. to rapidly exercise a feature for debugging.
 \item Scripts name control\_*.py which hold the simple keyboard-oriented 
     program for running the check scripts.  control\_master.py is the 
     main script, which invokes a control\_*.py script for each level of the 
-    testing and setup.
+    checking and setup.
 \item The olcbchecker directory and package contains general implementation 
     files.
 \end{enumerate}

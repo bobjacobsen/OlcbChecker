@@ -98,9 +98,9 @@ the messages in Standard sections 4.1, 4.3, 4.4, 4.6 and 4.7.
 be sent immediately, only that they be sent before the events are produced.
 Nodes typically send them immediately, and that's what this checks.
 
-The checks starts by restarting the node, which causes a transition to Initialized
+This check starts by restarting the node, which causes a transition to Initialized
 state.  That is then followed by the node identifying events that it will 
-produce and consume by appropriate messages. It then checks:
+produce and consume by appropriate messages. This then checks:
 
 \begin{enumerate}
 \item That the Producer Identified, Producer Identified Range, Consumer Identified 

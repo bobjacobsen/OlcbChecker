@@ -38,8 +38,7 @@ Configuration Description Information passes this check.
 
 A node which has the CDI bit set in PIP, but does
 has the Memory Configuration bit reset in PIP, fails this check.
-\footnote{Using the -p option or setting the checkpip default value False will 
-skip these checks of PIP bits.}
+\pipsetFootnote
 
 This check reads the information from the 0xFF memory space.
 If the space is not available, or there are no bytes of content in it, the check fails.
@@ -58,7 +57,7 @@ possible configurations to check. Each of these is checked in turn, if relevant.
 
 \item ACDI bit set and Memory Configuration bit not set
 
-This configuration fails the test.  ACDI set implies that certain information 
+This configuration fails the check.  PIP ACDI set implies that certain information 
 is available in the configuration memory.
 
 \item ACDI bit set and Memory Configuration bit set
@@ -100,8 +99,7 @@ A node which does not self-identify in PIP that it supports
 Configuration Description Information passes this check.
 
 A node which has the CDI bit not set in PIP passes this check.
-\footnote{Using the -p option or setting the checkpip default value False will 
-skip this check of PIP bits.}
+\pipsetFootnote
 
 The check reads the first 320 bytes of the CDI information in space 255 (0xFF) to 
 determine if an \xml{identification} element is present
