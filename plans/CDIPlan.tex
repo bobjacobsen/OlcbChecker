@@ -40,11 +40,18 @@ A node which has the CDI bit set in PIP, but does
 has the Memory Configuration bit reset in PIP, fails this check.
 \pipsetFootnote
 
-This check reads the information from the 0xFF memory space.
+This check reads the information from the 0xFF memory space
+until it encounters a null character.
 If the space is not available, or there are no bytes of content in it, the check fails.
+If the read sequence terminates early, without ending in a null character, the check fails.
  
 The check then validates the content against the 1.3 XML Schema
 which is stored in a local ”schema.xsd” file.
+
+The check then compares the length of the 0xFF memory space 
+as specified by the Memory Configuration Protocol Standard sections 4.15 and 4.16
+vs. the actual length of the retrieved CDI.
+If they do not agree, the check fails.
 
 \subsection{ACDI checking}
 
@@ -97,11 +104,9 @@ This checks against the statements in section 5.1.1 of the Standard.
 
 A node which does not self-identify in PIP that it supports
 Configuration Description Information passes this check.
-
-A node which has the CDI bit not set in PIP passes this check.
 \pipsetFootnote
 
-The check reads the first 320 bytes of the CDI information in space 255 (0xFF) to 
+The check reads the first 480 bytes of the CDI information in space 255 (0xFF) to 
 determine if an \xml{identification} element is present
 \footnote{The proper placement and contents of the \xml{identification} element
 was checked in the Validation checking step above}.  
@@ -115,6 +120,5 @@ up to the first zero byte.
 If the \xml{acdi} element is present, the contents of the 
 \xml{identification} sub-elements are checked against the ACDI-defined
 contents of the 251 (0xFB) memory space up to the first zero byte.
-
 
 \end{document}  
