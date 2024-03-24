@@ -10,7 +10,9 @@ python3.10 background_generator.py -d /dev/cu.usbmodemCC570001B1
 The -h option will display a full list of options.
 
 To get the lowest possible CAN priority, this sends
-a datagram to the 0xFFF alias.  
+a datagram from the 0xFFF alias to the 0xFFE alias.
+This does _not_ handle collisions should either of
+those aliases already exist on the CAN network.
 '''
 
 import sys
