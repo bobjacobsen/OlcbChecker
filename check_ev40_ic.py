@@ -72,6 +72,7 @@ def check():
             break
 
     # have the set to check, proceed to check each one
+    fail = False
     for event in consumedEvents :
         message = Message(MTI.Identify_Consumer, NodeID(olcbchecker.ownnodeid()), None, event.toArray())
         olcbchecker.sendMessage(message)
@@ -89,8 +90,12 @@ def check():
 
         except Empty:
             # no reply, error
-            print ("Failure - No reply for event: {}".format(event))
-            return (3)
+            print ("No reply for event: {}".format(event))
+            fail = True
+        
+    if fail : 
+        print ("Failure - no reply for one or more event IDs")
+        return(3)
         
     if trace >= 10 : print("Passed")
     return 0
