@@ -93,7 +93,7 @@ def isCheckPip() :
     '''
     return setup.configure.checkpip
 
-def gatherPIP(destination, timeout=0.3) :
+def gatherPIP(destination, timeout=0.3, always = False) :
     '''
     Get the PIP information from the DUT.
     If the result is None, the PIP values should not be checked.
@@ -107,7 +107,7 @@ def gatherPIP(destination, timeout=0.3) :
     from queue import Empty
 
     # Should we skip these checks?
-    if not isCheckPip() : return None
+    if not isCheckPip() and not always : return None
 
     # Get the PIP information from the destination.
     # This is somewhat redundant with what we're trying to check in some cases.

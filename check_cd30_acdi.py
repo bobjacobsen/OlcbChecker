@@ -113,7 +113,7 @@ def check():
     # checking sequence starts here
     ###############################
     
-    pipSet = olcbchecker.gatherPIP(destination)
+    pipSet = olcbchecker.gatherPIP(destination, always = True)
 
     memory_config_present = PIP.MEMORY_CONFIGURATION_PROTOCOL in pipSet
     snip_in_pip = PIP.SIMPLE_NODE_IDENTIFICATION_PROTOCOL in pipSet
