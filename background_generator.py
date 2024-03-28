@@ -10,7 +10,7 @@ python3.10 background_generator.py -d /dev/cu.usbmodemCC570001B1
 The -h option will display a full list of options.
 
 To get the lowest possible CAN priority, this sends
-a datagram from the 0xFFF alias to the 0xFFE alias.
+an end-datagram frame from the 0xFFF alias to the 0xFFE alias.
 This does _not_ handle collisions should either of
 those aliases already exist on the CAN network.
 '''
@@ -49,7 +49,7 @@ def check():
     amdFrameOwn   = ":X10701FFEN03000000FEED;"
     amdFrameODest = ":X10701FFFN03000000BEEF;"
     
-    dataFrame   = ":X1AFFFFFEN00;" # from FFF to FFE
+    dataFrame   = ":X1DFFFFFEN00;" # from FFF to FFE, end segment of datagram
     
     # establish aliases for our traffic
     sendToSocket(amdFrameOwn)
