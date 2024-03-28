@@ -81,7 +81,7 @@ def getTargetID(timeout=0.3) :
                     destination = received.source
             except Empty:
                 break
-        if trace() >= 20 : print ("DUT node ID: ", destination)
+        if trace() >= 20 : print ("ID of node being checked: ", destination)
     else: # was provided in configure
         destination = NodeID(targetnodeid())
     purgeMessages()

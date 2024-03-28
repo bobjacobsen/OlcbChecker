@@ -34,7 +34,7 @@ def check():
         return 0
         
     # prompt operator to restart node to start process
-    print("Please reset/restart the DUT now")
+    print("Please reset/restart the checked node now")
 
     try :
         # check for four CID
