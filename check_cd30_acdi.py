@@ -211,22 +211,22 @@ def check():
 
         # now check the results against previously acquired data
         if not manufacturerName == snip.manufacturerName :
-            print("Failure - SNAP and ACDI manufacturer name did not match")
+            print("Failure - SNIP and ACDI manufacturer name did not match")
             return (3)
         if not modelName == snip.modelName :
-            print("Failure - SNAP and ACDI model name did not match")
+            print("Failure - SNIP and ACDI model name did not match")
             return (3)
         if not hardwareVersion == snip.hardwareVersion :
-            print("Failure - SNAP and ACDI hardware Version did not match")
+            print("Failure - SNIP and ACDI hardware Version did not match")
             return (3)
         if not softwareVersion == snip.softwareVersion :
-            print("Failure - SNAP and ACDI software version did not match")
+            print("Failure - SNIP and ACDI software version did not match")
             return (3)
         if not userProvidedNodeName == snip.userProvidedNodeName :
-            print("Failure - SNAP and ACDI user provided node name did not match")
+            print("Failure - SNIP and ACDI user provided node name did not match")
             return (3)
         if not manufacturerName == snip.manufacturerName :
-            print("Failure - SNAP and ACDI user provided description did not match")
+            print("Failure - SNIP and ACDI user provided description did not match")
             return (3)
     
 
