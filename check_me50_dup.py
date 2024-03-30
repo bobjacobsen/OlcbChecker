@@ -32,6 +32,10 @@ def check() :
     ###############################
     # checking sequence starts here
     ###############################
+
+    if olcbchecker.setup.configure.skip_interactive :
+        print ("Interactive test skipped")
+        return 0  
     
     # send a message with our alias but target's NodeID to see if it provokes a response
     message = Message(MTI.Verified_NodeID, NodeID(olcbchecker.ownnodeid()), None, destination.toArray()) # send from destination node
