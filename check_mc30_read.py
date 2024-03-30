@@ -42,7 +42,12 @@ def getReplyDatagram(destination) :
                 continue
     
             if received.mti == MTI.Datagram_Received_OK :
-                # OK, proceed
+                # OK, proceed to check reply Pending bit
+                if not received.data :
+                    raise Exception("Failure - no flags in Datagram Received OK")
+                if received.data[0] & 0x80 != 0x80 :
+                    raise Exception("Failure - Reply Pending not set in Datagram Received OK")
+                # at this point, all OK
                 break
             else : # must be datagram rejected
                 # can't proceed
