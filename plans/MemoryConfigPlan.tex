@@ -50,7 +50,7 @@ Using the common\footnote{See section 4.2}
 space is checked in the CDI-checking plan}, 
 the checker sends a Get Configuration Options Command datagram.  It then checks:
 \begin{enumerate}
-\item That the datagram reply is received.
+\item That the Datagram Received OK is received,
 \item That a Get Address Space Information Reply datagram is received,
 \item The reply datagram is at least eight bytes long,
 \item That the reply datagram refers to the same memory space as the request,
@@ -77,7 +77,7 @@ and once with the address space in byte 6.
 
 For each, the checker checks:
 \begin{enumerate}
-\item The datagram reply has the Reply Pending bit set,
+\item The Datagram Received OK has the Reply Pending bit set,
 \item The reply datagram is long enough to be checked,
 \item It's a Read Reply datagram,
 \item The error bit is not set,
