@@ -53,6 +53,11 @@ def check():
     while True :
         try :
             received = olcbchecker.getMessage(20)  # might take a while to reboot
+            # was the datagram rejected?
+            if received.mti == MTI.Initialization_Complete :
+                print("Failure - reset datagram rejected")
+                return 3
+            
             # is this a reply from that node?
             if received.mti == MTI.Initialization_Complete or received.mti == MTI.Initialization_Complete_Simple :
                 # this is an init message, passes
