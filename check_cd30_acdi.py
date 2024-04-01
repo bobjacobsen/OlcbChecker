@@ -144,36 +144,45 @@ def check():
         memory_address_space_cmd = [0x20, 0x84, 251] 
         datagram = Message(MTI.Datagram, NodeID(olcbchecker.ownnodeid()), destination, memory_address_space_cmd)
         olcbchecker.sendMessage(datagram)
-        content = getReplyDatagram(destination).data
-        if content[1] != 0x87 :
-            print ("Failure - space 251 marked as not present")
-            return 3
+        try :
+            content = getReplyDatagram(destination).data
+            if content[1] != 0x87 :
+                print ("Failure - space 251 marked as not present")
+                return 3
+        except Exception as e :
+            print (e)
+            return (3)
+
         memory_address_space_cmd = [0x20, 0x84, 252] 
         datagram = Message(MTI.Datagram, NodeID(olcbchecker.ownnodeid()), destination, memory_address_space_cmd)
         olcbchecker.sendMessage(datagram)
-        content = getReplyDatagram(destination).data
-        if content[1] != 0x87 :
-            print ("Failure - space 252 marked as not present")
-            return 3
-        
-        # check version numbers in 251 and 252 spaces
-        v2 = read_memory(destination, 0, 1, 252)
-        if v2 != 0 and v2 != 4 :
-            print("Failure - Space 252 version number not match")
+        try :
+            content = getReplyDatagram(destination).data
+            if content[1] != 0x87 :
+                print ("Failure - space 252 marked as not present")
+                return 3
+            
+            # check version numbers in 251 and 252 spaces
+            v2 = read_memory(destination, 0, 1, 252)
+            if v2 != 0 and v2 != 4 :
+                print("Failure - Space 252 version number not match")
+                return (3)
+            v1 = read_memory(destination, 0, 1, 251)
+            if v1 != 0 and v1 != 2 :
+                print("Failure - Space 251 version number not match")
+                return (3)
+            
+            # load the six strings
+            manufacturerName =  read_memory(destination, 1, 41, 252)
+            modelName =         read_memory(destination, 42, 41, 252)
+            hardwareVersion =   read_memory(destination, 83, 21, 252)
+            softwareVersion =   read_memory(destination, 104, 21, 252)
+            userProvidedNodeName = read_memory(destination, 1, 64, 251)
+            userProvidedDescription = read_memory(destination, 64, 64, 251)
+        except Exception as e :
+            print (e)
             return (3)
-        v1 = read_memory(destination, 0, 1, 251)
-        if v1 != 0 and v1 != 2 :
-            print("Failure - Space 251 version number not match")
-            return (3)
-        
-        # load the six strings
-        manufacturerName =  read_memory(destination, 1, 41, 252)
-        modelName =         read_memory(destination, 42, 41, 252)
-        hardwareVersion =   read_memory(destination, 83, 21, 252)
-        softwareVersion =   read_memory(destination, 104, 21, 252)
-        userProvidedNodeName = read_memory(destination, 1, 64, 251)
-        userProvidedDescription = read_memory(destination, 64, 64, 251)
-        
+            
     
     #####
     # SNIP bit, ACDI bit and Memory Configuration bit set

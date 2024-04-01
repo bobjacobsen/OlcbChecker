@@ -110,13 +110,18 @@ def check():
     memory_address_space_cmd = [0x20, 0x84, 0xFF] 
     datagram = Message(MTI.Datagram, NodeID(olcbchecker.ownnodeid()), destination, memory_address_space_cmd)
     olcbchecker.sendMessage(datagram)
-    content = getReplyDatagram(destination).data
-    if content[1] != 0x87 :
-        print ("Failure - space 0xFF marked as not present")
-        return 3
+    try :
+        content = getReplyDatagram(destination).data
+        if content[1] != 0x87 :
+            print ("Failure - space 0xFF marked as not present")
+            return 3
     
-    if trace >= 10 : print("Passed")
-    return 0
+        if trace >= 10 : print("Passed")
+        return 0
+    except Exception as e:
+        print (e)
+        return (3)
+    
 
 if __name__ == "__main__":
     sys.exit(check())

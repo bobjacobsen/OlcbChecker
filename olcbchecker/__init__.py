@@ -6,6 +6,7 @@ the setup and configure modules
 '''
 
 from queue import Empty
+import sys
 
 def trace() :
     return setup.configure.trace
@@ -16,8 +17,11 @@ def sendMessage(message) :
     setup.canLink.sendMessage(message)
 
 def getMessage(timeout=0.8) :
-    return setup.messageQueue.get(True, timeout)
-
+    try :
+        return setup.messageQueue.get(True, timeout)
+    except KeyboardInterrupt as e :
+        sys.exit(0)
+        
 def purgeMessages(timeout=0.3):
     import time
     time.sleep(0.250) # time for previous actions to complete
