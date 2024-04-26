@@ -54,7 +54,7 @@ def check():
         try :
             received = olcbchecker.getMessage(20)  # might take a while to reboot
             # was the datagram rejected?
-            if received.mti == MTI.Initialization_Complete :
+            if received.mti == MTI.Datagram_Rejected :
                 print("Failure - reset datagram rejected")
                 return 3
             
