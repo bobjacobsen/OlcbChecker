@@ -20,17 +20,17 @@ import configure
 
 # define common interface for message-level compatibility checks
 
-trace = configure.trace # just to be shorter
+trace = configure.global_config.trace # just to be shorter
 
 # configure the physical link
-if configure.hostname is not None : 
+if configure.global_config.hostname is not None :
     from openlcb.canbus.tcpsocket import TcpSocket
     s = TcpSocket()
-    s.connect(configure.hostname, configure.portnumber)
+    s.connect(configure.global_config.hostname, configure.global_config.portnumber)
 else :
     from openlcb.canbus.seriallink import SerialLink
     s = SerialLink()
-    s.connect(configure.devicename)
+    s.connect(configure.global_config.devicename)
     
 if trace >= 20 :
     print("RM, SM are message level receive and send; RL, SL are link (frame) interface; RR, SR are raw socket interface")
@@ -59,7 +59,7 @@ def processMessage(msg):
     if trace >= 20 : print("RM: {} from {} {}".format(msg, msg.source, msg.data))
     messageQueue.put(msg)
    
-canLink = CanLink(NodeID(configure.ownnodeid))
+canLink = CanLink(NodeID(configure.global_config.ownnodeid))
 canLink.linkPhysicalLayer(canPhysicalLayerGridConnect)
 canLink.registerMessageReceivedListener(processMessage)
 

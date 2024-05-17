@@ -33,7 +33,7 @@ def check() :
     # checking sequence starts here
     ###############################
 
-    if olcbchecker.setup.configure.skip_interactive :
+    if olcbchecker.setup.configure.global_config.skip_interactive :
         print ("Interactive test skipped")
         return 0  
     

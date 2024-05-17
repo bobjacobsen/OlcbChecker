@@ -16,10 +16,14 @@ from queue import Empty
 
 import olcbchecker.setup
 
+from configure import TestConfiguration
+
+import configure
+
 def check():
     # set up the infrastructure
 
-    trace = olcbchecker.setup.trace # just to be shorter
+    trace = configure.global_config.trace # just to be shorter
 
     timeout = 0.3
 
@@ -28,8 +32,8 @@ def check():
     ###############################
     # checking sequence starts here
     ###############################
-    
-    if olcbchecker.setup.configure.skip_interactive :
+
+    if configure.global_config.skip_interactive :
         print ("Interactive test skipped")
         return 0
         

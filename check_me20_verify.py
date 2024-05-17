@@ -16,6 +16,7 @@ from openlcb.mti import MTI
 from openlcb.pip import PIP
 
 from queue import Empty
+import configure
 
 def check():
     # set up the infrastructure
@@ -37,7 +38,7 @@ def check():
     ###############################
 
     # send a Verify Nodes Global message
-    message = Message(MTI.Verify_NodeID_Number_Global, NodeID(olcbchecker.ownnodeid()), None)
+    message = Message(MTI.Verify_NodeID_Number_Global, NodeID(configure.global_config.ownnodeid), None)
     olcbchecker.sendMessage(message)
 
     # pull the received frames and get the source ID from first as remote NodeID

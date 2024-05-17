@@ -7,9 +7,10 @@ the setup and configure modules
 
 from queue import Empty
 import sys
+import configure
 
 def trace() :
-    return setup.configure.trace
+    return 10
 
 def sendMessage(message) :
     if trace() >= 20 :
@@ -47,12 +48,6 @@ def purgeFrames(timeout=0.3):
         except Empty:
              break
 
-def ownnodeid() :
-    return setup.configure.ownnodeid
-
-def targetnodeid() :
-    return setup.configure.targetnodeid
-
 def getTargetID(timeout=0.3) :
     '''
     If it hasn't already been specified, use a
@@ -66,10 +61,10 @@ def getTargetID(timeout=0.3) :
 
     # Make sure we have a valid node ID for the device being checked (DBC).
     # This is somewhat redundant with what we're trying to check in some cases.
-    if targetnodeid() is None:
+    if configure.global_config.targetnodeid is None:
 
         # send an VerifyNodes message to provoke response
-        message = Message(MTI.Verify_NodeID_Number_Global, NodeID(ownnodeid()), None)
+        message = Message(MTI.Verify_NodeID_Number_Global, NodeID(configure.global_config.ownnodeid), None)
         sendMessage(message)
 
         # pull the received frames and get the source ID from first as remote NodeID
@@ -87,7 +82,7 @@ def getTargetID(timeout=0.3) :
                 break
         if trace() >= 20 : print ("ID of node being checked: ", destination)
     else: # was provided in configure
-        destination = NodeID(targetnodeid())
+        destination = NodeID(configure.global_config.targetnodeid)
     purgeMessages()
     return destination
 
@@ -95,7 +90,7 @@ def isCheckPip() :
     '''
     Should this check against the PIP values?
     '''
-    return setup.configure.checkpip
+    return configure.global_config.checkpip
 
 def gatherPIP(destination, timeout=0.3, always = False) :
     '''
@@ -117,7 +112,8 @@ def gatherPIP(destination, timeout=0.3, always = False) :
     # This is somewhat redundant with what we're trying to check in some cases.
 
     # Send a PIP Request
-    message = Message(MTI.Protocol_Support_Inquiry, NodeID(ownnodeid()), destination)
+    ownid = configure.global_config.ownnodeid
+    message = Message(MTI.Protocol_Support_Inquiry, NodeID(ownid), destination)
     sendMessage(message)
 
     # pull the received frames and get the PIP from the reply

@@ -16,6 +16,7 @@ from openlcb.mti import MTI
 from openlcb.pip import PIP
 
 from queue import Empty
+import configure
 
 def check():
     # set up the infrastructure
@@ -44,7 +45,7 @@ def check():
             return(0)
     
     # send an SNIP request message to provoke response
-    message = Message(MTI.Simple_Node_Ident_Info_Request, NodeID(olcbchecker.ownnodeid()), destination)
+    message = Message(MTI.Simple_Node_Ident_Info_Request, NodeID(configure.global_config.ownnodeid), destination)
     olcbchecker.sendMessage(message)
 
     results = []
@@ -58,7 +59,7 @@ def check():
                 print ("Failure - Unexpected source of reply message: {} {}".format(received, received.source))
                 return(3)
         
-            if NodeID(olcbchecker.ownnodeid()) != received.destination : # check destination in message header
+            if NodeID(configure.global_config.ownnodeid) != received.destination : # check destination in message header
                 print ("Failure - Unexpected destination of reply message: {} {}".format(received, received.destination))
                 return(3)
         

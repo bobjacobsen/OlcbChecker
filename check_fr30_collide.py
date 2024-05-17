@@ -16,6 +16,7 @@ from openlcb.canbus.controlframe import ControlFrame
 from queue import Empty
 
 import olcbchecker.setup
+import configure
 
 def check():
     # set up the infrastructure
@@ -50,7 +51,7 @@ def check():
                 return 3
         
             # and it's the right node ID
-            targetnodeid = olcbchecker.setup.configure.targetnodeid
+            targetnodeid = configure.global_config.targetnodeid
             if targetnodeid == None :
                 # take first one we get 
                 targetnodeid = str(NodeID(reply1.data))
@@ -78,7 +79,7 @@ def check():
             return 3
 
         # collision in CID properly responded to, lets try an AMD alias collision
-        amd = CanFrame(ControlFrame.AMD.value, originalAlias, NodeID(olcbchecker.setup.configure.ownnodeid).toArray())
+        amd = CanFrame(ControlFrame.AMD.value, originalAlias, NodeID(configure.global_config.ownnodeid).toArray())
         olcbchecker.setup.sendCanFrame(amd)
 
         # check for AMR frame

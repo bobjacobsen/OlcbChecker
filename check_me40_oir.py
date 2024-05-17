@@ -15,6 +15,7 @@ from openlcb.message import Message
 from openlcb.mti import MTI
 
 from queue import Empty
+import configure
 
 def check() :
     # set up the infrastructure
@@ -34,7 +35,7 @@ def check() :
     
     # send a global message which should get no response
     
-    message = Message(MTI.Link_Layer_Down, NodeID(olcbchecker.ownnodeid()), destination) # MTI selected to be global
+    message = Message(MTI.Link_Layer_Down, NodeID(configure.global_config.ownnodeid), destination) # MTI selected to be global
     olcbchecker.sendMessage(message)
 
     try :
@@ -46,7 +47,7 @@ def check() :
         pass
         
     # send an addressed message to own node which should get no response
-    message = Message(MTI.New_Node_Seen, NodeID(olcbchecker.ownnodeid()),  NodeID(olcbchecker.ownnodeid()) ) # MTI selected to be addressed
+    message = Message(MTI.New_Node_Seen, NodeID(configure.global_config.ownnodeid),  NodeID(configure.global_config.ownnodeid) ) # MTI selected to be addressed
     olcbchecker.sendMessage(message)
 
     try :
@@ -59,7 +60,7 @@ def check() :
         
             
     # send a message to DBC to provoke response
-    message = Message(MTI.New_Node_Seen, NodeID(olcbchecker.ownnodeid()), destination) # MTI selected to be addressed
+    message = Message(MTI.New_Node_Seen, NodeID(configure.global_config.ownnodeid), destination) # MTI selected to be addressed
     olcbchecker.sendMessage(message)
 
     while True :

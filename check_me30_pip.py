@@ -17,6 +17,9 @@ from openlcb.pip import PIP
 
 from queue import Empty
 
+import configure
+
+
 def check():
     # set up the infrastructure
 
@@ -34,7 +37,8 @@ def check():
     ###############################
     
     # send an PIP message to provoke response
-    message = Message(MTI.Protocol_Support_Inquiry, NodeID(olcbchecker.ownnodeid()), destination)
+    ownid = configure.global_config.ownnodeid
+    message = Message(MTI.Protocol_Support_Inquiry, NodeID(ownid), destination)
     olcbchecker.sendMessage(message)
 
     while True :
@@ -47,7 +51,7 @@ def check():
                 print ("Failure - Unexpected source of reply message: {} {}".format(received, received.source))
                 return(3)
         
-            if NodeID(olcbchecker.ownnodeid()) != received.destination : # check destination in message header
+            if NodeID(ownid) != received.destination : # check destination in message header
                 print ("Failure - Unexpected destination of reply message: {} {}".format(received, received.destination))
                 return(3)
         
@@ -69,7 +73,7 @@ def check():
             return(3)
 
     # send a pip message to another node (our node) and expect no reply
-    message = Message(MTI.Protocol_Support_Inquiry, NodeID(olcbchecker.ownnodeid()), NodeID(olcbchecker.ownnodeid()))
+    message = Message(MTI.Protocol_Support_Inquiry, NodeID(ownid), NodeID(ownid))
     olcbchecker.sendMessage(message)
     try :
             received = olcbchecker.getMessage() # timeout if no entries

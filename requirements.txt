@@ -1,0 +1,4 @@
+elementpath==4.4.0
+openlcb @ file:///home/robert/PythonOlcbNode
+pyserial==3.5
+xmlschema==3.3.1

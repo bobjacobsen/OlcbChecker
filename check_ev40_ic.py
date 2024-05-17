@@ -17,6 +17,7 @@ from openlcb.pip import PIP
 from openlcb.eventid import EventID
 
 from queue import Empty
+import configure
 
 def check():
     # set up the infrastructure
@@ -46,7 +47,7 @@ def check():
             return(0)
 
     # send an Identify Events Addressed  message to accumulate producers to check
-    message = Message(MTI.Identify_Events_Addressed , NodeID(olcbchecker.ownnodeid()), destination)
+    message = Message(MTI.Identify_Events_Addressed , NodeID(configure.global_config.ownnodeid), destination)
     olcbchecker.sendMessage(message)
 
     # does not include range replies

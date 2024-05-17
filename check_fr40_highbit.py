@@ -16,13 +16,14 @@ from openlcb.canbus.controlframe import ControlFrame
 from queue import Empty
 
 import olcbchecker.setup
+import configure
 
 def check():
     # set up the infrastructure
 
     trace = olcbchecker.setup.trace # just to be shorter
-    ownnodeid = olcbchecker.setup.configure.ownnodeid
-    targetnodeid = olcbchecker.setup.configure.targetnodeid
+    ownnodeid = configure.global_config.ownnodeid
+    targetnodeid = configure.global_config.targetnodeid
 
     timeout = 0.3
     

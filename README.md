@@ -1,6 +1,24 @@
-Run these from this directory with e.g.
+# OlcbChecker
+
+This project lets you validate an OpenLCB / LCC node
+
+## Running
+
+You need:
+* Python 3
+
+Create a virtual environment and install the required dependencies:
+
 ```
-python3.10 control_master.py
+python3 -m venv rm-venv
+source rm-venv/bin/activate
+pip install -r requirements.txt
+```
+
+You may now run the control_master application:
+
+```
+python3 control_master.py
 ```
 or, depending on your Python installation, the shorter
 ```

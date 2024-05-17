@@ -17,6 +17,7 @@ from openlcb.pip import PIP
 from openlcb.eventid import EventID
 
 from queue import Empty
+import configure
 
 def check():
     # set up the infrastructure
@@ -46,7 +47,7 @@ def check():
             return(0)
 
     # send an Identify Events Global  message to provoke response - previously checked to work
-    message = Message(MTI.Identify_Events_Global , NodeID(olcbchecker.ownnodeid()), None)
+    message = Message(MTI.Identify_Events_Global , NodeID(configure.global_config.ownnodeid), None)
     olcbchecker.sendMessage(message)
 
     producerIdMTIs = [MTI.Producer_Identified_Unknown, MTI.Producer_Identified_Active, MTI.Producer_Identified_Inactive, MTI.Producer_Range_Identified]

@@ -16,6 +16,7 @@ from openlcb.mti import MTI
 from openlcb.eventid import EventID
 
 from queue import Empty
+import configure
 
 def check():
     # set up the infrastructure
@@ -33,7 +34,7 @@ def check():
     # checking sequence starts here
     ###############################
 
-    if olcbchecker.setup.configure.skip_interactive :
+    if configure.global_config.skip_interactive :
         print ("Interactive test skipped")
         return 0  
 
