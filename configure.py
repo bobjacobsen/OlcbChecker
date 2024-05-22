@@ -45,6 +45,10 @@ class TestConfiguration:
     def devicename(self):
         return self._devicename
 
+    @devicename.setter
+    def devicename(self, name):
+        self._devicename = name
+
     @property
     def portnumber(self):
         return self._portnumber
