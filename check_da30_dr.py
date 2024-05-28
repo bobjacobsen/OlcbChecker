@@ -16,6 +16,7 @@ from openlcb.mti import MTI
 from openlcb.pip import PIP
 
 from queue import Empty
+import configure
 
 def check():
     # set up the infrastructure
@@ -51,7 +52,7 @@ def check():
         data = list(range(0, length))
 
         # send an datagram to provoke response
-        message = Message(MTI.Datagram, NodeID(olcbchecker.ownnodeid()), destination, data)
+        message = Message(MTI.Datagram, NodeID(configure.global_config.ownnodeid), destination, data)
         olcbchecker.sendMessage(message)
 
         while True :
@@ -65,7 +66,7 @@ def check():
                     print ("Failure - Unexpected source of reply message: {} {}".format(received, received.source))
                     return(3)
         
-                if NodeID(olcbchecker.ownnodeid()) != received.destination : # check destination in message header
+                if NodeID(configure.global_config.ownnodeid) != received.destination : # check destination in message header
                     print ("Failure - Unexpected destination of reply message: {} {}".format(received, received.destination))
                     return(3)
         

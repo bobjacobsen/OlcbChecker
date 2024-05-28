@@ -16,6 +16,7 @@ from openlcb.mti import MTI
 from openlcb.pip import PIP
 
 from queue import Empty
+import configure
 
 import olcbchecker.setup
 
@@ -47,7 +48,7 @@ def check():
             return(0)
 
     # send an datagram to restart the node
-    message = Message(MTI.Datagram, NodeID(olcbchecker.ownnodeid()), destination, [0x20, 0xA9])
+    message = Message(MTI.Datagram, NodeID(configure.global_config.ownnodeid), destination, [0x20, 0xA9])
     olcbchecker.sendMessage(message)
 
     while True :
