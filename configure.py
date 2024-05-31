@@ -28,6 +28,8 @@ def options() :
     print ("                This is mutually exclusive with the -h --hostname option")
     print ("-t, --targetnode followed by a nodeID for the device being checked in 01.23.45.67.89.0A form")
     print ("")
+    print ("-r, --run run the tests instead of presenting a menu")
+    print ("")
     print ("Less frequently needed:")
     print ("")
     print ("-T, --trace followed by an integer trace level.  Higher numbers are more informatiom.")
@@ -79,8 +81,10 @@ if os.path.isfile("./localoverrides.py") :
 
 import getopt, sys
 
+runimmediate = False
+
 try:
-    opts, remainder = getopt.getopt(sys.argv[1:], "d:n:o:t:T:a:pPhiI", ["host=", "device=", "ownnode=", "targetnode=", "trace=", "help"])
+    opts, remainder = getopt.getopt(sys.argv[1:], "d:n:o:t:T:a:pPhiIr", ["host=", "device=", "ownnode=", "targetnode=", "trace=", "help"])
 except getopt.GetoptError as err:
     # print help information and exit:
     print (str(err)) # will print something like "option -a not recognized"
@@ -107,6 +111,8 @@ for opt, arg in opts:
         ownnodeid = arg
     elif opt in ("-T", "--trace"):
         trace = int(arg)
+    elif opt in ("-r", "--run"):
+        runimmediate = True
     elif opt in ("-a", "--address"):
         devicename = None # only one
         hostname = arg

@@ -4,6 +4,8 @@
 Top level of checking suite
 '''
 
+import olcbchecker.setup
+
 # We only import each specific option as it's 
 # invoked to reduce startup time and propagation of errors
 # during development
@@ -24,7 +26,34 @@ def prompt() :
     print("  ")
     print(" q  Quit")
     
+def checkAll() :
+    total = 0
+    import control_frame
+    total += min(control_frame.checkAll(),1)
+    import control_message
+    total += min(control_message.checkAll(),1)
+    import control_snip
+    total += min(control_snip.checkAll(),1)
+    import control_events
+    total += min(control_events.checkAll(),1)
+    import control_datagram
+    total += min(control_datagram.checkAll(),1)
+    import control_memory
+    total += min(control_memory.checkAll(),1)
+    import control_cdi
+    total += min(control_cdi.checkAll(),1)
+    
+    if total > 0 :
+        print ("\n{} sections had failures".format(total))
+    else :
+        print ("\nAll sections passed")
+    return;
+    
 def main() :
+    if olcbchecker.setup.configure.runimmediate :
+        checkAll()
+        return
+        
     '''
     loop to check against individual standards
     '''
@@ -65,27 +94,8 @@ def main() :
                 control_cdi.main()
                        
             case "a" : 
-                total = 0
-                import control_frame
-                total += min(control_frame.checkAll(),1)
-                import control_message
-                total += min(control_message.checkAll(),1)
-                import control_snip
-                total += min(control_snip.checkAll(),1)
-                import control_events
-                total += min(control_events.checkAll(),1)
-                import control_datagram
-                total += min(control_datagram.checkAll(),1)
-                import control_memory
-                total += min(control_memory.checkAll(),1)
-                import control_cdi
-                total += min(control_cdi.checkAll(),1)
-                
-                if total > 0 :
-                    print ("\n{} sections had failures".format(total))
-                else :
-                    print ("\nAll sections passed")
-                       
+                checkAll()     
+                                  
             case "q" | "quit" : return
                    
             case _ : continue

@@ -4,6 +4,8 @@
 Simple runner for frame transport suite
 '''
 
+import olcbchecker.setup
+
 import check_fr10_init
 import check_fr20_ame
 import check_fr30_collide
@@ -44,6 +46,10 @@ def checkAll() :
     return result
     
 def main() :
+    if olcbchecker.setup.configure.runimmediate :
+        checkAll()
+        return
+
     '''
     loop to check against Frame Transport Standard
     '''
