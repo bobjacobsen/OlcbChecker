@@ -24,6 +24,7 @@ This plan does not check:
 There's no generally-compatible way to do that.
 You can't even assume that a read / write / read sequence will return you to the original
 state, because nodes may react when information is written to them.
+\footnote{See the ACDI checks in the CDI check plan for another possibility.}
 \item The Reinitialize/Factory Reset Command and the Get Unique ID Command
 because these permanently change the state of the node being checked.
 \end{enumerate}
@@ -45,9 +46,9 @@ The checker sends a Get Configuration Options Command datagram.  It then checks:
 This section checks the messages and interaction in Standard sections 4.15 and 4.16.
 
 Using the common\footnote{See section 4.2}
-0xFD memory configuration space,
+0xFD and 0xFF memory configuration spaces,
 \footnote{Note that 0xFE, the all-memory space, is considered optional here. The 0xFF CDI 
-space is checked in the CDI-checking plan}, 
+space check is omitted if CDI is not found in PIP.}, 
 the checker sends a Get Configuration Options Command datagram.  It then checks:
 \begin{enumerate}
 \item That the Datagram Received OK is received,
@@ -55,6 +56,7 @@ the checker sends a Get Configuration Options Command datagram.  It then checks:
 \item The reply datagram is at least eight bytes long,
 \item That the reply datagram refers to the same memory space as the request,
 \item That the reserved bits in byte 7 are zero.
+\item That if the low bit of byte 7 is 1, there's a low address present in bytes 8-11.
 \end{enumerate}
 
 If the reply comes back indicating that that space is not present, 

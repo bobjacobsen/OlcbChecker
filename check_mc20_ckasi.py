@@ -93,8 +93,8 @@ def check():
     ###############################
     
     # check if PIP says this is present
+    pipSet = olcbchecker.gatherPIP(destination)  # needed for CDI check later
     if olcbchecker.isCheckPip() : 
-        pipSet = olcbchecker.gatherPIP(destination)
         if pipSet is None:
             print ("Failed in setup, no PIP information received")
             return (2)
@@ -104,7 +104,11 @@ def check():
             return(0)
 
     # For each of these spaces, will sent a "Get Address Space Information Command" and check reply
-    spaces = [0xFD]  # space required by memory _configuration_ standard; CDI checked later
+    spaces = [0xFD] # space required by memory _configuration_ standard
+    # add CDI if not checking PIP or not present
+    print(pipSet)
+    if pipSet == None or PIP.CONFIGURATION_DESCRIPTION_INFORMATION in pipSet :
+        spaces.append(0xFF)
 
     for space in spaces: 
 
@@ -119,10 +123,10 @@ def check():
             return (3)
         
         if len(reply.data) < 8 and len(reply.data) > 2 :
-            print ("Failure - space 0x{:02X} reply was too short: {}; byte[1] = 0x{:02X}".format(space, len(reply.data), reply.data[1]))
+            print ("Failure: space 0x{:02X} reply was too short: {}; byte[1] = 0x{:02X}".format(space, len(reply.data), reply.data[1]))
             return (3)
         elif len(reply.data) < 8 :
-            print ("Failure - space 0x{:02X} reply was too short: {}".format(len(space, reply.data)) )
+            print ("Failure: space 0x{:02X} reply was too short: {}".format(space, len(reply.data)) )
             return (3)
         
         # check that the reply says the space is present
@@ -131,13 +135,19 @@ def check():
                     .format(space, reply.data[1], reply.data))
 
         if reply.data[2] != space :
-            print ("Failure - address space number didn't match")
+            print (("Failure: space 0x{:02X} address space number didn't match").format(space))
             return (3)
               
-        if (reply.data[7]&0xFC) != 0 :
-            print ("Failure - improper flag bits set")
+        if (reply.data[7]&0xFE) != 0 :
+            print (("Failure: space 0x{:02X} improper flag bits set").format(space))
             return (3)
     
+        if (reply.data[7]*0x01) != 0 :
+            # check that low address is present
+            if len(reply.data) < 12 :
+                print (("Failure: space 0x{:02X} flagged containing low address but not present").format(space))
+                return (3)
+                
     if trace >= 10 : print("Passed")
     return 0
 

@@ -45,27 +45,27 @@ def check():
     while True :
     
         # SNIP and pip
-        #olcbchecker.sendMessage(snip)
-        #olcbchecker.sendMessage(snip)
+        olcbchecker.sendMessage(snip)
+        olcbchecker.sendMessage(snip)
         #time.sleep(0.008)
         #olcbchecker.sendMessage(snip)
-        #olcbchecker.sendMessage(pip)
+        olcbchecker.sendMessage(pip)
         
         # Exercise datagrams 
         # The delays before the responses are manually tuned for a specific node type
-    	olcbchecker.sendMessage(datagramRead)
-    	olcbchecker.sendMessage(datagramRead)
-    	olcbchecker.sendMessage(datagramRead)
-    	time.sleep(0.150)
-    	olcbchecker.sendMessage(datagramAck)
-    	time.sleep(0.100)
-    	olcbchecker.sendMessage(datagramAck)
-    	time.sleep(0.100)
-    	olcbchecker.sendMessage(datagramAck)
-    	
-    	# repeat periodically forever
-    	time.sleep(3.000)
-		
+        #olcbchecker.sendMessage(datagramRead)
+        #olcbchecker.sendMessage(datagramRead)
+        #olcbchecker.sendMessage(datagramRead)
+        #time.sleep(0.150)
+        #olcbchecker.sendMessage(datagramAck)
+        #time.sleep(0.100)
+        #olcbchecker.sendMessage(datagramAck)
+        #time.sleep(0.100)
+        #olcbchecker.sendMessage(datagramAck)
+        
+        # repeat periodically forever
+        time.sleep(3.000)
+
 if __name__ == "__main__":
     sys.exit(check())
     

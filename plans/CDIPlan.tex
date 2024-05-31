@@ -16,6 +16,12 @@
 
 This plan assumes that the Datagram Transport Protocol and the Memory Configuration Protocol 
 have been separately checked. It uses those, but does not do any detailed checking of them.
+\footnote{Those checks don't check for write capability, because at that level
+    there's no reliable way to know that it's possible. 
+    Once ACDI is established below, we could use writes to and reads from the
+    251 space to check the ability to write.
+    That requires further discussion.
+}
 
 \subsection{CDI Memory Present checking}
 
