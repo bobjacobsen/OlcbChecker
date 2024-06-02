@@ -4,6 +4,8 @@
 Simple runner for message network checks
 '''
 
+import olcbchecker.setup
+
 import check_me10_init
 import check_me20_verify
 import check_me30_pip
@@ -47,6 +49,10 @@ def checkAll() :
     return result
     
 def main() :
+    if olcbchecker.setup.configure.runimmediate :
+        checkAll()
+        return
+
     '''
     loop to check against Message Network Standard
     '''

@@ -4,6 +4,8 @@
 Simple runner for SNIP suite
 '''
 
+import olcbchecker.setup
+
 import check_sn10_snip
 
 def prompt() :
@@ -25,8 +27,12 @@ def checkAll() :
         print("\nAt least one SNIP check failed")
         
     return result
-    
+        
 def main() :
+    if olcbchecker.setup.configure.runimmediate :
+        checkAll()
+        return
+
     '''
     loop to check against SNIP Standard
     '''

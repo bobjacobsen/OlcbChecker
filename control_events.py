@@ -4,6 +4,8 @@
 Simple runner for message network checks
 '''
 
+import olcbchecker.setup
+
 import check_ev10_ida
 import check_ev20_idg
 import check_ev30_ip
@@ -42,6 +44,10 @@ def checkAll() :
     return result
     
 def main() :
+    if olcbchecker.setup.configure.runimmediate :
+        checkAll()
+        return
+
     '''
     loop to check against Event Transport Standard
     '''

@@ -4,6 +4,8 @@
 Simple runner for CDI suite
 '''
 
+import olcbchecker.setup
+
 import check_cd10_valid
 import check_cd20_read
 import check_cd30_acdi
@@ -37,6 +39,10 @@ def checkAll() :
     return result
     
 def main() :
+    if olcbchecker.setup.configure.runimmediate :
+        checkAll()
+        return
+
     '''
     loop to check against Frame Transport Standard
     '''

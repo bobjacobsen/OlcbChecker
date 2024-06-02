@@ -4,6 +4,8 @@
 Simple runner for Memory Configuration suite
 '''
 
+import olcbchecker.setup
+
 import check_mc10_co
 import check_mc20_ckasi
 import check_mc30_read
@@ -47,8 +49,12 @@ def checkAll() :
     return result
     
 def main() :
+    if olcbchecker.setup.configure.runimmediate :
+        checkAll()
+        return
+
     '''
-    loop to check against SNIP Standard
+    loop to check against Memory Standard
     '''
     while True :
         prompt()

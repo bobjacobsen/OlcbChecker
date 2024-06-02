@@ -60,8 +60,7 @@ def prompt() :
     print(" a run all in sequence")
     print("  ")
     print(" q  Quit")
-
-
+    
 def all_tests():
     """
     Return a list of all tests that we can run
@@ -82,32 +81,29 @@ def all_tests():
             control_memory,
             control_cdi]
 
-def string_to_test(name : str):
+def checkAll() :
+    total = 0
     import control_frame
+    total += min(control_frame.checkAll(),1)
     import control_message
+    total += min(control_message.checkAll(),1)
     import control_snip
+    total += min(control_snip.checkAll(),1)
     import control_events
+    total += min(control_events.checkAll(),1)
     import control_datagram
+    total += min(control_datagram.checkAll(),1)
     import control_memory
+    total += min(control_memory.checkAll(),1)
     import control_cdi
-
-    if name == 'control_frame':
-        return control_frame
-    if name == 'control_message':
-        return control_message
-    if name == 'control_snip':
-        return control_snip
-    if name == 'control_events':
-        return control_events
-    if name == 'control_datagram':
-        return control_datagram
-    if name == 'control_memory':
-        return control_memory
-    if name == 'control_cdi':
-        return control_cdi
-
-    return None
-
+    total += min(control_cdi.checkAll(),1)
+    
+    if total > 0 :
+        print ("\n{} sections had failures".format(total))
+    else :
+        print ("\nAll sections passed")
+    return;
+    
 def main() :
     args = parse_args()
     config = parse_config_file(args.config_file)
@@ -213,27 +209,8 @@ def run_prompt():
                 control_cdi.main()
                        
             case "a" : 
-                total = 0
-                import control_frame
-                total += min(control_frame.checkAll(),1)
-                import control_message
-                total += min(control_message.checkAll(),1)
-                import control_snip
-                total += min(control_snip.checkAll(),1)
-                import control_events
-                total += min(control_events.checkAll(),1)
-                import control_datagram
-                total += min(control_datagram.checkAll(),1)
-                import control_memory
-                total += min(control_memory.checkAll(),1)
-                import control_cdi
-                total += min(control_cdi.checkAll(),1)
-                
-                if total > 0 :
-                    print ("\n{} sections had failures".format(total))
-                else :
-                    print ("\nAll sections passed")
-                       
+                checkAll()     
+                                  
             case "q" | "quit" : return
                    
             case _ : continue

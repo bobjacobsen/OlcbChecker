@@ -43,8 +43,8 @@ These checks require the `openlcb` Python module. That's not yet available via P
 
 ```
 cd (somewhere)
-git clone https://github.com/bobjacobsen/PythonOlcbNode.git
-python3.10 -m pip install --editable PythonOlcbNode
+git clone https://github.com/bobjacobsen/python-openlcb.git
+python3.10 -m pip install --editable python-openlcb
 cd (where you put OlcbChecker)
 ```
 
@@ -53,4 +53,3 @@ The CDI check requires the `xmlschema` module.  If you don't have that already, 
 ```
 python3 -m pip install xmlschema
 ```
-

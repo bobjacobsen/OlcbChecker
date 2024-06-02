@@ -4,6 +4,8 @@
 Simple runner for Datagram suite
 '''
 
+import olcbchecker.setup
+
 import check_da30_dr
 
 def prompt() :
@@ -27,6 +29,10 @@ def checkAll() :
     return result
     
 def main() :
+    if olcbchecker.setup.configure.runimmediate :
+        checkAll()
+        return
+
     '''
     loop to check against Datagram Standard
     '''
