@@ -41,6 +41,10 @@ class TestConfiguration:
     def trace(self):
         return self._trace
 
+    @trace.setter
+    def trace(self, value):
+        self._trace = value
+
     @property
     def devicename(self):
         return self._devicename
@@ -53,13 +57,25 @@ class TestConfiguration:
     def portnumber(self):
         return self._portnumber
 
+    @portnumber.setter
+    def portnumber(self, value):
+        self._portnumber = value
+
     @property
     def ownnodeid(self):
         return self._ownnodeid
 
+    @ownnodeid.setter
+    def ownnodeid(self, value):
+        self._ownnodeid = value
+
     @property
     def targetnodeid(self):
         return self._targetnodeid
+
+    @targetnodeid.setter
+    def targetnodeid(self, value):
+        self._targetnodeid = value
 
     @property
     def skip_interactive(self):
@@ -72,6 +88,10 @@ class TestConfiguration:
     @property
     def checkpip(self):
         return self._checkpip
+
+    @checkpip.setter
+    def checkpip(self, value):
+        self._checkpip = value
 
     @property
     def tests(self):

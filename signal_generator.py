@@ -33,11 +33,11 @@ def check():
     destination = olcbchecker.getTargetID()
 
     # predefine some messages
-    snip = Message(MTI.Simple_Node_Ident_Info_Request, NodeID(olcbchecker.ownnodeid()), destination)
-    pip = Message(MTI.Protocol_Support_Inquiry, NodeID(olcbchecker.ownnodeid()), destination)
-    datagramNull = Message(MTI.Datagram, NodeID(olcbchecker.ownnodeid()), destination, [00, 00])
-    datagramRead = Message(MTI.Datagram, NodeID(olcbchecker.ownnodeid()), destination, [0x20, 0x43, 0, 0, 0, 0, 2])
-    datagramAck  = Message(MTI.Datagram_Received_OK, NodeID(olcbchecker.ownnodeid()), destination)
+    snip = Message(MTI.Simple_Node_Ident_Info_Request, NodeID(configure.global_config.ownnodeid), destination)
+    pip = Message(MTI.Protocol_Support_Inquiry, NodeID(configure.global_config.ownnodeid), destination)
+    datagramNull = Message(MTI.Datagram, NodeID(configure.global_config.ownnodeid), destination, [00, 00])
+    datagramRead = Message(MTI.Datagram, NodeID(configure.global_config.ownnodeid), destination, [0x20, 0x43, 0, 0, 0, 0, 2])
+    datagramAck  = Message(MTI.Datagram_Received_OK, NodeID(configure.global_config.ownnodeid), destination)
     
     # wait for alias allocation to complete
     time.sleep(2.000)

@@ -19,6 +19,7 @@ from openlcb.snip import SNIP
 import xmlschema
 
 from queue import Empty
+import configure
 
 import olcbchecker.setup
 
@@ -41,7 +42,7 @@ def getReplyDatagram(destination) :
             if destination != received.source : # check source in message header
                 continue
     
-            if NodeID(olcbchecker.ownnodeid()) != received.destination : # check destination in message header
+            if NodeID(configure.global_config.ownnodeid) != received.destination : # check destination in message header
                 continue
     
             if received.mti == MTI.Datagram_Received_OK :
@@ -65,12 +66,12 @@ def getReplyDatagram(destination) :
             if destination != received.source : # check source in message header
                 continue
     
-            if NodeID(olcbchecker.ownnodeid()) != received.destination : # check destination in message header
+            if NodeID(configure.global_config.ownnodeid) != received.destination : # check destination in message header
                 continue
 
             # here we've received the reply datagram
             # send the reply
-            message = Message(MTI.Datagram_Received_OK, NodeID(olcbchecker.ownnodeid()), destination, [0])
+            message = Message(MTI.Datagram_Received_OK, NodeID(configure.global_config.ownnodeid), destination, [0])
             olcbchecker.sendMessage(message)
 
             return received
@@ -86,7 +87,7 @@ def read_memory(destination, address, length, space) :
     ad4 = address & 0xFF
 
     memory_read_command = [0x20, 0x40, ad1, ad2, ad3, ad4, space, length] 
-    datagram = Message(MTI.Datagram, NodeID(olcbchecker.ownnodeid()), destination, memory_read_command)
+    datagram = Message(MTI.Datagram, NodeID(configure.global_config.ownnodeid), destination, memory_read_command)
     olcbchecker.sendMessage(datagram)
     content = getReplyDatagram(destination).data[7:]
     # if we just asked for one byte, return that as an int
@@ -142,7 +143,7 @@ def check():
     
         # check 251 and 252 spaces show present
         memory_address_space_cmd = [0x20, 0x84, 251] 
-        datagram = Message(MTI.Datagram, NodeID(olcbchecker.ownnodeid()), destination, memory_address_space_cmd)
+        datagram = Message(MTI.Datagram, NodeID(configure.global_config.ownnodeid), destination, memory_address_space_cmd)
         olcbchecker.sendMessage(datagram)
         try :
             content = getReplyDatagram(destination).data
@@ -154,7 +155,7 @@ def check():
             return (3)
 
         memory_address_space_cmd = [0x20, 0x84, 252] 
-        datagram = Message(MTI.Datagram, NodeID(olcbchecker.ownnodeid()), destination, memory_address_space_cmd)
+        datagram = Message(MTI.Datagram, NodeID(configure.global_config.ownnodeid), destination, memory_address_space_cmd)
         olcbchecker.sendMessage(datagram)
         try :
             content = getReplyDatagram(destination).data
@@ -191,7 +192,7 @@ def check():
     if snip_in_pip and acdi_in_pip and memory_config_present :
     
         # send an SNIP request message to provoke response
-        message = Message(MTI.Simple_Node_Ident_Info_Request, NodeID(olcbchecker.ownnodeid()), destination)
+        message = Message(MTI.Simple_Node_Ident_Info_Request, NodeID(configure.global_config.ownnodeid), destination)
         olcbchecker.sendMessage(message)
 
         results = []
@@ -205,7 +206,7 @@ def check():
                     print ("Failure - Unexpected source of reply message: {} {}".format(received, received.source))
                     return(3)
         
-                if NodeID(olcbchecker.ownnodeid()) != received.destination : # check destination in message header
+                if NodeID(configure.global_config.ownnodeid) != received.destination : # check destination in message header
                     print ("Failure - Unexpected destination of reply message: {} {}".format(received, received.destination))
                     return(3)
         
@@ -260,7 +261,7 @@ def check():
         
             # send an read datagran
             request = [0x20, 0x43, ad1,ad2,ad3,ad4, LENGTH]
-            message = Message(MTI.Datagram, NodeID(olcbchecker.ownnodeid()), destination, request)
+            message = Message(MTI.Datagram, NodeID(configure.global_config.ownnodeid), destination, request)
             olcbchecker.sendMessage(message)
 
             try :

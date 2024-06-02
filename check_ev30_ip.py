@@ -76,7 +76,7 @@ def check():
     # have the set to check, proceed to check each one
     fail = False
     for event in producedEvents :
-        message = Message(MTI.Identify_Producer, NodeID(olcbchecker.ownnodeid()), None, event.toArray())
+        message = Message(MTI.Identify_Producer, NodeID(configure.global_config.ownnodeid), None, event.toArray())
         olcbchecker.sendMessage(message)
 
         try:

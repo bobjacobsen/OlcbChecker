@@ -91,7 +91,7 @@ def check():
         return(3)
         
     # now check if addressed gets the same as global. First, get addressed.
-    message = Message(MTI.Identify_Events_Addressed , NodeID(olcbchecker.ownnodeid()), destination)
+    message = Message(MTI.Identify_Events_Addressed , NodeID(configure.global_config.ownnodeid), destination)
     olcbchecker.sendMessage(message)
     
     producerSeen = set(())

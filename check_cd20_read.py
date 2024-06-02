@@ -18,6 +18,7 @@ from openlcb.pip import PIP
 import xmlschema
 
 from queue import Empty
+import configure
 
 import olcbchecker.setup
 
@@ -40,7 +41,7 @@ def getReplyDatagram(destination) :
             if destination != received.source : # check source in message header
                 continue
     
-            if NodeID(olcbchecker.ownnodeid()) != received.destination : # check destination in message header
+            if NodeID(configure.global_config.ownnodeid) != received.destination : # check destination in message header
                 continue
     
             if received.mti == MTI.Datagram_Received_OK :
@@ -64,12 +65,12 @@ def getReplyDatagram(destination) :
             if destination != received.source : # check source in message header
                 continue
     
-            if NodeID(olcbchecker.ownnodeid()) != received.destination : # check destination in message header
+            if NodeID(configure.global_config.ownnodeid) != received.destination : # check destination in message header
                 continue
 
             # here we've received the reply datagram
             # send the reply
-            message = Message(MTI.Datagram_Received_OK, NodeID(olcbchecker.ownnodeid()), destination, [0])
+            message = Message(MTI.Datagram_Received_OK, NodeID(configure.global_config.ownnodeid), destination, [0])
             olcbchecker.sendMessage(message)
 
             return received
@@ -119,7 +120,7 @@ def check():
         
         # send an read datagran
         request = [0x20, 0x43, ad1,ad2,ad3,ad4, LENGTH]
-        message = Message(MTI.Datagram, NodeID(olcbchecker.ownnodeid()), destination, request)
+        message = Message(MTI.Datagram, NodeID(configure.global_config.ownnodeid), destination, request)
         olcbchecker.sendMessage(message)
 
         try :

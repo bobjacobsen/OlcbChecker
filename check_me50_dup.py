@@ -38,7 +38,7 @@ def check() :
         return 0  
     
     # send a message with our alias but target's NodeID to see if it provokes a response
-    message = Message(MTI.Verified_NodeID, NodeID(olcbchecker.ownnodeid()), None, destination.toArray()) # send from destination node
+    message = Message(MTI.Verified_NodeID, NodeID(configure.global_config.ownnodeid), None, destination.toArray()) # send from destination node
     olcbchecker.sendMessage(message)
 
     while True :

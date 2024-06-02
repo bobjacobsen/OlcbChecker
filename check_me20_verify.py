@@ -78,7 +78,7 @@ def check():
     olcbchecker.purgeMessages()
 
     # send an addressed verify to this node and check for answer
-    message = Message(MTI.Verify_NodeID_Number_Addressed, NodeID(olcbchecker.ownnodeid()), destination)
+    message = Message(MTI.Verify_NodeID_Number_Addressed, NodeID(configure.global_config.ownnodeid), destination)
     olcbchecker.sendMessage(message)
 
     while True :
@@ -117,7 +117,7 @@ def check():
     olcbchecker.purgeMessages()
 
     # send an addressed verify to a different node (the origin node) and check for lack of answer
-    message = Message(MTI.Verify_NodeID_Number_Addressed, NodeID(olcbchecker.ownnodeid()), NodeID(olcbchecker.ownnodeid()))
+    message = Message(MTI.Verify_NodeID_Number_Addressed, NodeID(configure.global_config.ownnodeid), NodeID(configure.global_config.ownnodeid))
     olcbchecker.sendMessage(message)
 
     try :
