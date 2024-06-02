@@ -133,7 +133,7 @@ def main() :
     if args.hostname is not None:
         configure.global_config.hostname = args.hostname
     if args.port is not None:
-        configure.global_config.portnumber = args.port
+        configure.global_config.portnumber = int(args.port)
     if args.device is not None:
         configure.global_config.devicename = args.device
     if args.target_node_id is not None:
