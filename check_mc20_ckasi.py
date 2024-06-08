@@ -106,7 +106,6 @@ def check():
     # For each of these spaces, will sent a "Get Address Space Information Command" and check reply
     spaces = [0xFD] # space required by memory _configuration_ standard
     # add CDI if not checking PIP or not present
-    print(pipSet)
     if pipSet == None or PIP.CONFIGURATION_DESCRIPTION_INFORMATION in pipSet :
         spaces.append(0xFF)
 
