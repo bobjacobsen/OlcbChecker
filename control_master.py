@@ -3,6 +3,7 @@
 '''
 Top level of checking suite
 '''
+import sys
 
 import olcbchecker.setup
 
@@ -101,4 +102,4 @@ def main() :
             
     return
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
