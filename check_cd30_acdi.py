@@ -115,9 +115,9 @@ def check():
     
     pipSet = olcbchecker.gatherPIP(destination, always = True)
 
-    memory_config_present = PIP.MEMORY_CONFIGURATION_PROTOCOL in pipSet
-    snip_in_pip = PIP.SIMPLE_NODE_IDENTIFICATION_PROTOCOL in pipSet
-    acdi_in_pip = PIP.ADCDI_PROTOCOL  in pipSet
+    memory_config_present = (pipSet is None) or (PIP.MEMORY_CONFIGURATION_PROTOCOL in pipSet)
+    snip_in_pip = (pipSet is None) or (PIP.SIMPLE_NODE_IDENTIFICATION_PROTOCOL in pipSet)
+    acdi_in_pip = (pipSet is None) or (PIP.ADCDI_PROTOCOL  in pipSet)
 
     #####
     # ACDI bit set and Memory Configuration bit not set
