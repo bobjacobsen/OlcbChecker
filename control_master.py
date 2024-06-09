@@ -47,12 +47,11 @@ def checkAll() :
         print ("\n{} sections had failures".format(total))
     else :
         print ("\nAll sections passed")
-    return;
+    return total;
     
 def main() :
     if olcbchecker.setup.configure.runimmediate :
-        checkAll()
-        return
+        return (checkAll())
         
     '''
     loop to check against individual standards

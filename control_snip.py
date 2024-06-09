@@ -3,6 +3,7 @@
 '''
 Simple runner for SNIP suite
 '''
+import sys
 
 import olcbchecker.setup
 
@@ -30,8 +31,7 @@ def checkAll() :
         
 def main() :
     if olcbchecker.setup.configure.runimmediate :
-        checkAll()
-        return
+        return (checkAll())
 
     '''
     loop to check against SNIP Standard
@@ -53,4 +53,4 @@ def main() :
                    
     return
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

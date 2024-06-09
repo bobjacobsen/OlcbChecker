@@ -3,6 +3,7 @@
 '''
 Simple runner for Memory Configuration suite
 '''
+import sys
 
 import olcbchecker.setup
 
@@ -50,8 +51,7 @@ def checkAll() :
     
 def main() :
     if olcbchecker.setup.configure.runimmediate :
-        checkAll()
-        return
+        return (checkAll())
 
     '''
     loop to check against Memory Standard
@@ -89,4 +89,4 @@ def main() :
                    
     return
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
