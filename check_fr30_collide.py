@@ -3,12 +3,13 @@
 This uses a CAN link layer to check response to an CID frame alias collision
 
 Usage:
-python3.10 check_fr20_ame.py
+python3.10 check_fr30_collide.py
 
 The -h option will display a full list of options.
 '''
 
 import sys
+import logging
 
 from openlcb.nodeid import NodeID
 from openlcb.canbus.canframe import CanFrame
@@ -20,7 +21,8 @@ import olcbchecker.setup
 def check():
     # set up the infrastructure
 
-    trace = olcbchecker.setup.trace # just to be shorter
+    logger = logging.getLogger("FRAME")
+
     timeout = 0.3
     
     olcbchecker.purgeFrames()
@@ -41,12 +43,12 @@ def check():
             waitFor = "waiting for AMD frame in first part"
             reply1 = olcbchecker.getFrame()
             if (reply1.header & 0xFF_FFF_000) != 0x10_701_000 :
-                print ("Failure - frame was not AMD frame in first part")
+                logger.warning ("Failure - frame was not AMD frame in first part")
                 return 3
         
             # check it carries a node ID
             if len(reply1.data) < 6 :
-                print ("Failure - first AMD frame did not carry node ID")
+                logger.warning ("Failure - first AMD frame did not carry node ID")
                 return 3
         
             # and it's the right node ID
@@ -74,7 +76,7 @@ def check():
         waitFor = "waiting for RID in response to CID frame"
         reply = olcbchecker.getFrame()
         if (reply.header & 0xFF_FFF_000) != 0x10_700_000 :
-            print ("Failure - frame was not RID frame in second part")
+            logger.warning ("Failure - frame was not RID frame in second part")
             return 3
 
         # collision in CID properly responded to, lets try an AMD alias collision
@@ -85,7 +87,7 @@ def check():
         waitFor = "waiting for AMR in response to AMD frame"
         reply = olcbchecker.getFrame()
         if (reply.header & 0xFF_FFF_000) != 0x10_703_000 :
-            print ("Failure - frame was not AMR frame in second part")
+            logger.warning ("Failure - frame was not AMR frame in second part")
             return 3
                 
         # loop for _optional_ CID 7 frame and eventual AMD with different alias
@@ -103,7 +105,7 @@ def check():
                     if (reply2.header & 0xFF_000_000) == 0x17_000_000 :
                         # check for _different_ alias
                         if (reply2.header & 0x00_000_FFF) == originalAlias :
-                            print ("Failure - did not receive different alias on CID 7 in second part")
+                            logger.warning ("Failure - did not receive different alias on CID 7 in second part")
                             return 3
                         # OK, remember this alias
                         newAlias = reply2.header & 0x00_000_FFF
@@ -116,7 +118,7 @@ def check():
         
                 # check it carries a node ID
                 if len(reply2.data) < 6 :
-                    print ("Failure - additional AMD frame did not carry node ID")
+                    logger.warning ("Failure - additional AMD frame did not carry node ID")
                     return 3
         
                 # and it's the right node ID
@@ -129,10 +131,10 @@ def check():
                 # and, if another was allocated via CID above, matches that
                 thisAlias = reply2.header & 0x00_000_FFF
                 if thisAlias == originalAlias :
-                    print("Failure - found original alias in second AMD")
+                    logger.warning("Failure - found original alias in second AMD")
                     return 3
                 if newAlias != 0 and (newAlias != thisAlias) :
-                    print("Failure - AMD alias did not match newly allocated one")
+                    logger.warning("Failure - AMD alias did not match newly allocated one")
                     return 3
 
                 # got the right one, so now have seen an AMD
@@ -176,17 +178,17 @@ def check():
             # check for right number of AMD replies
             
             if amdReceived and countAMDs != 1 :
-                print ("Failure - expected 1 AMD in third part and received "+str(countAMDs))
+                logger.warning ("Failure - expected 1 AMD in third part and received "+str(countAMDs))
                 return 3
             elif not amdReceived and countAMDs != 0 :
-                print ("Failure - expected 0 AMDs in third part and received "+str(countAMDs))
+                logger.warning ("Failure - expected 0 AMDs in third part and received "+str(countAMDs))
                 return 3
         
     except Empty:
-        print ("Failure - did not receive expected frame while "+waitFor)
+        logger.warning ("Failure - did not receive expected frame while "+waitFor)
         return 3
 
-    if trace >= 10 : print("Passed")
+    logger.info("Passed")
     return 0
  
 if __name__ == "__main__":

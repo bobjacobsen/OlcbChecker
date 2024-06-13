@@ -14,6 +14,7 @@ The sequence of operations is:
 '''
 
 import os
+import logging
 
 def options() :
     print ("")
@@ -132,6 +133,22 @@ for opt, arg in opts:
                       file=sys.stderr)
             options()
             sys.exit(2)
+
+# configure logging based on trace level:  This is temporary
+logger = logging.getLogger()  # Logger
+logger_handler = logging.StreamHandler()  # Handler for the logger
+logger.addHandler(logger_handler)
+
+# First, generic formatter:
+logger_handler.setFormatter(logging.Formatter('%(name)s: %(message)s'))
+
+match (trace) :
+    case 0:
+        logger.setLevel(logging.WARN)
+    case 10: 
+        logger.setLevel(logging.INFO)
+    case _:
+        logger.setLevel(logging.DEBUG)
 
 # check that a connection has been configured
 if (devicename is None and hostname is None ) or (devicename is not None and hostname is not None) :

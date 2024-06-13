@@ -3,12 +3,13 @@
 This uses a CAN link layer to check memmory configuration lock command
 
 Usage:
-python3.10 check_mc10_co.py
+python3.10 check_mc40_lock.py
 
 The -h option will display a full list of options.
 '''
 
 import sys
+import logging
 
 from openlcb.nodeid import NodeID
 from openlcb.message import Message
@@ -82,32 +83,32 @@ def sendLockCommand(destination, node) :
 
     olcbchecker.sendMessage(message)
 
-def checkLockReply(destination, node) :
+def checkLockReply(destination, node, logger) :
     # returns non-zero if fail
     try :
         reply = getReplyDatagram(destination)
     except Exception as e:
-        print (e)
+        logger.warning (str(e))
         return (3)
     # check that the reply is OK
     if len(reply.data) < 8 :
-        print ("Failure - reply was too short")
+        logger.warning ("Failure - reply was too short")
         return (3)
         
     if reply.data[0] != 0x20 or reply.data[1]!= 0x8A :
-        print ("Failure - improper command set")
+        logger.warning ("Failure - improper command set")
         return (3)
     
     # check for expected node ID
     if reply.data[2:] != node :
-        print ("Failure - Unexpects node ID {}, expected {}".format(reply.data[2:], node))    
+        logger.warning ("Failure - Unexpects node ID {}, expected {}".format(reply.data[2:], node))    
     # is OK
     return 0
 
 def check():
     # set up the infrastructure
 
-    trace = olcbchecker.trace() # just to be shorter
+    logger = logging.getLogger("MEMORY")
 
     # pull any early received messages
     olcbchecker.purgeMessages()
@@ -123,11 +124,10 @@ def check():
     if olcbchecker.isCheckPip() : 
         pipSet = olcbchecker.gatherPIP(destination)
         if pipSet is None:
-            print ("Failed in setup, no PIP information received")
+            logger.warning ("Failed in setup, no PIP information received")
             return (2)
         if not PIP.MEMORY_CONFIGURATION_PROTOCOL in pipSet :
-            if trace >= 10 : 
-                print("Passed - due to Memory Configuration protocol not in PIP")
+            logger.info("Passed - due to Memory Configuration protocol not in PIP")
             return(0)
 
     # lock contents used by check
@@ -136,43 +136,43 @@ def check():
     zero =  [0,0,0,0,0,0]
     
     sendLockCommand(destination, zero)
-    reply = checkLockReply(destination, zero)
-    if reply != 0 : print ("Failure - step 1 failed"); return reply    
+    reply = checkLockReply(destination, zero, logger)
+    if reply != 0 : logger.warning ("Failure - step 1 failed"); return reply    
       
     sendLockCommand(destination, nodeA)
-    reply = checkLockReply(destination, nodeA)
-    if reply != 0 : print ("Failure - step 2 failed"); return reply     
+    reply = checkLockReply(destination, nodeA, logger)
+    if reply != 0 : logger.warning ("Failure - step 2 failed"); return reply     
 
     sendLockCommand(destination, nodeB)
-    reply = checkLockReply(destination, nodeA)
-    if reply != 0 : print ("Failure - step 3 failed"); return reply     
+    reply = checkLockReply(destination, nodeA, logger)
+    if reply != 0 : logger.warning ("Failure - step 3 failed"); return reply     
         
     sendLockCommand(destination, zero)
-    reply = checkLockReply(destination, zero)
-    if reply != 0 : print ("Failure - step 4 failed"); return reply   
+    reply = checkLockReply(destination, zero, logger)
+    if reply != 0 : logger.warning ("Failure - step 4 failed"); return reply   
         
     sendLockCommand(destination, nodeB)
-    reply = checkLockReply(destination, nodeB)
-    if reply != 0 : print ("Failure - step 5 failed"); return reply 
+    reply = checkLockReply(destination, nodeB, logger)
+    if reply != 0 : logger.warning ("Failure - step 5 failed"); return reply 
         
     sendLockCommand(destination, nodeA)
-    reply = checkLockReply(destination, nodeB)
-    if reply != 0 : print ("Failure - step 6 failed"); return reply 
+    reply = checkLockReply(destination, nodeB, logger)
+    if reply != 0 : logger.warning ("Failure - step 6 failed"); return reply 
         
     sendLockCommand(destination, nodeA)
-    reply = checkLockReply(destination, nodeB)
-    if reply != 0 : print ("Failure - step 7 failed"); return reply 
+    reply = checkLockReply(destination, nodeB, logger)
+    if reply != 0 : logger.warning ("Failure - step 7 failed"); return reply 
         
     sendLockCommand(destination, zero)
-    reply = checkLockReply(destination, zero)
-    if reply != 0 : print ("Failure - step 8 failed"); return reply 
+    reply = checkLockReply(destination, zero, logger)
+    if reply != 0 : logger.warning ("Failure - step 8 failed"); return reply 
         
     sendLockCommand(destination, zero)
-    reply = checkLockReply(destination, zero)
-    if reply != 0 : print ("Failure - step 9 failed"); return reply 
+    reply = checkLockReply(destination, zero, logger)
+    if reply != 0 : logger.warning ("Failure - step 9 failed"); return reply 
         
     
-    if trace >= 10 : print("Passed")
+    logger.info("Passed")
     return 0
 
 if __name__ == "__main__":

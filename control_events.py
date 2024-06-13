@@ -4,6 +4,7 @@
 Simple runner for message network checks
 '''
 import sys
+import logging
 
 import olcbchecker.setup
 
@@ -22,31 +23,33 @@ def prompt() :
     print("  ")
     print(" q go back")
 
-def checkAll() :
+def checkAll(logger=logging.getLogger("EVENTS")) :
     result = 0
  
-    print("\nIdentify Event Addressed checking")
+    logger.info("Identify Event Addressed checking")
     result += check_ev10_ida.check()
 
-    print("\nIdentify Event Global checking")
+    logger.info("Identify Event Global checking")
     result += check_ev20_idg.check()
 
-    print("\nIdentify Producer checking")
+    logger.info("Identify Producer checking")
     result += check_ev30_ip.check()
 
-    print("\nIdentify Consumer checking")
+    logger.info("Identify Consumer checking")
     result += check_ev40_ic.check()
 
     if result == 0 :
-        print("\nSuccess - all event checks passed")
+        logger.info("Success - all event checks passed")
     else:
-        print("\nAt least one event check failed")
+        logger.warning("At least one event check failed")
 
     return result
     
 def main() :
+    logger = logging.getLogger("EVENT")
+
     if olcbchecker.setup.configure.runimmediate :
-        return (checkAll())
+        return (checkAll(logger))
 
     '''
     loop to check against Event Transport Standard
@@ -69,7 +72,7 @@ def main() :
                 check_ev40_ic.check()
            
             case  "a" :
-                checkAll()
+                checkAll(logger)
             
             case "q" | "quit" : return
             

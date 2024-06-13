@@ -3,12 +3,13 @@
 This uses a CAN link layer to check ACDI consistency
 
 Usage:
-python3.10 check_mc10_co.py
+python3.10 check_cd30_acdi.py
 
 The -h option will display a full list of options.
 '''
 
 import sys
+import logging
 
 from openlcb.nodeid import NodeID
 from openlcb.message import Message
@@ -101,7 +102,7 @@ def read_memory(destination, address, length, space) :
 def check():
     # set up the infrastructure
 
-    trace = olcbchecker.trace() # just to be shorter
+    logger = logging.getLogger("CDI")
 
     # pull any early received messages
     olcbchecker.purgeMessages()
@@ -124,7 +125,7 @@ def check():
     #####
 
     if acdi_in_pip and not memory_config_present :  
-        print ("Failure - ACDI is in PIP but Memory Configuration is not")
+        logger.warning ("Failure - ACDI is in PIP but Memory Configuration is not")
         return 3
         
     #####
@@ -147,10 +148,10 @@ def check():
         try :
             content = getReplyDatagram(destination).data
             if content[1] != 0x87 :
-                print ("Failure - space 251 marked as not present")
+                logger.warning ("Failure - space 251 marked as not present")
                 return 3
         except Exception as e :
-            print (e)
+            logger.warning (str(e))
             return (3)
 
         memory_address_space_cmd = [0x20, 0x84, 252] 
@@ -159,17 +160,17 @@ def check():
         try :
             content = getReplyDatagram(destination).data
             if content[1] != 0x87 :
-                print ("Failure - space 252 marked as not present")
+                logger.warning ("Failure - space 252 marked as not present")
                 return 3
             
             # check version numbers in 251 and 252 spaces
             v2 = read_memory(destination, 0, 1, 252)
             if v2 != 0 and v2 != 4 :
-                print("Failure - Space 252 version number not match")
+                logger.warning("Failure - Space 252 version number not match")
                 return (3)
             v1 = read_memory(destination, 0, 1, 251)
             if v1 != 0 and v1 != 2 :
-                print("Failure - Space 251 version number not match")
+                logger.warning("Failure - Space 251 version number not match")
                 return (3)
             
             # load the six strings
@@ -180,7 +181,7 @@ def check():
             userProvidedNodeName = read_memory(destination, 1, 64, 251)
             userProvidedDescription = read_memory(destination, 64, 64, 251)
         except Exception as e :
-            print (e)
+            logger.warning (str(e))
             return (3)
             
     
@@ -202,11 +203,11 @@ def check():
                 if not received.mti == MTI.Simple_Node_Ident_Info_Reply : continue # wait for next
         
                 if destination != received.source : # check source in message header
-                    print ("Failure - Unexpected source of reply message: {} {}".format(received, received.source))
+                    logger.warning ("Failure - Unexpected source of reply message: {} {}".format(received, received.source))
                     return(3)
         
                 if NodeID(olcbchecker.ownnodeid()) != received.destination : # check destination in message header
-                    print ("Failure - Unexpected destination of reply message: {} {}".format(received, received.destination))
+                    logger.warning ("Failure - Unexpected destination of reply message: {} {}".format(received, received.destination))
                     return(3)
         
                 # accumulate the data
@@ -220,22 +221,22 @@ def check():
 
         # now check the results against previously acquired data
         if not manufacturerName == snip.manufacturerName :
-            print("Failure - SNIP and ACDI manufacturer name did not match")
+            logger.warning("Failure - SNIP and ACDI manufacturer name did not match")
             return (3)
         if not modelName == snip.modelName :
-            print("Failure - SNIP and ACDI model name did not match")
+            logger.warning("Failure - SNIP and ACDI model name did not match")
             return (3)
         if not hardwareVersion == snip.hardwareVersion :
-            print("Failure - SNIP and ACDI hardware Version did not match")
+            logger.warning("Failure - SNIP and ACDI hardware Version did not match")
             return (3)
         if not softwareVersion == snip.softwareVersion :
-            print("Failure - SNIP and ACDI software version did not match")
+            logger.warning("Failure - SNIP and ACDI software version did not match")
             return (3)
         if not userProvidedNodeName == snip.userProvidedNodeName :
-            print("Failure - SNIP and ACDI user provided node name did not match")
+            logger.warning("Failure - SNIP and ACDI user provided node name did not match")
             return (3)
         if not manufacturerName == snip.manufacturerName :
-            print("Failure - SNIP and ACDI user provided description did not match")
+            logger.warning("Failure - SNIP and ACDI user provided description did not match")
             return (3)
     
 
@@ -266,7 +267,7 @@ def check():
             try :
                 reply = getReplyDatagram(destination)
             except Exception as e:
-                print (e)
+                logger.warning (str(e))
                 return (3)
         
             content.extend(reply.data[6:]) 
@@ -281,16 +282,16 @@ def check():
         acdi_in_cdi = "<acdi" in result # could be <acdi/> or <acdi></acdi>
 
         if acdi_in_cdi and not acdi_in_pip :
-            print ("Failure - ACDI in CDI but not in PIP")
+            logger.warning ("Failure - ACDI in CDI but not in PIP")
             return 3
 
         if not acdi_in_cdi and acdi_in_pip :
-            print ("Failure - ACDI in PIP but not in CDI")
+            logger.warning ("Failure - ACDI in PIP but not in CDI")
             return 3
 
     
     
-    if trace >= 10 : print("Passed")
+    logger.info("Passed")
     return 0
 
 if __name__ == "__main__":

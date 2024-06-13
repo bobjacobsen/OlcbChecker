@@ -24,7 +24,6 @@ def check():
     # set up the infrastructure
 
     import olcbchecker.setup
-    trace = olcbchecker.trace() # just to be shorter
 
     # pull any early received messages
     olcbchecker.purgeMessages()

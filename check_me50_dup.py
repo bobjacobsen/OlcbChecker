@@ -9,6 +9,7 @@ The -h option will display a full list of options.
 '''
 
 import sys
+import logging
 
 from openlcb.nodeid import NodeID
 from openlcb.message import Message
@@ -21,7 +22,7 @@ def check() :
     # set up the infrastructure
 
     import olcbchecker.setup
-    trace = olcbchecker.trace() # just to be shorter
+    logger = logging.getLogger("MESSAGE")
 
     # pull any early received messages
     olcbchecker.purgeMessages()
@@ -34,7 +35,7 @@ def check() :
     ###############################
 
     if olcbchecker.setup.configure.skip_interactive :
-        print ("Interactive test skipped")
+        logger.info("Interactive test skipped")
         return 0  
     
     # send a message with our alias but target's NodeID to see if it provokes a response
@@ -49,16 +50,16 @@ def check() :
             # this is a PCER message, success
 
             if EventID("01.01.00.00.00.00.02.01") != EventID(received.data) :
-                print ("Failure - Unexpected notification EventID: {} {}".format(received, EventID(received.data)))
+                logger.warning ("Failure - Unexpected notification EventID: {} {}".format(received, EventID(received.data)))
                 return(3)
                 
             break
         except Empty:
-            print ("Did not receive well-known event: Check for indication on node")
+            logger.warning ("Did not receive well-known event: Check for indication on node")
             # this is a partial pass
             return(0)
 
-    if trace >= 10 : print("Passed")
+    logger.info("Passed")
     return 0
 
 if __name__ == "__main__":

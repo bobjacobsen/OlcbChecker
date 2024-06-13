@@ -9,6 +9,7 @@ The -h option will display a full list of options.
 '''
 
 import sys
+import logging
 
 from openlcb.nodeid import NodeID
 from openlcb.message import Message
@@ -22,7 +23,7 @@ def check():
     # set up the infrastructure
 
     import olcbchecker.setup
-    trace = olcbchecker.trace() # just to be shorter
+    logger = logging.getLogger("EVENTS")
 
     # pull any early received messages
     olcbchecker.purgeMessages()
@@ -38,11 +39,10 @@ def check():
     if olcbchecker.isCheckPip() : 
         pipSet = olcbchecker.gatherPIP(destination)
         if pipSet is None:
-            print ("Failed in setup, no PIP information received")
+            logger.warning ("Failed in setup, no PIP information received")
             return (2)
         if not PIP.EVENT_EXCHANGE_PROTOCOL in pipSet :
-            if trace >= 10 : 
-                print("Passed - due to Event Exchange not in PIP")
+            logger.info("Passed - due to Event Exchange not in PIP")
             return(0)
 
     # send an Identify Events Global  message to provoke response - previously checked to work
@@ -61,10 +61,10 @@ def check():
             received = olcbchecker.getMessage() # timeout if no entries
             # is this a reply?
             if received.mti not in producerIdMTIs and received.mti not in consumerIdMTIs and received.mti != MTI.Producer_Consumer_Event_Report :
-                    print ("Failure - Unexpected message {}".format(received))
+                    logger.warning ("Failure - Unexpected message {}".format(received))
                 
             if destination != received.source : # check source in message header
-                print ("Failure - Unexpected source of reply message: {} {}".format(received, received.source))
+                logger.warning ("Failure - Unexpected source of reply message: {} {}".format(received, received.source))
                 return(3)
 
             if received.mti in producerIdMTIs :
@@ -79,14 +79,14 @@ def check():
                 eventID = EventID(received.data)
                 # TODO:  the following does not properly check against a Producer Range Identified
                 if eventID not in producedEvents :
-                    print ("Failure - PCER without Producer Identified: {}".format(eventID))
+                    logger.warning ("Failure - PCER without Producer Identified: {}".format(eventID))
                     return(3)
         except Empty:
             # stopped getting messages, proceed
             break
 
     if len(producerReplys) == 0 and len(consumerReplys) == 0 :
-        print ("Failure - Did not received any identify messages")
+        logger.warning ("Failure - Did not received any identify messages")
         return(3)
         
     # now check if addressed gets the same as global. First, get addressed.
@@ -105,7 +105,7 @@ def check():
                     continue
                 
             if destination != received.source : # check source in message header
-                print ("Failure - Unexpected source of reply message: {} {}".format(received, received.source))
+                logger.warning ("Failure - Unexpected source of reply message: {} {}".format(received, received.source))
                 return(3)
 
             if received.mti in producerIdMTIs :
@@ -113,25 +113,25 @@ def check():
                     producerSeen.add(received)
                     continue
                 else :
-                    print ("Failure - Identify Producer not in global result {} {}".format(received, EventID(received.data)))
+                    logger.warning ("Failure - Identify Producer not in global result {} {}".format(received, EventID(received.data)))
                     
             if received.mti in consumerIdMTIs :
                 if received in consumerReplys :
                     consumerSeen.add(received)
                     continue
                 else :
-                    print ("Failure - Identify Consumer not in global result {} {}".format(received, EventID(received.data)))
+                    logger.warning ("Failure - Identify Consumer not in global result {} {}".format(received, EventID(received.data)))
                     
         except Empty:
             # stopped getting messages, proceed
             break
 
     if len(producerReplys) != len(producerSeen) or len(consumerReplys) !=len(consumerSeen) :
-        print ("Failure - missing identify messages")
+        logger.warning ("Failure - missing identify messages")
         return(3)
     
     
-    if trace >= 10 : print("Passed")
+    logger.info("Passed")
     return 0
 
 if __name__ == "__main__":

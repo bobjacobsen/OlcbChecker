@@ -4,6 +4,7 @@
 Top level of checking suite
 '''
 import sys
+import logging
 
 import olcbchecker.setup
 

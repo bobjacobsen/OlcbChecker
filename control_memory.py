@@ -4,6 +4,7 @@
 Simple runner for Memory Configuration suite
 '''
 import sys
+import logging
 
 import olcbchecker.setup
 
@@ -24,34 +25,36 @@ def prompt() :
     print("  ")
     print(" q go back")
 
-def checkAll() :
+def checkAll(logger=logging.getLogger("MEMORY")) :
     result = 0
  
-    print("\nConfiguration Options checking")
+    logger.info("Configuration Options checking")
     result += check_mc10_co.check()
 
-    print("\nAddress Space Information checking")
+    logger.info("Address Space Information checking")
     result += check_mc20_ckasi.check()
 
-    print("\nRead checking")
+    logger.info("Read checking")
     result += check_mc30_read.check()
 
-    print("\nLock/Reserve checking")
+    logger.info("Lock/Reserve checking")
     result += check_mc40_lock.check()
 
-    print("\nRestart checking")
+    logger.info("Restart checking")
     result += check_mc50_restart.check()
 
     if result == 0 :
-        print("\nSuccess - all memory checks passed")
+        logger.info("Success - all memory checks passed")
     else:
-        print("\nAt least one memory check failed")
+        logger.warning("At least one memory check failed")
         
     return result
     
 def main() :
+    logger = logging.getLogger("MEMORY")
+
     if olcbchecker.setup.configure.runimmediate :
-        return (checkAll())
+        return (checkAll(logger))
 
     '''
     loop to check against Memory Standard
@@ -81,7 +84,7 @@ def main() :
                 check_mc50_restart.check()
            
             case  "a" :
-                checkAll()
+                checkAll(logger)
             
             case "q" | "quit" : return
             

@@ -9,6 +9,7 @@ The -h option will display a full list of options.
 '''
 
 import sys
+import logging
 
 from openlcb.nodeid import NodeID
 from openlcb.message import Message
@@ -20,7 +21,7 @@ def check() :
     # set up the infrastructure
 
     import olcbchecker.setup
-    trace = olcbchecker.trace() # just to be shorter
+    logger = logging.getLogger("MESSAGE")
 
     # pull any early received messages
     olcbchecker.purgeMessages()
@@ -39,7 +40,7 @@ def check() :
 
     try :
         received = olcbchecker.getMessage() # timeout if no replies
-        print ("Failure - Unexpected reply to global unknown MTU: {} {}".format(received, received.source))
+        logger.warning ("Failure - Unexpected reply to global unknown MTU: {} {}".format(received, received.source))
         return(3)
     except:
         # this is normal
@@ -51,7 +52,7 @@ def check() :
 
     try :
         received = olcbchecker.getMessage() # timeout if no replies
-        print ("Failure - Unexpected reply to global unknown MTU: {} {}".format(received, received.source))
+        logger.warning ("Failure - Unexpected reply to global unknown MTU: {} {}".format(received, received.source))
         return(3)
     except:
         # this is normal
@@ -70,14 +71,14 @@ def check() :
             # this is a OIR message, success
 
             if destination != received.source : # check source in message header
-                print ("Failure - Unexpected source of reply message: {} {}".format(received, received.source))
+                logger.warning ("Failure - Unexpected source of reply message: {} {}".format(received, received.source))
                 return(3)
         
             if NodeID(olcbchecker.ownnodeid()) != received.destination : # check destination in message header
-                print ("Failure - Unexpected destination of reply message: {} {}".format(received, received.destination))
+                logger.warning ("Failure - Unexpected destination of reply message: {} {}".format(received, received.destination))
                 return(3)
             if len(received.data) < 4:
-                print ("Failure - Unexpected length of reply message: {} {}".format(received, received.data))
+                logger.warning ("Failure - Unexpected length of reply message: {} {}".format(received, received.data))
                 return(3)
 
             try :            
@@ -85,21 +86,21 @@ def check() :
             except ValueError :
                 seenMTI = None
             if seenMTI != MTI.New_Node_Seen :
-                print ("Failure - MTI not carried in data: {} {}".format(received, received.data, seenMTI))
+                logger.warning ("Failure - MTI not carried in data: {} {}".format(received, received.data, seenMTI))
                 try :
                     earlyMTI = MTI(0x2000|received.data[0]<<8 | received.data[1])
                 except ValueError:
                     earlyMTI = None
                 if earlyMTI == MTI.New_Node_Seen :
-                    print("    Hint: MTI incorrectly found in first two bytes of OIR reply")
+                    logger.warning("    Hint: MTI incorrectly found in first two bytes of OIR reply")
                 return(3)
             
             break
         except Empty:
-            print ("Failure - Did not receive Optional Interaction Rejected reply")
+            logger.warning ("Failure - Did not receive Optional Interaction Rejected reply")
             return(3)
 
-    if trace >= 10 : print("Passed")
+    logger.info("Passed")
     return 0
 
 if __name__ == "__main__":

@@ -3,12 +3,13 @@
 This uses a CAN link layer to check memmory configuration read command
 
 Usage:
-python3.10 check_mc10_co.py
+python3.10 check_mc30_read.py
 
 The -h option will display a full list of options.
 '''
 
 import sys
+import logging
 
 from openlcb.nodeid import NodeID
 from openlcb.message import Message
@@ -90,12 +91,12 @@ def sendAndCheckResponse(destination, request, length) :
         try :
             reply = getReplyDatagram(destination)
         except Exception as e:
-            print (e)
+            logger.warning(str(e))
             return (3)
         
         # check length of returned datagram
         if len(reply.data) != len(request) -1 + length :
-            print("Failure - length was {}, expected {}".format(len(reply.data), len(request) -1 + length) )
+            logger.warning("Failure - length was {}, expected {}".format(len(reply.data), len(request) -1 + length) )
             return 3
         
         expectedReply = request
@@ -103,7 +104,7 @@ def sendAndCheckResponse(destination, request, length) :
         
         checkLen = len(request)-1
         if expectedReply[:checkLen] != reply.data[:checkLen] :
-            print("Failure - header was {}, expected {}".format(reply.data[:checkLen]), expectedReply[:checkLen])
+            logger.warning("Failure - header was {}, expected {}".format(reply.data[:checkLen]), expectedReply[:checkLen])
             return 3
             
         return 0
@@ -111,7 +112,7 @@ def sendAndCheckResponse(destination, request, length) :
 def check():
     # set up the infrastructure
 
-    trace = olcbchecker.trace() # just to be shorter
+    logger = logging.getLogger("MEMORY")
 
     # pull any early received messages
     olcbchecker.purgeMessages()
@@ -127,45 +128,44 @@ def check():
     if olcbchecker.isCheckPip() : 
         pipSet = olcbchecker.gatherPIP(destination)
         if pipSet is None:
-            print ("Failed in setup, no PIP information received")
+            logger.warning ("Failed in setup, no PIP information received")
             return (2)
         if not PIP.MEMORY_CONFIGURATION_PROTOCOL in pipSet :
-            if trace >= 10 : 
-                print("Passed - due to Memory Configuration protocol not in PIP")
+            logger.info("Passed - due to Memory Configuration protocol not in PIP")
             return(0)
 
     reply = sendAndCheckResponse(destination, [0x20, 0x41, 0,0,0,0, 2], 2)
     if reply != 0 : 
-        print("   in read of 2 bytes from short-form read")
+        logger.warning("   in read of 2 bytes from short-form read")
         return reply
 
     reply = sendAndCheckResponse(destination, [0x20, 0x41, 0,0,0,0, 10], 10)
     if reply != 0 : 
-        print("   in read of 10 bytes from short-form read")
+        logger.warning("   in read of 10 bytes from short-form read")
         return reply
 
     reply = sendAndCheckResponse(destination, [0x20, 0x41, 0,0,0,0, 64], 64)
     if reply != 0 : 
-        print("   in read of 64 bytes from short-form read")
+        logger.warning("   in read of 64 bytes from short-form read")
         return reply
         
     reply = sendAndCheckResponse(destination, [0x20, 0x40, 0,0,0,0, 0xFD, 2], 2)
     if reply != 0 : 
-        print("   in read of 2 bytes from long-form read")
+        logger.warning("   in read of 2 bytes from long-form read")
         return reply
 
     reply = sendAndCheckResponse(destination, [0x20, 0x40, 0,0,0,0, 0xFD, 10], 10)
     if reply != 0 : 
-        print("   in read of 10 bytes from long-form read")
+        logger.warning("   in read of 10 bytes from long-form read")
         return reply
 
     reply = sendAndCheckResponse(destination, [0x20, 0x40, 0,0,0,0, 0xFD, 64], 64)
     if reply != 0 : 
-        print("   in read of 64 bytes from long-form read")
+        logger.warning("   in read of 64 bytes from long-form read")
         return reply
         
             
-    if trace >= 10 : print("Passed")
+    logger.info("Passed")
     return 0
 
 if __name__ == "__main__":

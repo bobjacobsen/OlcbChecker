@@ -4,6 +4,7 @@
 Simple runner for message network checks
 '''
 import sys
+import logging
 
 import olcbchecker.setup
 
@@ -24,34 +25,36 @@ def prompt() :
     print("  ")
     print(" q go back")
 
-def checkAll() :
+def checkAll(logger=logging.getLogger("MESSAGE")) :
     result = 0
  
-    print("\nNode Initialized checking")
+    logger.info("Node Initialized checking")
     result += check_me10_init.check()
 
-    print("\nVerify Node checking")
+    logger.info("Verify Node checking")
     result += check_me20_verify.check()
 
-    print("\nProtocol Support Inquiry checking")
+    logger.info("Protocol Support Inquiry checking")
     result += check_me30_pip.check()
 
-    print("\nOptional Interaction Rejected checking")
+    logger.info("Optional Interaction Rejected checking")
     result += check_me40_oir.check()
 
-    print("\nDuplicate Node ID Discovery checking")
+    logger.info("Duplicate Node ID Discovery checking")
     result += check_me50_dup.check()
 
     if result == 0 :
-        print("\nSuccess - all message checks passed")
+        logger.info("Success - all message checks passed")
     else:
-        print("\nAt least one message check failed")
+        logger.warning("At least one message check failed")
 
     return result
     
 def main() :
+    logger = logging.getLogger("MESSAGE")
+
     if olcbchecker.setup.configure.runimmediate :
-        return (checkAll())
+        return (checkAll(logger))
 
     '''
     loop to check against Message Network Standard
@@ -77,7 +80,7 @@ def main() :
                 check_me50_dup.check()
            
             case  "a" :
-                checkAll()
+                checkAll(logger)
             
             case "q" | "quit" : return
             

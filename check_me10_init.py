@@ -9,6 +9,7 @@ The -h option will display a full list of options.
 '''
 
 import sys
+import logging
 
 from openlcb.nodeid import NodeID
 from openlcb.message import Message
@@ -21,7 +22,7 @@ def check():
     # set up the infrastructure
 
     import olcbchecker.setup
-    trace = olcbchecker.trace() # just to be shorter
+    logger = logging.getLogger("MESSAGE")
 
     # pull any early received messages
     olcbchecker.purgeMessages()
@@ -34,11 +35,11 @@ def check():
     ###############################
 
     if olcbchecker.setup.configure.skip_interactive :
-        print ("Interactive test skipped")
+        logger.info("Interactive test skipped")
         return 0  
 
     # prompt operator to restart node
-    print("Please reset/restart the DUT now")
+    print("Please reset/restart the device being checked now")
 
     while True :
         try :
@@ -47,27 +48,27 @@ def check():
             if received.mti == MTI.Initialization_Complete or received.mti == MTI.Initialization_Complete_Simple :
                 # this is an init message, check source
                 if destination != received.source : 
-                    print("Failure - source address not correct")
+                    logger.warning("Failure - source address not correct")
                     return(3)
                 # check that it's carrying enough data to be a node ID
                 if len(received.data) != 6 :
-                    print("Failure - not correct data length, not carrying a Node ID")
+                    logger.warning("Failure - not correct data length, not carrying a Node ID")
                     return 3
                 # check that the data is the source node ID
                 nodeID = NodeID(received.data)
                 if nodeID != received.source :
-                    print("Failure - Node ID in data does not match source ID")
+                    logger.warning("Failure - Node ID in data does not match source ID")
                     return 3                
                 # success
                 break                
        
-            print("Failure - received unexpected message type: {}".format(received))
+            logger.warning("Failure - received unexpected message type: {}".format(received))
         
         except Empty:
-            print ("Failure - Did not receive Initialization Complete message")
+            logger.warning ("Failure - Did not receive Initialization Complete message")
             return(3)
 
-    if trace >= 10 : print("Passed")
+    logger.info("Passed")
     return 0
 
 if __name__ == "__main__":

@@ -9,6 +9,7 @@ The -h option will display a full list of options.
 '''
 
 import sys
+import logging
 
 from openlcb.nodeid import NodeID
 from openlcb.message import Message
@@ -81,7 +82,7 @@ def getReplyDatagram(destination) :
 def check():
     # set up the infrastructure
 
-    trace = olcbchecker.trace() # just to be shorter
+    logger = logging.getLogger("MEMORY")
 
     # pull any early received messages
     olcbchecker.purgeMessages()
@@ -97,11 +98,10 @@ def check():
     if olcbchecker.isCheckPip() : 
         pipSet = olcbchecker.gatherPIP(destination)
         if pipSet is None:
-            print ("Failed in setup, no PIP information received")
+            logger.warning ("Failed in setup, no PIP information received")
             return (2)
         if not PIP.MEMORY_CONFIGURATION_PROTOCOL in pipSet :
-            if trace >= 10 : 
-                print("Passed - due to Memory Configuration protocol not in PIP")
+            logger.info("Passed - due to Memory Configuration protocol not in PIP")
             return(0)
 
     # send an datagram to provoke response
@@ -111,23 +111,23 @@ def check():
     try :
         reply = getReplyDatagram(destination)
     except Exception as e:
-        print (e)
+        logger.warning (str(e))
         return (3)
         
     # check that the reply is OK
     if len(reply.data) < 6 :
-        print ("Failure - reply was too short")
+        logger.warning ("Failure - reply was too short")
         return (3)
         
     if reply.data[3] != 0 or (reply.data[2]&0x01) != 0 :
-        print ("Failure - improper command bits set")
+        logger.warning ("Failure - improper command bits set")
         return (3)
     
     if (reply.data[4]&0x0C) != 0 :
-        print ("Failure - improper write bits set")
+        logger.warning ("Failure - improper write bits set")
         return (3)
     
-    if trace >= 10 : print("Passed")
+    logger.info("Passed")
     return 0
 
 if __name__ == "__main__":

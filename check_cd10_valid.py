@@ -3,12 +3,13 @@
 This uses a CAN link layer to check CDI contents against schema
 
 Usage:
-python3.10 check_mc10_co.py
+python3.10 check_cd10_valid.py
 
 The -h option will display a full list of options.
 '''
 
 import sys
+import logging
 
 from openlcb.nodeid import NodeID
 from openlcb.message import Message
@@ -83,7 +84,7 @@ def getReplyDatagram(destination) :
 def check():
     # set up the infrastructure
 
-    trace = olcbchecker.trace() # just to be shorter
+    logger = logging.getLogger("CDI")
 
     # pull any early received messages
     olcbchecker.purgeMessages()
@@ -99,11 +100,10 @@ def check():
     if olcbchecker.isCheckPip() : 
         pipSet = olcbchecker.gatherPIP(destination)
         if pipSet is None:
-            print ("Failed in setup, no PIP information received")
+            logger.warning ("Failed in setup, no PIP information received")
             return (2)
         if not PIP.CONFIGURATION_DESCRIPTION_INFORMATION in pipSet :
-            if trace >= 10 : 
-                print("Passed - due to CDI protocol not in PIP")
+            logger.info("Passed - due to CDI protocol not in PIP")
             return(0)
 
     # check for 0xFF space valid
@@ -113,13 +113,13 @@ def check():
     try :
         content = getReplyDatagram(destination).data
         if content[1] != 0x87 :
-            print ("Failure - space 0xFF marked as not present")
+            logger.warning ("Failure - space 0xFF marked as not present")
             return 3
     
-        if trace >= 10 : print("Passed")
+        logger.info("Passed")
         return 0
     except Exception as e:
-        print (e)
+        logger.warning (str(e))
         return (3)
     
 

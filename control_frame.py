@@ -4,6 +4,7 @@
 Simple runner for frame transport suite
 '''
 import sys
+import logging
 
 import olcbchecker.setup
 
@@ -24,31 +25,33 @@ def prompt() :
     print("  ")
     print(" q go back")
 
-def checkAll() :
+def checkAll(logger=logging.getLogger("FRAME")) :
     result = 0
  
-    print("\nInitialization checking")
+    logger.info("Initialization checking")
     result += check_fr10_init.check()
 
-    print("\nAME checking")
+    logger.info("AME checking")
     result += check_fr20_ame.check()
 
-    print("\nCollision checking")
+    logger.info("Collision checking")
     result += check_fr30_collide.check()
 
-    print("\nReserved bit checking")
+    logger.info("Reserved bit checking")
     result += check_fr40_highbit.check()
 
     if result == 0 :
-        print("\nSuccess - all frame checks passed")
+        logger.info("Success - all frame checks passed")
     else:
-        print("\nAt least one frame check failed")
+        logger.warning("At least one frame check failed")
         
     return result
     
 def main() :
+    logger = logging.getLogger("FRAME")
+
     if olcbchecker.setup.configure.runimmediate :
-        return (checkAll())
+        return (checkAll(logger))
 
     '''
     loop to check against Frame Transport Standard
@@ -74,7 +77,7 @@ def main() :
                 check_fr40_highbit.check()
            
             case  "a" :
-                checkAll()
+                checkAll(logger)
             
             case "q" | "quit" : return
             

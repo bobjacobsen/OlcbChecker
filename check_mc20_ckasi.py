@@ -9,6 +9,7 @@ The -h option will display a full list of options.
 '''
 
 import sys
+import logging
 
 from openlcb.nodeid import NodeID
 from openlcb.message import Message
@@ -80,7 +81,7 @@ def getReplyDatagram(destination) :
 def check():
     # set up the infrastructure
 
-    trace = olcbchecker.trace() # just to be shorter
+    logger = logging.getLogger("MEMORY")
 
     # pull any early received messages
     olcbchecker.purgeMessages()
@@ -96,11 +97,10 @@ def check():
     pipSet = olcbchecker.gatherPIP(destination)  # needed for CDI check later
     if olcbchecker.isCheckPip() : 
         if pipSet is None:
-            print ("Failed in setup, no PIP information received")
+            logger.warning ("Failed in setup, no PIP information received")
             return (2)
         if not PIP.MEMORY_CONFIGURATION_PROTOCOL in pipSet :
-            if trace >= 10 : 
-                print("Passed - due to Memory Configuration protocol not in PIP")
+            logger.info("Passed - due to Memory Configuration protocol not in PIP")
             return(0)
 
     # For each of these spaces, will sent a "Get Address Space Information Command" and check reply
@@ -118,36 +118,36 @@ def check():
         try :
             reply = getReplyDatagram(destination)
         except Exception as e:
-            print (e)
+            logger.warning(str(e))
             return (3)
         
         if len(reply.data) < 8 and len(reply.data) > 2 :
-            print ("Failure: space 0x{:02X} reply was too short: {}; byte[1] = 0x{:02X}".format(space, len(reply.data), reply.data[1]))
+            logger.warning ("Failure: space 0x{:02X} reply was too short: {}; byte[1] = 0x{:02X}".format(space, len(reply.data), reply.data[1]))
             return (3)
         elif len(reply.data) < 8 :
-            print ("Failure: space 0x{:02X} reply was too short: {}".format(space, len(reply.data)) )
+            logger.warning ("Failure: space 0x{:02X} reply was too short: {}".format(space, len(reply.data)) )
             return (3)
         
         # check that the reply says the space is present
         if reply.data[1] != 0x87 :
-            print ("Warning - Space 0x{:02X} reply was 0x{:02x}, not 'address space present 0x87': {}"
+            logger.warning ("Warning - Space 0x{:02X} reply was 0x{:02x}, not 'address space present 0x87': {}"
                     .format(space, reply.data[1], reply.data))
 
         if reply.data[2] != space :
-            print (("Failure: space 0x{:02X} address space number didn't match").format(space))
+            logger.warning (("Failure: space 0x{:02X} address space number didn't match").format(space))
             return (3)
               
         if (reply.data[7]&0xFE) != 0 :
-            print (("Failure: space 0x{:02X} improper flag bits set").format(space))
+            logger.warning (("Failure: space 0x{:02X} improper flag bits set").format(space))
             return (3)
     
         if (reply.data[7]*0x01) != 0 :
             # check that low address is present
             if len(reply.data) < 12 :
-                print (("Failure: space 0x{:02X} flagged containing low address but not present").format(space))
+                logger.warning (("Failure: space 0x{:02X} flagged containing low address but not present").format(space))
                 return (3)
                 
-    if trace >= 10 : print("Passed")
+    logger.info("Passed")
     return 0
 
 if __name__ == "__main__":

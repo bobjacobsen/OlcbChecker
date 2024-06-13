@@ -9,6 +9,7 @@ The -h option will display a full list of options.
 '''
 
 import sys
+import logging
 
 from openlcb.nodeid import NodeID
 from openlcb.message import Message
@@ -21,7 +22,7 @@ def check():
     # set up the infrastructure
 
     import olcbchecker.setup
-    trace = olcbchecker.trace() # just to be shorter
+    logger = logging.getLogger("MESSAGE")
 
     # pull any early received messages
     olcbchecker.purgeMessages()
@@ -52,26 +53,26 @@ def check():
                 continue # allow other nodes to reply to this global request
         
             if len(received.data) != 6 :
-                print ("Failure - Unexpected length of reply message: {}".format(received))
+                logger.warning ("Failure - Unexpected length of reply message: {}".format(received))
                 return(3)
             
             if destination != NodeID(received.data) :
-                print ("Failure - Unexpected contents of reply message: {}".format(received))
+                logger.warning ("Failure - Unexpected contents of reply message: {}".format(received))
                 return(3)
             
             # check against PIP
             if pipSet is not None :
                 simple = PIP.SIMPLE_PROTOCOL in pipSet
                 if simple and received.mti == MTI.Verified_NodeID :
-                    print ("Failure - PIP says Simple Node but didn't receive correct MTI")
+                    logger.warning ("Failure - PIP says Simple Node but didn't receive correct MTI")
                     return(3) 
                 elif (not simple) and received.mti == MTI.Verified_NodeID_Simple :
-                    print ("Failure - PIP says not Simple Node but didn't receive correct MTI")
+                    logger.warning ("Failure - PIP says not Simple Node but didn't receive correct MTI")
                     return(3) 
 
             break
         except Empty:
-            print ("Failure - did not get response to global")
+            logger.warning ("Failure - did not get response to global")
             return(3)
 
     olcbchecker.purgeMessages()
@@ -87,29 +88,29 @@ def check():
             if received.mti != MTI.Verified_NodeID and received.mti != MTI.Verified_NodeID_Simple: continue # wait for next
         
             if destination != received.source : # check source in message header
-                print ("Failure - Unexpected source of reply message: {} {}".format(received, received.source))
+                logger.warning ("Failure - Unexpected source of reply message: {} {}".format(received, received.source))
                 return(3)
         
             if len(received.data) != 6 :
-                print ("Failure - Unexpected length of reply message: {}".format(received))
+                logger.warning ("Failure - Unexpected length of reply message: {}".format(received))
                 return(3)
             
             if destination != NodeID(received.data) :
-                print ("Failure - Unexpected contents of reply message: {}".format(received))
+                logger.warning ("Failure - Unexpected contents of reply message: {}".format(received))
                 return(3)
             
             # check against PIP
             if pipSet is not None :
                 simple = PIP.SIMPLE_PROTOCOL in pipSet
                 if simple and received.mti == MTI.Verified_NodeID :
-                    print ("Failure - PIP says Simple Node but didn't receive correct MTI")
+                    logger.warning ("Failure - PIP says Simple Node but didn't receive correct MTI")
                     return(3) 
                 elif (not simple) and received.mti == MTI.Verified_NodeID_Simple :
-                    print ("Failure - PIP says not Simple Node but didn't receive correct MTI")
+                    logger.warning ("Failure - PIP says not Simple Node but didn't receive correct MTI")
                     return(3) 
             break
         except Empty:
-            print ("Failure - no reply to Verify Node Addressed request")
+            logger.warning ("Failure - no reply to Verify Node Addressed request")
             return(3) 
 
     # pull any early received messages
@@ -123,15 +124,15 @@ def check():
         received = olcbchecker.getMessage() # timeout if no entries
         # is this a pip reply?
         if received.mti == MTI.Verified_NodeID: # wait for next
-            print ("Failure - Should not have gotten a reply {}".format(received))
+            logger.warning ("Failure - Should not have gotten a reply {}".format(received))
             return(3) 
-        print ("Failure - Unexpected message {}".format(received))
+        logger.warning ("Failure - Unexpected message {}".format(received))
         return(3)  
     except Empty:
         # this is success
         pass
 
-    if trace >= 10 : print("Passed")
+    logger.info("Passed")
     return 0
 
 if __name__ == "__main__":

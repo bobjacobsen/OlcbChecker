@@ -3,12 +3,13 @@
 This uses a CAN link layer to check memmory configuration restart command
 
 Usage:
-python3.10 check_mc10_co.py
+python3.10 check_mc50_restart.py
 
 The -h option will display a full list of options.
 '''
 
 import sys
+import logging
 
 from openlcb.nodeid import NodeID
 from openlcb.message import Message
@@ -23,7 +24,7 @@ import olcbchecker.setup
 def check():
     # set up the infrastructure
 
-    trace = olcbchecker.trace() # just to be shorter
+    logger = logging.getLogger("MEMORY")
 
     # pull any early received messages
     olcbchecker.purgeMessages()
@@ -39,11 +40,10 @@ def check():
     if olcbchecker.isCheckPip() : 
         pipSet = olcbchecker.gatherPIP(destination)
         if pipSet is None:
-            print ("Failed in setup, no PIP information received")
+            logger.warning ("Failed in setup, no PIP information received")
             return (2)
         if not PIP.MEMORY_CONFIGURATION_PROTOCOL in pipSet :
-            if trace >= 10 : 
-                print("Passed - due to Memory Configuration protocol not in PIP")
+            logger.info("Passed - due to Memory Configuration protocol not in PIP")
             return(0)
 
     # send an datagram to restart the node
@@ -55,7 +55,7 @@ def check():
             received = olcbchecker.getMessage(20)  # might take a while to reboot
             # was the datagram rejected?
             if received.mti == MTI.Datagram_Rejected :
-                print("Failure - reset datagram rejected")
+                logger.warning("Failure - reset datagram rejected")
                 return 3
             
             # is this a reply from that node?
@@ -63,10 +63,10 @@ def check():
                 # this is an init message, passes
                 break
         except Empty:
-            print("Failure - did not receive Initialization Complete")
+            logger.warning("Failure - did not receive Initialization Complete")
             return 3
             
-    if trace >= 10 : print("Passed")
+    logger.info("Passed")
     return 0
 
 if __name__ == "__main__":

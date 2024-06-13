@@ -9,6 +9,7 @@ The -h option will display a full list of options.
 '''
 
 import sys
+import logging
 
 from openlcb.nodeid import NodeID
 from openlcb.message import Message
@@ -22,7 +23,7 @@ def check():
     # set up the infrastructure
 
     import olcbchecker.setup
-    trace = olcbchecker.trace() # just to be shorter
+    logger = logging.getLogger("EVENTS")
 
     # pull any early received messages
     olcbchecker.purgeMessages()
@@ -38,11 +39,10 @@ def check():
     if olcbchecker.isCheckPip() : 
         pipSet = olcbchecker.gatherPIP(destination)
         if pipSet is None:
-            print ("Failed in setup, no PIP information received")
+            logger.warning ("Failed in setup, no PIP information received")
             return (2)
         if not PIP.EVENT_EXCHANGE_PROTOCOL in pipSet :
-            if trace >= 10 : 
-                print("Passed - due to Event Exchange not in PIP")
+            logger.info("Passed - due to Event Exchange not in PIP")
             return(0)
 
     # send an Identify Events Addressed  message to accumulate producers to check
@@ -62,7 +62,7 @@ def check():
                     continue # just skip
                 
             if destination != received.source : # check source in message header
-                print ("Failure - Unexpected source of reply message: {} {}".format(received, received.source))
+                logger.warning ("Failure - Unexpected source of reply message: {} {}".format(received, received.source))
                 return(3)
 
             if received.mti in producerIdMTIs :
@@ -91,14 +91,14 @@ def check():
 
         except Empty:
             # no reply, error
-            print ("Failure - No reply for event: {}".format(event))
+            logger.warning ("Failure - No reply for event: {}".format(event))
             fail = True
         
     if fail:
-        print ("Failure - No reply for one or more events")
+        logger.warning ("Failure - No reply for one or more events")
         return (3)
         
-    if trace >= 10 : print("Passed")
+    logger.info("Passed")
     return 0
 
 if __name__ == "__main__":

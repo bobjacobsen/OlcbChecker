@@ -3,12 +3,13 @@
 This uses a CAN link layer to check response to an AME frame with a zaero high bit
 
 Usage:
-python3.10 check_fr20_ame.py
+python3.10 check_fr40_highbit.py
 
 The -h option will display a full list of options.
 '''
 
 import sys
+import logging
 
 from openlcb.nodeid import NodeID
 from openlcb.canbus.canframe import CanFrame
@@ -20,7 +21,8 @@ import olcbchecker.setup
 def check():
     # set up the infrastructure
 
-    trace = olcbchecker.setup.trace # just to be shorter
+    logger = logging.getLogger("FRAME")
+
     ownnodeid = olcbchecker.setup.configure.ownnodeid
     targetnodeid = olcbchecker.setup.configure.targetnodeid
 
@@ -47,12 +49,12 @@ def check():
             # check for AMD frame
             frame = olcbchecker.getFrame(1.0)
             if (frame.header & 0xFF_FFF_000) != 0x10_701_000 :
-                print ("Failure - frame was not AMD frame in first part")
+                logger.warning ("Failure - frame was not AMD frame in first part")
                 return 3
         
             # check it carries a node ID
             if len(frame.data) < 6 :
-                print ("Failure - AMD frame did not carry node ID")
+                logger.warning ("Failure - AMD frame did not carry node ID")
                 return 3
 
             if targetnodeid is None :
@@ -66,10 +68,10 @@ def check():
             # loop to try again                
         
     except Empty:
-        print ("Failure - did not receive expected frame")
+        logger.warning ("Failure - did not receive expected frame")
         return 3
 
-    if trace >= 10 : print("Passed")
+    logger.info("Passed")
     return 0
  
 if __name__ == "__main__":

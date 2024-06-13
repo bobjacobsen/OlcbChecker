@@ -4,6 +4,7 @@
 Simple runner for CDI suite
 '''
 import sys
+import logging
 
 import olcbchecker.setup
 
@@ -20,28 +21,30 @@ def prompt() :
     print("  ")
     print(" q go back")
 
-def checkAll() :
+def checkAll(logger=logging.getLogger("CDI")) :
     result = 0
  
-    print("\nCDI Memory Present checking")
+    logger.info("CDI Memory Present checking")
     result += check_cd10_valid.check()
 
-    print("\nValidation checking")
+    logger.info("Validation checking")
     result += check_cd20_read.check()
 
-    print("\nACDI checking")
+    logger.info("ACDI checking")
     result += check_cd30_acdi.check()
 
     if result == 0 :
-        print("\nSuccess - all CDI checks passed")
+        logger.info("Success - all CDI checks passed")
     else:
-        print("\nAt least one CDI check failed")
+        logger.warning("At least one CDI check failed")
         
     return result
     
 def main() :
+    logger = logging.getLogger("CDI")
+
     if olcbchecker.setup.configure.runimmediate :
-        return (checkAll())
+        return (checkAll(logger))
 
     '''
     loop to check against Frame Transport Standard
@@ -63,7 +66,7 @@ def main() :
                 check_cd30_acdi.check()
                            
             case  "a" :
-                checkAll()
+                checkAll(logger)
             
             case "q" | "quit" : return
             

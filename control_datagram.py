@@ -4,6 +4,7 @@
 Simple runner for Datagram suite
 '''
 import sys
+import logging
 
 import olcbchecker.setup
 
@@ -16,22 +17,24 @@ def prompt() :
     print("  ")
     print(" q go back")
 
-def checkAll() :
+def checkAll(logger=logging.getLogger("DATAGRAM")) :
     result = 0
  
-    print("\nDatagram Reception checking")
+    logger.info("Datagram Reception checking")
     result += check_da30_dr.check()
 
     if result == 0 :
-        print("\nSuccess - all datagram checks passed")
+        logger.info("Success - all datagram checks passed")
     else:
-        print("\nAt least one datagram check failed")
+        logger.warn("At least one datagram check failed")
         
     return result
     
 def main() :
+    logger = logging.getLogger("DATAGRAM")
+
     if olcbchecker.setup.configure.runimmediate :
-        return (checkAll())
+        return (checkAll(logger))
 
     '''
     loop to check against Datagram Standard
@@ -45,7 +48,7 @@ def main() :
                 check_da30_dr.check()
            
             case  "a" :
-                checkAll()
+                checkAll(logger)
             
             case "q" | "quit" : return
             

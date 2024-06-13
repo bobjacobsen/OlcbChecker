@@ -9,6 +9,7 @@ The -h option will display a full list of options.
 '''
 
 import sys
+import logging
 
 from openlcb.nodeid import NodeID
 from openlcb.message import Message
@@ -21,7 +22,7 @@ def check():
     # set up the infrastructure
 
     import olcbchecker.setup
-    trace = olcbchecker.trace() # just to be shorter
+    logger = logging.getLogger("MESSAGE")
 
     # pull any early received messages
     olcbchecker.purgeMessages()
@@ -44,28 +45,28 @@ def check():
             if not received.mti == MTI.Protocol_Support_Reply : continue # wait for next
         
             if destination != received.source : # check source in message header
-                print ("Failure - Unexpected source of reply message: {} {}".format(received, received.source))
+                logger.warning ("Failure - Unexpected source of reply message: {} {}".format(received, received.source))
                 return(3)
         
             if NodeID(olcbchecker.ownnodeid()) != received.destination : # check destination in message header
-                print ("Failure - Unexpected destination of reply message: {} {}".format(received, received.destination))
+                logger.warning ("Failure - Unexpected destination of reply message: {} {}".format(received, received.destination))
                 return(3)
         
             result = received.data[0] << 24 | \
                         received.data[1] << 16 | \
                         received.data[2] <<8|  \
                         received.data[3]
-            if trace >= 10 :
-                print("PIP reports:")
-                list = PIP.contentsNamesFromInt(result)
-                for e in list :
-                    print (" ",e)
+            
+            logger.info("PIP reports:")
+            list = PIP.contentsNamesFromInt(result)
+            for e in list :
+                logger.info ("  "+str(e))
             if received.data[3] != 0 :
-                print ("Failure - Unexpected contents in 4th byte; 0x{:02X}".format(received.data[3]))
+                logger.warning ("Failure - Unexpected contents in 4th byte; 0x{:02X}".format(received.data[3]))
                 return(3)
             break
         except Empty:
-            print ("Failure - no reply to PIP request")
+            logger.warning ("Failure - no reply to PIP request")
             return(3)
 
     # send a pip message to another node (our node) and expect no reply
@@ -74,13 +75,13 @@ def check():
     try :
             received = olcbchecker.getMessage() # timeout if no entries
             # error, we received a reply
-            print ("Failure - Unexpected reply to PIP request addressed to a different node")
+            logger.warning ("Failure - Unexpected reply to PIP request addressed to a different node")
             return(3)
     except:
         # this is normal, success
         pass
                     
-    if trace >= 10 : print("Passed")
+    logger.info("Passed")
     return 0
 
 if __name__ == "__main__":

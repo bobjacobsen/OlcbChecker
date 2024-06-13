@@ -4,6 +4,7 @@
 Simple runner for SNIP suite
 '''
 import sys
+import logging
 
 import olcbchecker.setup
 
@@ -16,22 +17,24 @@ def prompt() :
     print("  ")
     print(" q go back")
 
-def checkAll() :
+def checkAll(logger=logging.getLogger("SNIP")) :
     result = 0
  
-    print("\nSNIP reply checking")
+    logger.info("SNIP reply checking")
     result += check_sn10_snip.check()
 
     if result == 0 :
-        print("\nSuccess - all SNIP checks passed")
+        logger.info("Success - all SNIP checks passed")
     else:
-        print("\nAt least one SNIP check failed")
+        logger.warning("At least one SNIP check failed")
         
     return result
         
 def main() :
+    logger = logging.getLogger("SNIP")
+    
     if olcbchecker.setup.configure.runimmediate :
-        return (checkAll())
+        return (checkAll(logger))
 
     '''
     loop to check against SNIP Standard
@@ -45,7 +48,7 @@ def main() :
                 check_sn10_snip.check()
            
             case  "a" :
-                checkAll()
+                checkAll(logger)
             
             case "q" | "quit" : return
             

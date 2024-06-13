@@ -3,12 +3,13 @@
 This uses a CAN link layer to check Identify Consumers messages
 
 Usage:
-python3.10 check_ev30_ic.py 
+python3.10 check_ev40_ic.py 
 
 The -h option will display a full list of options.
 '''
 
 import sys
+import logging
 
 from openlcb.nodeid import NodeID
 from openlcb.message import Message
@@ -22,7 +23,7 @@ def check():
     # set up the infrastructure
 
     import olcbchecker.setup
-    trace = olcbchecker.trace() # just to be shorter
+    logger = logging.getLogger("EVENTS")
 
     # pull any early received messages
     olcbchecker.purgeMessages()
@@ -38,11 +39,10 @@ def check():
     if olcbchecker.isCheckPip() : 
         pipSet = olcbchecker.gatherPIP(destination)
         if pipSet is None:
-            print ("Failed in setup, no PIP information received")
+            logger.warning ("Failed in setup, no PIP information received")
             return (2)
         if not PIP.EVENT_EXCHANGE_PROTOCOL in pipSet :
-            if trace >= 10 : 
-                print("Passed - due to Event Exchange not in PIP")
+            logger.info("Passed - due to Event Exchange not in PIP")
             return(0)
 
     # send an Identify Events Addressed  message to accumulate producers to check
@@ -62,7 +62,7 @@ def check():
                     continue # just skip
                 
             if destination != received.source : # check source in message header
-                print ("Failure - Unexpected source of reply message: {} {}".format(received, received.source))
+                logger.warning ("Failure - Unexpected source of reply message: {} {}".format(received, received.source))
                 return(3)
 
             if received.mti in consumerIdMTIs :
@@ -90,14 +90,14 @@ def check():
 
         except Empty:
             # no reply, error
-            print ("No reply for event: {}".format(event))
+            logger.warning ("No reply for event: {}".format(event))
             fail = True
         
     if fail : 
-        print ("Failure - no reply for one or more event IDs")
+        logger.warning ("Failure - no reply for one or more event IDs")
         return(3)
         
-    if trace >= 10 : print("Passed")
+    logger.info("Passed")
     return 0
 
 if __name__ == "__main__":
