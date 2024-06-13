@@ -39,3 +39,5 @@ python3 -m pip install xmlschema
 ```
 
 Output is done via the Python `logging` module.  The scripts are self-configuring. If you want special output formats or locations, configure the logging package before calling the specific tests.
+
+To configure this to your hardware, you can copy the `defaults.py` file to `localoverrides.py` and edit it with appropriate values.  Alternately you can run the `control_setup.py` script and provide the needed values interactively.
