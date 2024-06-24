@@ -1,6 +1,6 @@
 \input{formattingHeader}
 
-\title{Checking the OpenLCB Traction Protocol Standard}
+\title{Checking the OpenLCB Train Control Protocol Standard}
 
 \begin{document}
 \maketitle
@@ -8,17 +8,17 @@
 
 \introductionCaveats
     {https://nbviewer.org/github/openlcb/documents/blob/master/drafts/TractionS.pdf}
-    {(Draft) Traction Protocol Standard}
+    {(Draft) Train Control Protocol Standard}
 
-\section{Traction Protocol Procedure}
+\section{Train Control Protocol Procedure}
 
-\checkProcedure{Traction Protocol Checking}
+\checkProcedure{Train Control Protocol Checking}
 
 A node which does not self-identify in PIP that it supports
-the Traction Protocol should be considered to have passed these checks.
+the Train Control Protocol should be considered to have passed these checks.
 \pipsetFootnote
 
-Note that this commands the speed and functions of a traction node.
+Note that this commands the speed and functions of a locomotive node.
 Although the commanded speed is quite low, the
 tests should be run in a way that the associated physical locomotive
 does not run away.
@@ -26,7 +26,7 @@ does not run away.
 \subsection{Defined Event ID checking}
 
 This section checks that the node supports the isTrain event
-defined in section 4.1 and 6.4 of the Traction Protocol Standard.
+defined in section 4.1 and 6.4 of the Train Control Protocol Standard.
 
 It does this by issuing an Identify Events to the node, and then
 checking for a Producer Identified reply carrying the isTrain Event ID.
@@ -44,7 +44,7 @@ checking for a Producer Identified reply carrying the isTrain Event ID.
 \subsection{Check memory spaces}
 
 This section checks the memory spaces defined in section 7
-of the Traction Protocol Standard.
+of the Train Control Protocol Standard.
 
 \footnote{This does not check the information defined by the 
     Function Definition Information Standard.
