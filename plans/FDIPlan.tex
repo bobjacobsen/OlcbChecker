@@ -14,11 +14,35 @@
 
 \checkProcedure{Function Definition Information Checking}
 
-A node which does not self-identify in PIP that it supports
-Function Definition Information should be considered to have passed these checks.
-\pipsetFootnote
+This plan assumes that the Datagram Transport Protocol and the Memory Configuration Protocol 
+have been separately checked. It uses those, but does not do any detailed checking of them.
 
-\subsection{}
+\subsection{FDI Memory Present checking}
 
+This section checks that the FDI memory defined in the Function 
+Definition Information Standard is present.
+
+The Get Address Space Information Command from the Memory Configuration Protocol
+is used to validate that space 0xFA is present and read-only.
+
+\subsection{Validation checking}
+
+This section checks the content of the FDI against the XML Schema 
+defined in Section 5 of the Standard to make sure that it is valid XML. 
+
+This check reads the information from the 0xFA memory space
+until it encounters a null character.
+\begin{enumerate}
+\item If the space is not available, or there are no bytes of content in it, the check fails.
+\item If the read sequence terminates early, without ending in a null character, the check fails.
+\end{enumerate}
+ 
+The check then validates the content against the 1.0 FDI XML Schema
+which is stored in a local ”FDIschema.xsd” file.
+
+The check then compares the length of the 0xFF memory space 
+as specified by the Memory Configuration Protocol Standard sections 4.15 and 4.16
+vs. the actual length of the retrieved FDI.
+If they do not agree, the check fails.
 
 \end{document}  
