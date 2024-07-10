@@ -1,0 +1,49 @@
+\input{formattingHeader}
+
+\title{Checking the OpenLCB Firmware Upgrade Protocol Standard}
+
+\begin{document}
+\maketitle
+
+
+\introductionCaveats
+    {https://nbviewer.org/github/openlcb/documents/blob/master/drafts/FirmwareUpgradeS.pdf}
+    {(Draft) Firmware Upgrade Protocol Standard}
+
+\section{Firmware Upgrade Protocol Procedure}
+
+\checkProcedure{Firmware Upgrade Protocol Checking}
+
+A node which does not self-identify in PIP that it supports
+the Firmware Upgrade Protocol should be considered to have passed these checks.
+\pipsetFootnote
+
+This test requires a vendor-provided current version of the 
+appropriate firmware file for downloading into the node being checked.
+Do not start this check without having that file available,
+as a node is not required to recover from a firmware upgrade without
+being successfully upgraded.
+
+\subsection{Firmware Upgrade status}
+
+This check follows the sequence documented in Section 5.5
+
+At this time, only the datagram-based transfers are checked.
+
+\begin{enumerate}
+\item The checker sends a Memory Configuration datagram command “Freeze” with an 
+    argument of Firmware Space 0xEF. 
+    A Datagram Received reply may or many not be received in response.
+\item The checker waits up to 20 seconds for a Node Initialization Complete message from the 
+    node being checked.
+\item The checker confirms that the PIP Firmware Upgrade active bit is set.
+\item The checker uses Memory Write operations of 64 bytes to download the contents of the firmware file.
+\item The checker resets the node being checked using a Memory Configuration 
+    datagram command “Unfreeze” with an argument of Firmware Space 0xEF.    
+    A Datagram Received reply may or many not be received in response.
+\item The checker waits up to 20 seconds for a Node Initialization Complete message from the 
+    node being checked.
+\item The checker confirms that the PIP Firmware Upgrade active bit is reset.
+\end{enumerate}
+
+\end{document}  
