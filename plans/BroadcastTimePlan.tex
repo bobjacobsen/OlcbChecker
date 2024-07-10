@@ -1,0 +1,70 @@
+\input{formattingHeader}
+
+\title{Checking the OpenLCB Broadcast Time Protocol Standard}
+
+\begin{document}
+\maketitle
+
+
+\introductionCaveats
+    {https://nbviewer.org/github/openlcb/documents/blob/master/standards/BroadcastTimeS.pdf}
+    {(Draft) Broadcast Time Protocol Standard}
+
+The Broadcast Time Protocol specifies the behavior of both producers and consumers of 
+broadcast time information.  Only the producer behavior is checked here.
+
+These checks are done for each defined clock separately. 
+For example, they can be run on the 01.01.00.00.01.00 Default Fast Clock
+followed by running them for the 01.01.00.00.01.01 Default Real-time Clock.
+
+\section{Broadcast Time Protocol Producer Procedure}
+
+\checkProcedure{Broadcast Time Protocol Checking}
+
+\subsection{Clock Query checking}
+
+This checks that the Clock Query defined in Section 6.4 of the Standard results in the
+Clock Synchronization sequence defined in section 6.3.
+
+The clock query is sent. 
+Then the specific reports in items 1 through 6 are checked for, in order.
+
+Note that the values of the time, date, rate, state are not checked in this step.
+
+\subsection{Clock Set checking}
+
+This checks that the Clock Set operations defined in Section 6.5 of the Standard results 
+in new clock settings followed by the
+Clock Synchronization sequence defined in section 6.3.
+
+This sets the clock to 01:23 AM on July 22, 2023 with the rate set to 4X and the clock stopped.
+
+The check then waits up to 4 seconds for a Clock Synchronization sequence, which it checks for
+the specific time, date, rate and state that was previously set.
+
+\subsection{Requested time checking}
+
+This checks that the Report Time Event indicated in bullet 2 of section 6.2 is 
+produced when requested.
+
+First this check sends a Consumer Identified message for the 01:24AM  July 22, 2023 event.
+
+Then it sets the clock to 01:23 AM on July 22, 2023 with the rate set to 5X and the clock running.
+
+It then waits up to 15 seconds for the production of the 01;24AM Report Time Event.
+
+\subsection{Startup Sequence checking}
+
+This checks the startup sequence described in section 6.1 of the Standard.
+
+The node being checked is manually restarted.
+
+The resulting message traffic is then checked for the required elements:
+\begin{enumerate}
+\item The Producer Range Identified and Consumer Range Identified messages, in either order.
+\item A Clock Synchronization sequence as defined in section 6.3.
+\end{enumerate}
+
+Note that the existence of the Clock Synchronization messages are checked, but not 
+their contents.  The Clock is allowed to start up with any time value.
+\end{document}  
