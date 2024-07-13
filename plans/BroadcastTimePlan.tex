@@ -10,14 +10,16 @@
     {https://nbviewer.org/github/openlcb/documents/blob/master/standards/BroadcastTimeS.pdf}
     {Broadcast Time Protocol Standard}
 
-The Broadcast Time Protocol specifies the behavior of both producers and consumers of 
-broadcast time information.  Only the producer behavior is checked here.
+\section{Broadcast Time Protocol Producer checking}
 
-These checks are done for each defined clock separately. 
+The Broadcast Time Protocol specifies the behavior of both producers and consumers of 
+broadcast time information.  
+The producer behavior is checked in this section.
+
+These checks should be done for each defined clock separately. 
 For example, they can be run on the 01.01.00.00.01.00 Default Fast Clock
 followed by running them for the 01.01.00.00.01.01 Default Real-time Clock.
-
-\section{Broadcast Time Protocol Producer Procedure}
+Consult the device's documentation to see which clock IDs are defined.
 
 \checkProcedure{Broadcast Time Protocol Checking}
 
@@ -37,12 +39,12 @@ This checks that the Clock Set operations defined in Section 6.5 of the Standard
 in new clock settings followed by the
 Clock Synchronization sequence defined in section 6.3.
 
-This sets the clock to 01:23 AM on July 22, 2023 with the rate set to 4X and the clock stopped.
+This then sets the clock to 01:23 AM on July 22, 2023 with the rate set to 4X and the clock stopped.
 
 The check then waits up to 4 seconds for a Clock Synchronization sequence, which it checks for
 the specific time, date, rate and state that was previously set.
 
-\subsection{Requested time checking}
+\subsection{Requested Time checking}
 
 This checks that the Report Time Event indicated in bullet 2 of section 6.2 is 
 produced when requested.
@@ -51,7 +53,8 @@ First this check sends a Consumer Identified message for the 01:24AM  July 22, 2
 
 Then it sets the clock to 01:23 AM on July 22, 2023 with the rate set to 5X and the clock running.
 
-It then waits up to 15 seconds for the production of the 01;24AM Report Time Event.
+It then waits up to 30 seconds for the production of the 01;24AM Report Time Event.
+If the event is not received, or it contains the wrong contents, the check fails.
 
 \subsection{Startup Sequence checking}
 
@@ -67,4 +70,29 @@ The resulting message traffic is then checked for the required elements:
 
 Note that the existence of the Clock Synchronization messages are checked, but not 
 their contents.  The Clock is allowed to start up with any time value.
+
+\section{Broadcast Time Protocol Consumer checking}
+
+The Broadcast Time Protocol specifies the behavior of both producers and consumers of 
+broadcast time information.  
+The consumer behavior is checked in this section.
+
+These checks should be done for each defined clock separately. 
+For example, they can be run on the 01.01.00.00.01.00 Default Fast Clock
+followed by running them for the 01.01.00.00.01.01 Default Real-time Clock.
+Consult the device's documentation to see which clock IDs are defined.
+
+\subsection{Synchronization Checking}
+
+This checks the response of the clock to the Clock Synchronization sequence defined
+in section 6.3.
+
+The check sends the synchronization sequence for 
+    01:23 AM on July 22, 2023 with the rate set to 4X and the clock stopped.
+    
+The user is then prompted to check the consumer node's display, if any, to see if the
+same time, date, rate and/or state are being displayed.
+
+
+
 \end{document}  
