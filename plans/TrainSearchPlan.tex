@@ -11,21 +11,123 @@
     {Train Search Protocol Standard}
 
 The Train Search Protocol specifies the behavior of both providers and requestors of 
-train search information.  These are checked separately.
+train search information.  Only the provider is checked here.
 
 
 \section{Train Search Protocol Provider Procedure}
 
 \checkProcedure{Train Search Protocol Provider Checking}
 
-\subsection{Defined Event ID checking}
+These checks require the attached node to, when appropriately commanded,
+to create a virtual train node with address 12.
 
+\subsection{Virtual Train Node creation check}
 
-\section{Train Search Protocol Requestor Procedure}
+This checks the interaction in section 6.2 of the Standard
+followed by checking the interaction in section 6.1 of the Standard.
 
-\checkProcedure{Train Search Protocol Requestor Checking}
+This check starts with the device under test having not created a
+virtual node with address 12. For some devices, doing a power cycle will 
+drop all virtual nodes and prepare the device for this test.
 
-\subsection{Defined Event ID checking}
+\begin{enumerate}
 
+\item Send a search Identify Producer with search nibbles 0x12.FF.FF and 
+    not-Allocate, Exact, Address Only, Any/Default protocol 0x60.
+    
+\item Wait one second for a reply.  There should not be one.
+
+\item Send a search Identify Producer with search nibbles 0x12.FF.FF and 
+    Allocate, Exact, Address Only, Any/Default protocol 0xE0.
+
+\item Wait up to one second for a reply.  A Producer Identified Valid for the same event ID
+    should be received.
+
+\item Send a search Identify Producer with search nibbles 00x12.FF.FF and 
+    not Allocate, Exact, Address Only, Any/Default protocol 0x60.
+
+\item Wait up to one second for a reply.  A Producer Identified Valid for the same event ID
+    should be received.    
+
+\end{enumerate}
+
+\subsection{Match partial values check}
+
+This is checking aspects of the Event Identifier matching algorithm described
+in section 6.3 of the Standard.
+
+\begin{enumerate}
+
+\item Ensure node with address 12 exists; may have been created in the previous check.
+
+    \begin{enumerate}
+    \item Send a search Identify Producer with search nibbles 0x12.FF.FF and 
+        Allocate, Exact, Address Only, Any/Default protocol 0xE0.
+
+    \item Wait up to one second for a reply.  A Producer Identified Valid for the same event ID
+        should be received.
+    \end{enumerate}
+
+\item Search not-allocate for partial match on 2; should exist
+    \begin{enumerate}
+    \item Send a search Identify Producer with search nibbles 0x2F.FF.FF and 
+        not-Allocate, Exact, Address Only, Any/Default protocol 0x60.
+
+    \item Wait up to one second for a reply.  A Producer Identified Valid for the same event ID
+        should be received.
+    \end{enumerate}
+
+\item Search not-allocate for partial match on 1; should exist
+    \begin{enumerate}
+    \item Send a search Identify Producer with search nibbles 0x1F.FF.FF and 
+        not-Allocate, Exact, Address Only, Any/Default protocol 0x60.
+
+    \item Wait up to one second for a reply.  A Producer Identified Valid for the same event ID
+        should be received.
+    \end{enumerate}
+
+\end{enumerate}
+
+(Should partial match on 0x1F2FFF exist?  0x2F1FFF?)
+
+\subsection{Reserved address values check}
+
+This is checking the reserved values found in Table 2 of section 5.2 of the Standard.
+
+Having 0xA through 0xE in a search nibble should result in no matches.
+
+\begin{enumerate}
+
+\item Send a search Identify Producer with search nibbles 0x0B.FF.FF and 
+    Allocate, Exact, Address Only, Any/Default protocol 0xE0.
+
+\item Wait one second for a reply.  There should not be one.
+
+\end{enumerate}
+
+\subsection{Reserved address values check}
+
+This is checking the reserved values found in Table 4 of section 5.2 of the Standard.
+
+Having reserved values in the protocol nibble should result in no matches.
+
+\begin{enumerate}
+
+\item Send a search Identify Producer with search nibbles 0x12.FF.FF and 
+    protocol byte Allocate plus reserved values 0xF0.
+
+\item Wait one second for a reply.  There should not be one.
+
+\item Send a search Identify Producer with search nibbles 0x12.FF.FF and 
+    protocol byte Allocate plus reserved values 0xF8.
+
+\item Wait one second for a reply.  There should not be one.
+
+\item Send a search Identify Producer with search nibbles 0x12.FF.FF and 
+    protocol byte Allocate plus reserved values 0xE3.
+
+\item Wait one second for a reply.  There should not be one.
+
+\end{enumerate}
 
 \end{document}  
