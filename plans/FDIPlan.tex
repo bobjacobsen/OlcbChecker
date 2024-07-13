@@ -38,9 +38,9 @@ until it encounters a null character.
 \end{enumerate}
  
 The check then validates the content against the 1.0 FDI XML Schema
-which is stored in a local ”FDIschema.xsd” file.
+which is stored in a local ”fdi.xsd” file.
 
-The check then compares the length of the 0xFF memory space 
+The check then compares the length of the 0xFA memory space 
 as specified by the Memory Configuration Protocol Standard sections 4.15 and 4.16
 vs. the actual length of the retrieved FDI.
 If they do not agree, the check fails.
