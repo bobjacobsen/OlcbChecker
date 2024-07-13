@@ -19,8 +19,8 @@ the Train Control Protocol should be considered to have passed these checks.
 \pipsetFootnote
 
 Note that this commands the speed and functions of a locomotive node.
-Although the commanded speed is quite low, the
-tests should be run in a way that the associated physical locomotive
+Although the commanded speed is quite low and only for a short time, the
+checks should be run in a way that the associated physical locomotive
 does not run away.
 
 \subsection{Defined Event ID checking}
@@ -33,23 +33,109 @@ checking for a Producer Identified reply carrying the isTrain Event ID.
 
 \subsection{Check set and query speeds}
 
-\subsection{Check query controller}
+This checks the ability to set and query the speed and direction of the train.
+Note that it checks that forward/reverse is independent of the speed setting, particularly
+at zero.
 
-\subsection{Check set and query functions}
+\begin{enumerate}
 
-\subsection{Check emergency stop}
+    \item Set the speed and direction to 0.75 reverse.
 
-\subsection{Check controller configuration command and response}
+    \item Query the speed and direction. Check for 0.75 reverse.
+
+    \item Set the speed and direction to 0 reverse.
+
+    \item Query the speed and direction. Check for 0 reverse.
+
+    \item Set the speed and direction to 0.75 forward.
+
+    \item Query the speed and direction. Check for 0.75 forward.
+
+    \item Set the speed and direction to 0 forward.
+
+    \item Query the speed and direction. Check for 0 forward.
+
+\end{enumerate}
+
+In any case, even if the earlier checks failed, end by setting the speed 
+and direction to 0 forward.
+
+\subsection{Check set and query of functions}
+
+This section assumes that F0 is available on the train.
+The FDI is not used to confirm that in this section.
+
+\begin{enumerate}
+
+    \item Set F0 to on.
+
+    \item Query F0 and check for an "on" response.
+
+    \item Set F0 to off.
+
+    \item Query F0 and check for an "off" response.
+
+\end{enumerate}
+
+In any case, even if the earlier checks failed, end by setting F0 to "off".
+
+\subsection{Check Emergency Stop}
+
+\begin{enumerate}
+
+    \item Set the speed and direction to 0.75 reverse.
+
+    \item Query the speed and direction. Check for 0.75 reverse.
+
+    \item Send an emergency stop to the train.
+
+    \item Query the speed and direction. Check for 0 reverse.
+
+    \item Set the speed and direction to 0.75 forward.
+
+    \item Query the speed and direction. Check for 0.75 forward.
+
+    \item Set the speed and direction to 0 forward.
+
+\end{enumerate}
+
+In any case, even if the earlier checks failed, end by setting the speed 
+and direction to 0 forward.
+
+\subsection{Check Global Emergency Stop}
+
+\subsection{Check Global Emergency Off}
 
 \subsection{Check memory spaces}
 
-This section checks the memory spaces defined in section 7
+This section checks the existence and properties of memory spaces defined in section 7
 of the Train Control Protocol Standard.
 
 \footnote{This does not check the information defined by the 
     Function Definition Information Standard.
 }
     
-\subsection{}
+\subsection{Checking function memory space connection}
+
+This section assumes that F0 is available on the train.
+The FDI is not used to confirm that in this section.
+
+\begin{enumerate}
+
+    \item Set function 0 "on"
+
+    \item Check byte 0 in the 0xF9 memory space for a non-zero value.
+
+    \item Write byte 0 in the 0xF9 memory space to zero.
+
+    \item Check that function 0 is "off".
+
+\end{enumerate}
+
+\subsection{Check Controller Configuration command and response}
+
+\subsection{Check Listener Configuration command and response}
+
+\subsection{Check Train Control Management command and response}
 
 \end{document}  
