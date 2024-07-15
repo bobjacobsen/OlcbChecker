@@ -18,5 +18,7 @@ clean:
 
 %.pdf : %.tex formattingHeader.tex
 	pdflatex $<  
+	pdflatex $<  
+	pdflatex $<  
 
 	
