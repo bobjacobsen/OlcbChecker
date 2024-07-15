@@ -14,6 +14,8 @@
 
 \checkProcedure{Train Control Protocol Checking}
 
+This procedure checks the operation of a Train Node.  
+
 A node which does not self-identify in PIP that it supports
 the Train Control Protocol should be considered to have passed these checks.
 \pipsetFootnote
@@ -63,7 +65,7 @@ and direction to 0 forward.
 \subsection{Check set and query of functions}
 
 This section assumes that F0 is available on the train.
-The FDI is not used to confirm that in this section.
+The FDI is not used to confirm that.
 
 \begin{enumerate}
 
@@ -80,6 +82,9 @@ The FDI is not used to confirm that in this section.
 In any case, even if the earlier checks failed, end by setting F0 to "off".
 
 \subsection{Check Emergency Stop}
+
+This checks the behavior defined in section 6.2 of the Standard.
+It does not check that the train stops.
 
 \begin{enumerate}
 
@@ -104,21 +109,86 @@ and direction to 0 forward.
 
 \subsection{Check Global Emergency Stop}
 
+This checks the behavior defined in section 6.2 of the Standard.
+It does not check that the train stops.
+
+\begin{enumerate}
+
+    \item Set the speed and direction to 0.75 reverse.
+
+    \item Query the speed and direction. Check for 0.75 reverse.
+
+    \item Produce an Emergency Stop All event.
+
+    \item Query the speed and direction. Check for 0.75 reverse.
+
+    \item Set the speed and direction to 0.75 forward.
+
+    \item Query the speed and direction. Check for 0.75 forward.
+
+    \item Produce a Clean Emergency Stop event.
+    
+    \item Set the speed and direction to 0 forward.
+
+\end{enumerate}
+
+In any case, even if the earlier checks failed, end by setting the speed 
+and direction to 0 forward.
+
 \subsection{Check Global Emergency Off}
+
+This checks the behavior defined in section 6.2 of the Standard.
+It does not check that the train stops and that the train's outputs power off.
+
+\begin{enumerate}
+
+    \item Set the speed and direction to 0.75 reverse.
+
+    \item Query the speed and direction. Check for 0.75 reverse.
+
+    \item Produce an Emergency Off All event.
+
+    \item Query the speed and direction. Check for 0.75 reverse.
+
+    \item Set the speed and direction to 0.75 forward.
+
+    \item Query the speed and direction. Check for 0.75 forward.
+
+    \item Produce a Clean Emergency Off event.
+    
+    \item Set the speed and direction to 0 forward.
+
+\end{enumerate}
+
+In any case, even if the earlier checks failed, end by setting the speed 
+and direction to 0 forward.
 
 \subsection{Check memory spaces}
 
-This section checks the existence and properties of memory spaces defined in section 7
+This section checks the existence and properties of the memory spaces defined in section 7
 of the Train Control Protocol Standard.
 
-\footnote{This does not check the information defined by the 
-    Function Definition Information Standard.
-}
+This does not check the information defined by the 
+Function Definition Information Standard.
+
+\begin{enumerate}
+
+\item Use a Get Address Space Information Command datagram from the Memory Configuration protocol
+to enquire about the status of space 0xF9.
+
+\item Check that the response indicates the memory space exists.
+
+\item Use a Get Address Space Information Command datagram from the Memory Configuration protocol
+to enquire about the status of space 0xFA.
+
+\item Check that the response indicates the memory space exists.
+
+\end{enumerate}
     
-\subsection{Checking function memory space connection}
+\subsection{Checking function to/from memory space connection}
 
 This section assumes that F0 is available on the train.
-The FDI is not used to confirm that in this section.
+The FDI is not used to confirm that.
 
 \begin{enumerate}
 
@@ -132,10 +202,56 @@ The FDI is not used to confirm that in this section.
 
 \end{enumerate}
 
+
 \subsection{Check Controller Configuration command and response}
+
+\begin{enumerate}
+
+    \item Send a Train Control Assign Controller command with the checker's Node ID.
+    \item Check for a Train Control Assign Controller reply with OK in the flags.
+
+    \item Send a Train Control Query Controller command
+    \item Check for a Train Control Query Controller response with the checker's Node ID
+        in the Active Controller field.
+
+    \item Send a Train Control Release Controller command
+    \item Check for a Train Control Query Controller response with a zero Node ID
+        in the Active Controller field.
+    
+    \item Send a Train Control Assign Controller command with the checker's Node ID.
+    \item Check for a Train Control Assign Controller reply with OK in the flags.
+
+\end{enumerate}
+
+Note:  There needs to be additional checking of the Controller Changing Notify 
+    added here.
+
+In any case, including if some check fails, end by sending a Train Control Release
+    Controller command.
 
 \subsection{Check Listener Configuration command and response}
 
+This section is still to be written.
+
 \subsection{Check Train Control Management command and response}
+
+This assumes that the node being checked has not been reserved by another node.
+
+\begin{enumerate}
+
+    \item Send a Train Control Management Reserve command
+    \item Check for a Train Control Management Reserve response with OK in the flags.
+
+    \item Send a Train Control Management Release command.  No response is expected.
+
+    \item Send a Train Control Management Reserve command
+    \item Check for a Train Control Management Reserve response with OK in the flags.
+
+    \item Send a Train Control Management Reserve command
+    \item Check for a Train Control Management Reserve response with fail in the flags.
+    
+    \item Send a Train Control Management Release command.  No response is expected.
+
+\end{enumerate}
 
 \end{document}  
