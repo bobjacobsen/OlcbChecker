@@ -9,6 +9,14 @@
 \usepackage{hyperref}
 \DeclareGraphicsRule{.tif}{png}{.png}{`convert #1 `dirname #1`/`basename #1 .tif`.png}
 
+\usepackage{fancyhdr}
+\fancyhf{}
+\fancyfoot[R]{\thepage}
+\renewcommand\headrulewidth{0pt}
+\pagestyle{fancyplain}
+% To put the name in the footer, do 
+% \fancyfoot[L]{Foo}
+
 % common header content elements
 %\author{The OpenLCB Group}
 %\date{}                                         % Activate to display a given date or no date
