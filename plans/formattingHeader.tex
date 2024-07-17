@@ -9,19 +9,49 @@
 \usepackage{hyperref}
 \DeclareGraphicsRule{.tif}{png}{.png}{`convert #1 `dirname #1`/`basename #1 .tif`.png}
 
+% fornat header abd footer
 \usepackage{fancyhdr}
 \fancyhf{}
-\fancyfoot[R]{\thepage}
+\fancyfoot[L]{\footnotesize{Copyright 2022-2024. All rights reserved. 
+        This OpenLCB document is licensed under the 
+        \newline
+        Creative Commons Attribution-ShareAlike 4.0 International License (CC BY-SA 4.0). 
+        \newline
+        See https://openlcb.org/licensing for more information.
+    }
+    \hfill \thepage
+}
 \renewcommand\headrulewidth{0pt}
+\setlength{\headheight}{13.59999pt}
+
+\fancypagestyle{firststyle}
+{
+   \fancyhf{}
+    \fancyfoot[L]{\footnotesize{Copyright 2022-2024. All rights reserved. 
+        This OpenLCB document is licensed under the 
+        \newline
+        Creative Commons Attribution-ShareAlike 4.0 International License (CC BY-SA 4.0). 
+        \newline
+        See https://openlcb.org/licensing for more information.
+        }
+        \hfill \thepage
+    }
+   \renewcommand{\headrulewidth}{0pt} % removes horizontal header line
+}
+
 \pagestyle{fancyplain}
-% To put the name in the footer, do 
-% \fancyfoot[L]{Foo}
+% The name is put in the header by the titleandheader command below
 
 % common header content elements
 %\author{The OpenLCB Group}
 %\date{}                                         % Activate to display a given date or no date
 
 
+% specify the text for the title and footer
+\newcommand*{\titleandheader}[1]{
+    \title{#1}
+    \fancyhead[L]{\footnotesize{#1}}
+}
 
 % to format XML tags in proper angle brackets <>
 \newcommand*{\xml}[1]{\texttt{<#1>}}
