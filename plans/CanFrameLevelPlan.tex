@@ -120,5 +120,47 @@ and with no NodeID and checks for:
 \item With the 0x1000\_0000 bit set to one.
 \end{enumerate}
 
+\subsection{Capacity Check}
+
+It is an unspoken assumption of the Standard that a node will receive and
+process all CAN frames, even when the CAN bus is 100\% busy. (Though see Section 4
+of the Technical Note for discussion on this.)
+
+To confirm that, the checker:
+
+\begin{enumerate}
+    \item Sends 300 PCER messages with an Event ID of 
+        00.00.00.00.00.00.00.01, followed by a Verify Node ID Number Addressed 
+        message to the device being checked,
+        followed by 300 PCER messages with an Event ID of 
+        00.00.00.00.00.00.00.01. 
+        All 601 messages are sent at the full CAN rate, with no inter-frame gaps.
+    \item It then looks for whether a Verified Node ID Number message was transmitted in
+        response to the Verify Node ID Number Addressed message. If not, the check fails.
+    \item It then sends 300 Verify Node ID Number Addressed messages addressed 
+        to another (not-present) node,
+        followed by a Verify Node ID Number Global message, 
+        then 300 Verify Node ID Number Addressed messages
+        addressed to another (not-present) node.
+        All 601 messages are sent at the full CAN rate, with no inter-frame gaps.
+    \item It then looks for whether a Verified Node ID Number message was transmitted in
+        response to the Verify Node ID Number Global message. If not, the check fails.
+    \item It then sends 300 Identify Consumer messages with an Event ID of 
+        00.00.00.00.00.00.00.01
+        followed by a global Verify Nodes message, then 
+        300 Identify Consumer messages with an Event ID of 
+        00.00.00.00.00.00.00.01.
+        All 601 messages are sent at the full CAN rate, with no inter-frame gaps.
+    \item It then looks for whether a Verified Node ID Number message was transmitted in
+        response to the global Verify Nodes message. If not, the check fails.
+\end{enumerate}
+
+\subsection{Compatibility with Standard CAN frames}
+
+This checks the compatibility with standard CAN frames defined in section 4 of the standard.
+
+The checker sends each valid standard CAN frame header, 2048 values, sequentially.
+As it does this, it checks for a response from the node being checked.  Any response 
+fails the check.
 
 \end{document}  

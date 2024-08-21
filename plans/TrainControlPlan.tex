@@ -36,6 +36,7 @@ checking for a Producer Identified reply carrying the isTrain Event ID.
 \subsection{Check set and query speeds}
 
 This checks the ability to set and query the speed and direction of the train.
+This interaction is defined in sections 4.3 and 4.4 of the Standard.
 Note that it checks that forward/reverse is independent of the speed setting, particularly
 at zero.
 
@@ -67,6 +68,9 @@ and direction to 0 forward.
 This section assumes that F0 is available on the train.
 The FDI is not used to confirm that.
 
+The message and reply are defined in sections 4.3 and 4.4 of the Standard;
+the interaction is defined in section 6.3.
+
 \begin{enumerate}
 
     \item Set F0 to on.
@@ -92,7 +96,7 @@ It does not check that the train stops.
 
     \item Query the speed and direction. Check for 0.75 reverse.
 
-    \item Send an emergency stop to the train.
+    \item Send an emergency stop command to the train.
 
     \item Query the speed and direction. Check for 0 reverse.
 
@@ -126,7 +130,7 @@ It does not check that the train stops.
 
     \item Query the speed and direction. Check for 0.75 forward.
 
-    \item Produce a Clean Emergency Stop event.
+    \item Produce a Clear Emergency Stop event.
     
     \item Set the speed and direction to 0 forward.
 
@@ -154,7 +158,7 @@ It does not check that the train stops and that the train's outputs power off.
 
     \item Query the speed and direction. Check for 0.75 forward.
 
-    \item Produce a Clean Emergency Off event.
+    \item Produce a Clear Emergency Off event.
     
     \item Set the speed and direction to 0 forward.
 
@@ -189,6 +193,9 @@ to enquire about the status of space 0xFA.
 
 This section assumes that F0 is available on the train.
 The FDI is not used to confirm that.
+
+This uses the message definition from section 4.3 of the Standard 
+and the interaction defined in section 6.3.
 
 \begin{enumerate}
 
