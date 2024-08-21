@@ -1,0 +1,66 @@
+\input{formattingHeader}
+
+\titleandheader{OpenLCB Checking Implementor Questionnaire }
+
+\begin{document}
+\maketitle
+\thispagestyle{firststyle}
+
+\section{Introduction}
+
+Some information about construction of the node being checked can't readily be obtained
+from active checks on the LCC bus. Some information is needed to make those active 
+checks effective.  This questionnaire is meant to deal with both of those
+by getting specific implementation details from the device implementer.
+It should be filled out with details from the specific device being checked.
+It's divided into sections corresponding to the specific test plans.
+
+Please feel free to add extra pages as needed.
+
+\section{Unique IDs}
+\begin{enumerate}
+    \item What is the Unique ID(s) of the node being checked?
+    \item Was the Unique ID(s) assigned from a range under the control of the implementor? Which?
+    \item Does the implementor assign different Unique IDs to individual nodes?
+\end{enumerate}
+
+\section{CAN Physical Layer}
+\begin{enumerate}
+    \item Does the device use standard CAN transceiver(s) from recognized vendors?
+    \item Does the device use standard CAN controller(s) from recognized vendors?
+    \item If the device has more than two LCC jacks, how are they to be used?
+\end{enumerate}
+
+\section{CAN Frame Transfer Layer}
+\begin{enumerate}
+    \item Does the device use the recommended algorithm for generating alias values?
+    \begin{enumerate}
+        \item If not, please describe how the node meets the requirements of the 
+            CAN Frame Level Standard 
+    \end{enumerate}
+\end{enumerate}
+
+\section{Message Transport Layer}
+
+\section{Simple Node Information Protocol}
+\subsection{Simple Node Information Protocol Producers}
+
+\subsection{Simple Node Information Protocol Consumers}
+\begin{enumerate}
+    \item Does the device properly decode future versions of the SNIP
+        information? (See Section 5.2 of the Standard.)
+\end{enumerate}
+
+
+\section{CDI}
+\subsection{CDI Producers}
+
+\subsection{CDI Consumers}
+\begin{enumerate}
+    \item Does the device decode and display all the element types in section 
+            5.1 of the Standard?
+    \item Does the device properly handle additional, unknown elements? 
+            (See Section 6 of the Standard)
+\end{enumerate}
+
+\end{document}  
