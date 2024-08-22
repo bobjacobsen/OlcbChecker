@@ -14,6 +14,8 @@ import logging
 from openlcb.nodeid import NodeID
 from openlcb.canbus.canframe import CanFrame
 from openlcb.canbus.controlframe import ControlFrame
+from openlcb.message import Message
+from openlcb.mti import MTI
 from queue import Empty
 
 import olcbchecker.setup
@@ -89,7 +91,12 @@ def check():
         if (reply.header & 0xFF_FFF_000) != 0x10_703_000 :
             logger.warning ("Failure - frame was not AMR frame in second part")
             return 3
-                
+
+        # Sends a global verify node ID message, forcing the target node to
+        # allocate a new alias.
+        message = Message(MTI.Verify_NodeID_Number_Global, NodeID(olcbchecker.setup.configure.ownnodeid), None)
+        olcbchecker.sendMessage(message)        
+        
         # loop for _optional_ CID 7 frame and eventual AMD with different alias
         newAlias = 0  # zero indicates invalid, not allocated
         amdReceived = False

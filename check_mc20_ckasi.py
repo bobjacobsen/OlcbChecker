@@ -141,7 +141,7 @@ def check():
             logger.warning (("Failure: space 0x{:02X} improper flag bits set").format(space))
             return (3)
     
-        if (reply.data[7]*0x01) != 0 :
+        if (reply.data[7]&0x02) != 0 :
             # check that low address is present
             if len(reply.data) < 12 :
                 logger.warning (("Failure: space 0x{:02X} flagged containing low address but not present").format(space))
