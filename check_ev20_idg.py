@@ -64,8 +64,8 @@ def check():
                     logger.warning ("Failure - Unexpected message {}".format(received))
                 
             if destination != received.source : # check source in message header
-                logger.warning ("Failure - Unexpected source of reply message: {} {}".format(received, received.source))
-                return(3)
+                logger.info ("Note - Unexpected source of reply message: {} {}".format(received, received.source))
+                continue
 
             if received.mti in producerIdMTIs :
                     producerReplys.add(received)
