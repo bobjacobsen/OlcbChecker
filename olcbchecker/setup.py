@@ -25,19 +25,19 @@ trace = configure.trace # just to be shorter
 # configure the physical link
 if configure.hostname is not None : 
     from openlcb.canbus.tcpsocket import TcpSocket
-    s = TcpSocket()
-    s.connect(configure.hostname, configure.portnumber)
+    interface = TcpSocket()
+    interface.connect(configure.hostname, configure.portnumber)
 else :
     from openlcb.canbus.seriallink import SerialLink
-    s = SerialLink()
-    s.connect(configure.devicename)
+    interface = SerialLink()
+    interface.connect(configure.devicename)
     
 if trace >= 20 :
     print("RM, SM are message level receive and send; RL, SL are link (frame) interface; RR, SR are raw socket interface")
 
 def sendToSocket(string) :
     if trace >= 40 : print("      SR: "+string.strip())
-    s.send(string)
+    interface.send(string)
 
 def sendCanFrame(frame) :
     canPhysicalLayerGridConnect.sendCanFrame(frame)
@@ -73,10 +73,13 @@ def receiveLoop() :
     canPhysicalLayerGridConnect.physicalLayerUp()
     while True:
         try : 
-            input = s.receive()
+            input = interface.receive()
         except (ConnectionResetError, RuntimeError) :
             # connection broken, have to stop processing
             print("\nLCC Connection Broken\n")
+            break
+        except :
+            print("\nLCC connection ends")
             break
         if trace >= 40 : print("      RR: "+input.strip())
         # pass to link processor
