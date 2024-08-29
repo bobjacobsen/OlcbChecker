@@ -32,7 +32,14 @@ python3.10 -m pip install --editable python-openlcb
 cd (where you put OlcbChecker)
 ```
 
-The CDI check requires the `xmlschema` module.  If you don't have that already, do
+Alternately, you can check out the python-openlcb and create a symbolic link from it's included `openlcb` directory to your `OlcbChecker` directory:
+```
+cd (where you put OlcbChecker)
+git clone https://github.com/bobjacobsen/python-openlcb.git
+ln -s python-openlcb/openlcb OlchChecker/openlcb
+```
+
+The CDI and FDI checks require the `xmlschema` module.  If you don't have that already, do
 
 ```
 python3 -m pip install xmlschema
