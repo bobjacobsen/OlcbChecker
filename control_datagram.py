@@ -55,5 +55,8 @@ def main() :
             case _ : continue
                    
     return
+
 if __name__ == "__main__":
-    sys.exit(main())
+    result = main()
+    olcbchecker.setup.interface.close()
+    sys.exit(result)
