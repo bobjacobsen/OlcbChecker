@@ -1,6 +1,6 @@
 #!/usr/bin/env python3.10
 '''
-This uses a CAN link layer to check CDI contents against schema
+This uses a CAN link layer to check that the CDI memory space is valid
 
 Usage:
 python3.10 check_cd10_valid.py
