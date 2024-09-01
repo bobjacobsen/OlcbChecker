@@ -172,7 +172,10 @@ and direction to 0 scale m/s forward.
 This section checks the existence and properties of the memory spaces defined in section 7
 of the Train Control Protocol Standard.
 
-This does not check the information defined by the 
+Note that the 0xF9 space is optional.  An info message is issue if the 0xF9 space
+is not present, but the check still passes.  The 0xFA space is required for the check to pass.
+
+This does not check the information in the 0xFA space defined by the 
 Function Definition Information Standard.
 
 \begin{enumerate}
@@ -191,8 +194,11 @@ to enquire about the status of space 0xFA.
     
 \subsection{Checking function to/from memory space connection}
 
-This section assumes that F0 is available on the train.
+This section assumes that the F0 function is available in the train node.
 The FDI is not used to confirm that.
+
+This section assumes that the 0xF9 memory space is available in the train node.
+If the 0xF9 space is marked as not present, the check passes.
 
 This uses the message definition from section 4.3 of the Standard 
 and the interaction defined in section 6.3.

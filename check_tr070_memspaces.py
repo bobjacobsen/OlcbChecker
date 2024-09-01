@@ -118,6 +118,16 @@ def check():
             logger.warning(str(e))
             return (3)
         
+        # check for whether the reply indicates space present
+        if len(reply.data) >= 2 and reply.data[1] == 0x86:
+            # marked not-present; this is OK for the 0xF9 space
+            if space == 0xF9 :
+                logger.info("Note - optional 0xF9 space not present") 
+                continue
+            else :
+                logger.warning("Failure - required space 0xFA not present")
+                return (3)
+            
         if len(reply.data) < 8 and len(reply.data) > 2 :
             logger.warning ("Failure: space 0x{:02X} reply was too short: {}; byte[1] = 0x{:02X}".format(space, len(reply.data), reply.data[1]))
             return (3)
