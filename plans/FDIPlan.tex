@@ -37,16 +37,16 @@ until it encounters a null character.
 \item If the read sequence terminates early, without ending in a null character, the check fails.
 \end{enumerate}
  
+The check then compares the length of the 0xFA memory space 
+as specified by the Memory Configuration Protocol Standard sections 4.15 and 4.16
+vs. the actual length of the retrieved FDI.
+If they do not agree, the check fails.
+
 The check then compares the first two lines of the content against the 
 definition in section 5. 
 Any version of the CDI schema is accepted.
 
 The check then validates the content against the FDI XML Schema
 given in the xsi:noNamespaceSchemaLocation attribute.
-
-The check then compares the length of the 0xFA memory space 
-as specified by the Memory Configuration Protocol Standard sections 4.15 and 4.16
-vs. the actual length of the retrieved FDI.
-If they do not agree, the check fails.
 
 \end{document}  

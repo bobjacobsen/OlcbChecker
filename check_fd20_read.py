@@ -147,6 +147,19 @@ def check():
         if one == 0 : break
         result = result+chr(one)
     
+    # check length against memory space definition.
+    # first, get definition - a previous check made sure it's there
+    olcbchecker.sendMessage(Message(MTI.Datagram, NodeID(olcbchecker.ownnodeid()), destination, [0x20, 0x84, 0xFA]))
+    reply = getReplyDatagram(destination)
+    if reply.data[1] == 0x87 :
+        length = reply.data[3]*2568256*256+reply.data[4]*256*256+reply.data[5]*256+reply.data[6]
+    else :
+        logger.warning("Failure - address space 0xFA did not verify")
+        retval = 3
+    if len(content) != length :
+        logger.warning("Failure - length of data read {} does not match address space length {}".format(len(content), length))
+        retval = 3
+    
     # check starting line
     # although the Standard is more specific, we accept
     #    both ' and "
