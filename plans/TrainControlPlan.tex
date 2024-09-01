@@ -92,24 +92,24 @@ It does not check that the train stops.
 
 \begin{enumerate}
 
-    \item Set the speed and direction to 0.75 reverse.
+    \item Set the speed and direction to 0.1 scale m/s reverse.
 
-    \item Query the speed and direction. Check for 0.75 reverse.
+    \item Query the speed and direction. Check for 0.1 scale m/s reverse.
 
     \item Send an emergency stop command to the train.
 
-    \item Query the speed and direction. Check for 0 reverse.
+    \item Query the speed and direction. Check for 0 scale m/s reverse.
 
-    \item Set the speed and direction to 0.75 forward.
+    \item Set the speed and direction to 0.1 scale m/s forward.
 
-    \item Query the speed and direction. Check for 0.75 forward.
+    \item Query the speed and direction. Check for 0.1 scale m/s forward.
 
-    \item Set the speed and direction to 0 forward.
+    \item Set the speed and direction to 0 scale m/s forward.
 
 \end{enumerate}
 
 In any case, even if the earlier checks failed, end by setting the speed 
-and direction to 0 forward.
+and direction to 0 scale m/s forward.
 
 \subsection{Check Global Emergency Stop}
 
@@ -118,26 +118,26 @@ It does not check that the train stops.
 
 \begin{enumerate}
 
-    \item Set the speed and direction to 0.75 reverse.
+    \item Set the speed and direction to 0.1 scale m/s reverse.
 
-    \item Query the speed and direction. Check for 0.75 reverse.
+    \item Query the speed and direction. Check for 0.1 scale m/s reverse.
 
     \item Produce an Emergency Stop All event.
 
-    \item Query the speed and direction. Check for 0.75 reverse.
+    \item Query the speed and direction. Check for 0.1 scale m/s reverse.
 
-    \item Set the speed and direction to 0.75 forward.
+    \item Set the speed and direction to 0.1 scale m/s forward.
 
-    \item Query the speed and direction. Check for 0.75 forward.
+    \item Query the speed and direction. Check for 0.1 scale m/s forward.
 
     \item Produce a Clear Emergency Stop event.
     
-    \item Set the speed and direction to 0 forward.
+    \item Set the speed and direction to 0 scale m/s forward.
 
 \end{enumerate}
 
 In any case, even if the earlier checks failed, end by setting the speed 
-and direction to 0 forward.
+and direction to 0 scale m/s forward.
 
 \subsection{Check Global Emergency Off}
 
@@ -146,33 +146,36 @@ It does not check that the train stops and that the train's outputs power off.
 
 \begin{enumerate}
 
-    \item Set the speed and direction to 0.75 reverse.
+    \item Set the speed and direction to 0.1 scale m/s reverse.
 
-    \item Query the speed and direction. Check for 0.75 reverse.
+    \item Query the speed and direction. Check for 0.1 scale m/s reverse.
 
     \item Produce an Emergency Off All event.
 
-    \item Query the speed and direction. Check for 0.75 reverse.
+    \item Query the speed and direction. Check for 0.1 scale m/s reverse.
 
-    \item Set the speed and direction to 0.75 forward.
+    \item Set the speed and direction to 0.1 scale m/s forward.
 
-    \item Query the speed and direction. Check for 0.75 forward.
+    \item Query the speed and direction. Check for 0.1 scale m/s forward.
 
     \item Produce a Clear Emergency Off event.
     
-    \item Set the speed and direction to 0 forward.
+    \item Set the speed and direction to 0 scale m/s forward.
 
 \end{enumerate}
 
 In any case, even if the earlier checks failed, end by setting the speed 
-and direction to 0 forward.
+and direction to 0 scale m/s forward.
 
 \subsection{Check memory spaces}
 
 This section checks the existence and properties of the memory spaces defined in section 7
 of the Train Control Protocol Standard.
 
-This does not check the information defined by the 
+Note that the 0xF9 space is optional.  An info message is issue if the 0xF9 space
+is not present, but the check still passes.  The 0xFA space is required for the check to pass.
+
+This does not check the information in the 0xFA space defined by the 
 Function Definition Information Standard.
 
 \begin{enumerate}
@@ -191,8 +194,11 @@ to enquire about the status of space 0xFA.
     
 \subsection{Checking function to/from memory space connection}
 
-This section assumes that F0 is available on the train.
+This section assumes that the F0 function is available in the train node.
 The FDI is not used to confirm that.
+
+This section assumes that the 0xF9 memory space is available in the train node.
+If the 0xF9 space is marked as not present, the check passes.
 
 This uses the message definition from section 4.3 of the Standard 
 and the interaction defined in section 6.3.
@@ -247,15 +253,15 @@ This assumes that the node being checked has not been reserved by another node.
 \begin{enumerate}
 
     \item Send a Train Control Management Reserve command
-    \item Check for a Train Control Management Reserve response with OK in the flags.
+    \item Check for a Train Control Management Reserve response with an OK code in the flags.
 
     \item Send a Train Control Management Release command.  No response is expected.
 
     \item Send a Train Control Management Reserve command
-    \item Check for a Train Control Management Reserve response with OK in the flags.
+    \item Check for a Train Control Management Reserve response with an OK code in the flags.
 
     \item Send a Train Control Management Reserve command
-    \item Check for a Train Control Management Reserve response with fail in the flags.
+    \item Check for a Train Control Management Reserve response with a fail code in the flags.
     
     \item Send a Train Control Management Release command.  No response is expected.
 

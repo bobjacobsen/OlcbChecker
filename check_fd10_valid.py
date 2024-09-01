@@ -1,9 +1,9 @@
 #!/usr/bin/env python3.10
 '''
-This uses a CAN link layer to check that the CDI memory space is valid
+Check that the FDI memory space is valid
 
 Usage:
-python3.10 check_cd10_valid.py
+python3.10 check_fd10_valid.py
 
 The -h option will display a full list of options.
 '''
@@ -84,7 +84,7 @@ def getReplyDatagram(destination) :
 def check():
     # set up the infrastructure
 
-    logger = logging.getLogger("CDI")
+    logger = logging.getLogger("FDI")
 
     # pull any early received messages
     olcbchecker.purgeMessages()
@@ -102,18 +102,18 @@ def check():
         if pipSet is None:
             logger.warning ("Failed in setup, no PIP information received")
             return (2)
-        if not PIP.CONFIGURATION_DESCRIPTION_INFORMATION in pipSet :
-            logger.info("Passed - due to CDI protocol not in PIP")
+        if not PIP.FUNCTION_DESCRIPTION_INFORMATION in pipSet :
+            logger.info("Passed - due to FDI protocol not in PIP")
             return(0)
 
-    # check for 0xFF space valid
-    memory_address_space_cmd = [0x20, 0x84, 0xFF] 
+    # check for 0xFA space valid
+    memory_address_space_cmd = [0x20, 0x84, 0xFA] 
     datagram = Message(MTI.Datagram, NodeID(olcbchecker.ownnodeid()), destination, memory_address_space_cmd)
     olcbchecker.sendMessage(datagram)
     try :
         content = getReplyDatagram(destination).data
         if content[1] != 0x87 :
-            logger.warning ("Failure - space 0xFF marked as not present")
+            logger.warning ("Failure - space 0xFA marked as not present")
             return 3
     
         logger.info("Passed")

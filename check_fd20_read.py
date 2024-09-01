@@ -1,9 +1,9 @@
 #!/usr/bin/env python3.10
 '''
-This uses a CAN link layer to check CDI contents against schema
+Check FDI contents against schema
 
 Usage:
-python3.10 check_cd20_read.py
+python3.10 check_fd20_read.py
 
 The -h option will display a full list of options.
 '''
@@ -84,7 +84,7 @@ def getReplyDatagram(destination) :
 def check():
     # set up the infrastructure
 
-    logger = logging.getLogger("CDI")
+    logger = logging.getLogger("FDI")
 
     # pull any early received messages
     olcbchecker.purgeMessages()
@@ -102,14 +102,14 @@ def check():
         if pipSet is None:
             logger.warning("Failed in setup, no PIP information received")
             return (2)
-        if not PIP.CONFIGURATION_DESCRIPTION_INFORMATION in pipSet :
-            logger.info("Passed - due to CDI protocol not in PIP")
+        if not PIP.FUNCTION_DESCRIPTION_INFORMATION in pipSet :
+            logger.info("Passed - due to FDI protocol not in PIP")
             return(0)
 
     address = 0
     LENGTH = 64
     content = []
-
+    
     retval = 0
     
     while not 0x00 in content : 
@@ -120,46 +120,46 @@ def check():
         ad4 = address & 0xFF
         
         # send an read datagran
-        request = [0x20, 0x43, ad1,ad2,ad3,ad4, LENGTH]
+        request = [0x20, 0x40, ad1,ad2,ad3,ad4, 0xFA, LENGTH]
         message = Message(MTI.Datagram, NodeID(olcbchecker.ownnodeid()), destination, request)
         olcbchecker.sendMessage(message)
 
         try :
             reply = getReplyDatagram(destination)
-
+            
             # if read failed, the check failed - no 0 read?
             if reply.data[1] == 0x58 :
-                logger.warning("Failure - CDI read operation failed.  Perhaps no terminating zero byte?")
+                logger.warning("Failure - FDI read operation failed.  Perhaps no terminating zero byte?")
                 retval = 3
                 break
-
+                
         except Exception as e:
             logger.warning(e)
             return (3)
         
-        content.extend(reply.data[6:]) 
+        content.extend(reply.data[7:]) 
         address = address+LENGTH
          
-    # here have CDI, perhaps plus a few zeros.
+    # here have FDI, perhaps plus a few zeros.
     # convert to string
     result = ""
     for one in content:  
         if one == 0 : break
         result = result+chr(one)
-
+    
     # check length against memory space definition.
     # first, get definition - a previous check made sure it's there
-    olcbchecker.sendMessage(Message(MTI.Datagram, NodeID(olcbchecker.ownnodeid()), destination, [0x20, 0x84, 0xFF]))
+    olcbchecker.sendMessage(Message(MTI.Datagram, NodeID(olcbchecker.ownnodeid()), destination, [0x20, 0x84, 0xFA]))
     reply = getReplyDatagram(destination)
     if reply.data[1] == 0x87 :
-        length = reply.data[3]*2568256*256+reply.data[4]*256*256+reply.data[5]*256+reply.data[6]+1 # datagram is highest address, doesn't include location 0 
+        length = reply.data[3]*2568256*256+reply.data[4]*256*256+reply.data[5]*256+reply.data[6]
     else :
-        logger.warning("Failure - address space 0xFF did not verify")
+        logger.warning("Failure - address space 0xFA did not verify")
         retval = 3
     if len(content) != length :
         logger.warning("Failure - length of data read {} does not match address space length {}".format(len(content), length))
         retval = 3
-        
+    
     # check starting line
     # although the Standard is more specific, we accept
     #    both ' and "
@@ -174,19 +174,20 @@ def check():
     quote = result[start+len(key)]  # could be ', could be "
     end = result.find(quote, start+len(key)+1)
     schema = result[start+len(key)+1:end]
-    if not schema.startswith("https://openlcb.org/schema/cdi/1") :
+    if not schema.startswith("https://openlcb.org/schema/fdi/1") :
         logger.error("Failure - unexpected schema location: "+schema)
         retval = 3
     
+ 
     # tempory write to file; this needs to be changed to in-memory
-    temp = open("tempCDI.xml", "w")
+    temp = open("tempFDI.xml", "w")
     temp.write(result)
     temp.close()
     
     try :
-        xmlschema.validate('tempCDI.xml', schema)
+        xmlschema.validate('tempFDI.xml', schema)
     except Exception as e:
-        logger.warning("Failure - CDI XML "+str(e))
+        logger.warning("Failure - FDI XML "+str(e))
         return 3
     
     if retval == 0 : logger.info("Passed")
