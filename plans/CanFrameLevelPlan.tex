@@ -124,7 +124,10 @@ and with no NodeID and checks for:
 
 It is an unspoken assumption of the Standard that a node will receive and
 process all CAN frames, even when the CAN bus is 100\% busy. (Though see Section 4
-of the Technical Note for discussion on this.)
+of the Technical Note for discussion on this.) 
+
+This check uses Message Network-level
+messages ant Event Transport messages.
 
 To confirm that, the checker:
 

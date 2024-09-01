@@ -21,7 +21,9 @@ def prompt() :
     print(" 1 Initialization checking")
     print(" 2 AME checking")
     print(" 3 Collision checking")
-    print(" 4 reserved bit checking")
+    print(" 4 Reserved bit checking")
+    print(" 5 Capacity checking")
+    print(" 6 Standard frame checking")
     print("  ")
     print(" q go back")
 
@@ -39,6 +41,12 @@ def checkAll(logger=logging.getLogger("FRAME")) :
 
     logger.info("Reserved bit checking")
     result += check_fr40_highbit.check()
+
+    logger.info("Capacity checking")
+    result += check_fr50_capacity.check()
+
+    logger.info("Standard frame checking")
+    result += check_fr60_standard.check()
 
     if result == 0 :
         logger.info("Success - all frame checks passed")
@@ -75,6 +83,14 @@ def main() :
             case "4" : 
                 print("\nReserved bit checking")
                 check_fr40_highbit.check()
+           
+            case "5" : 
+                print("\nCapacity checking")
+                check_fr50_capacity.check()
+           
+            case "6" : 
+                print("\nStandard frame checking")
+                check_fr60_standard.check()
            
             case  "a" :
                 checkAll(logger)
