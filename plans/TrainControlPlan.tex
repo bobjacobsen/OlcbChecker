@@ -92,24 +92,24 @@ It does not check that the train stops.
 
 \begin{enumerate}
 
-    \item Set the speed and direction to 0.75 reverse.
+    \item Set the speed and direction to 0.1 scale m/s reverse.
 
-    \item Query the speed and direction. Check for 0.75 reverse.
+    \item Query the speed and direction. Check for 0.1 scale m/s reverse.
 
     \item Send an emergency stop command to the train.
 
-    \item Query the speed and direction. Check for 0 reverse.
+    \item Query the speed and direction. Check for 0 scale m/s reverse.
 
-    \item Set the speed and direction to 0.75 forward.
+    \item Set the speed and direction to 0.1 scale m/s forward.
 
-    \item Query the speed and direction. Check for 0.75 forward.
+    \item Query the speed and direction. Check for 0.1 scale m/s forward.
 
-    \item Set the speed and direction to 0 forward.
+    \item Set the speed and direction to 0 scale m/s forward.
 
 \end{enumerate}
 
 In any case, even if the earlier checks failed, end by setting the speed 
-and direction to 0 forward.
+and direction to 0 scale m/s forward.
 
 \subsection{Check Global Emergency Stop}
 
@@ -118,26 +118,26 @@ It does not check that the train stops.
 
 \begin{enumerate}
 
-    \item Set the speed and direction to 0.75 reverse.
+    \item Set the speed and direction to 0.1 scale m/s reverse.
 
-    \item Query the speed and direction. Check for 0.75 reverse.
+    \item Query the speed and direction. Check for 0.1 scale m/s reverse.
 
     \item Produce an Emergency Stop All event.
 
-    \item Query the speed and direction. Check for 0.75 reverse.
+    \item Query the speed and direction. Check for 0.1 scale m/s reverse.
 
-    \item Set the speed and direction to 0.75 forward.
+    \item Set the speed and direction to 0.1 scale m/s forward.
 
-    \item Query the speed and direction. Check for 0.75 forward.
+    \item Query the speed and direction. Check for 0.1 scale m/s forward.
 
     \item Produce a Clear Emergency Stop event.
     
-    \item Set the speed and direction to 0 forward.
+    \item Set the speed and direction to 0 scale m/s forward.
 
 \end{enumerate}
 
 In any case, even if the earlier checks failed, end by setting the speed 
-and direction to 0 forward.
+and direction to 0 scale m/s forward.
 
 \subsection{Check Global Emergency Off}
 
@@ -146,26 +146,26 @@ It does not check that the train stops and that the train's outputs power off.
 
 \begin{enumerate}
 
-    \item Set the speed and direction to 0.75 reverse.
+    \item Set the speed and direction to 0.1 scale m/s reverse.
 
-    \item Query the speed and direction. Check for 0.75 reverse.
+    \item Query the speed and direction. Check for 0.1 scale m/s reverse.
 
     \item Produce an Emergency Off All event.
 
-    \item Query the speed and direction. Check for 0.75 reverse.
+    \item Query the speed and direction. Check for 0.1 scale m/s reverse.
 
-    \item Set the speed and direction to 0.75 forward.
+    \item Set the speed and direction to 0.1 scale m/s forward.
 
-    \item Query the speed and direction. Check for 0.75 forward.
+    \item Query the speed and direction. Check for 0.1 scale m/s forward.
 
     \item Produce a Clear Emergency Off event.
     
-    \item Set the speed and direction to 0 forward.
+    \item Set the speed and direction to 0 scale m/s forward.
 
 \end{enumerate}
 
 In any case, even if the earlier checks failed, end by setting the speed 
-and direction to 0 forward.
+and direction to 0 scale m/s forward.
 
 \subsection{Check memory spaces}
 
@@ -247,15 +247,15 @@ This assumes that the node being checked has not been reserved by another node.
 \begin{enumerate}
 
     \item Send a Train Control Management Reserve command
-    \item Check for a Train Control Management Reserve response with OK in the flags.
+    \item Check for a Train Control Management Reserve response with an OK code in the flags.
 
     \item Send a Train Control Management Release command.  No response is expected.
 
     \item Send a Train Control Management Reserve command
-    \item Check for a Train Control Management Reserve response with OK in the flags.
+    \item Check for a Train Control Management Reserve response with an OK code in the flags.
 
     \item Send a Train Control Management Reserve command
-    \item Check for a Train Control Management Reserve response with fail in the flags.
+    \item Check for a Train Control Management Reserve response with a fail code in the flags.
     
     \item Send a Train Control Management Release command.  No response is expected.
 
