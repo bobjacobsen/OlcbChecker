@@ -109,6 +109,8 @@ def check():
     address = 0
     LENGTH = 64
     content = []
+
+    retval = 0
     
     while not 0x00 in content : 
     
@@ -124,6 +126,13 @@ def check():
 
         try :
             reply = getReplyDatagram(destination)
+
+            # if read failed, the check failed - no 0 read?
+            if reply.data[1] == 0x58 :
+                logger.warning("Failure - CDI read operation failed.  Perhaps no terminating zero byte?")
+                retval = 3
+                break
+
         except Exception as e:
             logger.warning(e)
             return (3)
@@ -138,19 +147,38 @@ def check():
         if one == 0 : break
         result = result+chr(one)
     
+    # check starting line
+    # although the Standard is more specific, we accept
+    #    both ' and "
+    #    optional attributes, like encoding, after the initial version attribute
+    if not result.translate(str.maketrans("'",'"')).startswith('<?xml version="1.0"') :
+        logger.warning("Failure - First line not correct")
+        retval = 3
+        
+    # retrieve schema name and check
+    key = "xsi:noNamespaceSchemaLocation="
+    start = result.find(key)
+    quote = result[start+len(key)]  # could be ', could be "
+    end = result.find(quote, start+len(key)+1)
+    schema = result[start+len(key)+1:end]
+    if not schema.startswith("https://openlcb.org/schema/cdi/1") :
+        logger.error("Failure - unexpected schema location: "+schema)
+        retval = 3
+    
     # tempory write to file; this needs to be changed to in-memory
     temp = open("tempCDI.xml", "w")
     temp.write(result)
     temp.close()
     
     try :
-        xmlschema.validate('tempCDI.xml', 'cdi.xsd')
+        xmlschema.validate('tempCDI.xml', schema)
     except Exception as e:
         logger.warning("Failure - CDI XML "+str(e))
         return 3
     
-    logger.info("Passed")
-    return 0
+    if retval == 0 : logger.info("Passed")
+    else : logger.info("Failed, see above")
+    return retval
 
 if __name__ == "__main__":
     sys.exit(check())
