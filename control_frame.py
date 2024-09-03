@@ -12,6 +12,8 @@ import check_fr10_init
 import check_fr20_ame
 import check_fr30_collide
 import check_fr40_highbit
+import check_fr50_capacity
+import check_fr60_standard
 
 import subprocess
 
