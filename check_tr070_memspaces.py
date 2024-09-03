@@ -100,7 +100,7 @@ def check():
             logger.warning ("Failed in setup, no PIP information received")
             return (2)
         if not PIP.MEMORY_CONFIGURATION_PROTOCOL in pipSet :
-            logger.info("Passed - due to Memory Configuration protocol not in PIP")
+            logger.info("Passed - due to Train Control protocol not in PIP")
             return(0)
 
     # For each of these spaces, will sent a "Get Address Space Information Command" and check reply
