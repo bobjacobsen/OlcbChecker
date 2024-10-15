@@ -11,6 +11,8 @@ The -h option will display a full list of options.
 import sys
 import logging
 
+import olcbchecker
+
 from openlcb.nodeid import NodeID
 from openlcb.message import Message
 from openlcb.mti import MTI

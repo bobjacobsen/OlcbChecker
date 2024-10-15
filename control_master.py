@@ -23,6 +23,9 @@ def prompt() :
     print(" 4 Datagram Transport checking")
     print(" 5 Memory Configuration checking")
     print(" 6 CDI checking")
+    print(" 7 Train Control checking")
+    print(" 8 Train Search checking")
+    print(" 9 FDI checking")
     print("  ")
     print(" a run all in sequence")
     print("  ")
@@ -44,6 +47,12 @@ def checkAll() :
     total += min(control_memory.checkAll(),1)
     import control_cdi
     total += min(control_cdi.checkAll(),1)
+    import control_traincontrol
+    total += min(control_traincontrol.checkAll(),1)
+    import control_trainsearch
+    total += min(control_trainsearch.checkAll(),1)
+    import control_fdi
+    total += min(control_fdi.checkAll(),1)
     
     if total > 0 :
         print ("\n{} sections had failures".format(total))
@@ -93,6 +102,18 @@ def main() :
             case "6" : 
                 import control_cdi
                 control_cdi.main()
+                       
+            case "7" : 
+                import control_traincontrol
+                control_traincontrol.main()
+                       
+            case "8" : 
+                import control_trainsearch
+                control_trainsearch.main()
+                       
+            case "9" : 
+                import control_fdi
+                control_fdi.main()
                        
             case "a" : 
                 checkAll()     

@@ -88,8 +88,8 @@ in section 6.3 of the Standard.
 
 \end{enumerate}
 
-(Should partial match on 0x1F2FFF exist?  0x2F1FFF? - Check that 3, 13 does not exist)
-(Ensure 12 exists; 0x0C check)
+(An additional check that 0x23 doesn't match would be good, but is there a good-enough way
+to ensure that a locomotive matching that number doesn't exist during the check?)
 
 \subsection{Reserved address values check}
 
@@ -98,6 +98,16 @@ This is checking the reserved values found in Table 2 of section 5.2 of the Stan
 Having 0xA through 0xE in a search nibble should result in no matches.
 
 \begin{enumerate}
+
+\item Ensure node with address 12 exists; may have been created in the previous check.
+
+    \begin{enumerate}
+    \item Send a search Identify Producer with search nibbles 0x12.FF.FF and 
+        Allocate, Exact, Address Only, Any/Default protocol 0xE0.
+
+    \item Wait up to one second for a reply.  A Producer Identified Valid for the same event ID
+        should be received.
+    \end{enumerate}
 
 \item Send a search Identify Producer with search nibbles 0x0B.FF.FF and 
     Allocate, Exact, Address Only, Any/Default protocol 0xE0.
@@ -113,6 +123,16 @@ This is checking the reserved values found in Table 4 of section 5.2 of the Stan
 Having reserved values in the protocol nibble should result in no matches.
 
 \begin{enumerate}
+
+\item Ensure node with address 12 exists; may have been created in the previous check.
+
+    \begin{enumerate}
+    \item Send a search Identify Producer with search nibbles 0x12.FF.FF and 
+        Allocate, Exact, Address Only, Any/Default protocol 0xE0.
+
+    \item Wait up to one second for a reply.  A Producer Identified Valid for the same event ID
+        should be received.
+    \end{enumerate}
 
 \item Send a search Identify Producer with search nibbles 0x12.FF.FF and 
     protocol byte Allocate plus reserved values 0xF0.

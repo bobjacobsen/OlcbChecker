@@ -75,15 +75,15 @@ the interaction is defined in section 6.3.
 
     \item Set F0 to on.
 
-    \item Query F0 and check for an "on" response.
+    \item Query F0 and check for an ``on'' response.
 
     \item Set F0 to off.
 
-    \item Query F0 and check for an "off" response.
+    \item Query F0 and check for an ``off'' response.
 
 \end{enumerate}
 
-In any case, even if the earlier checks failed, end by setting F0 to "off".
+In any case, even if the earlier checks failed, end by setting F0 to ``off''.
 
 \subsection{Check Emergency Stop}
 
@@ -172,10 +172,10 @@ and direction to 0 scale m/s forward.
 This section checks the existence and properties of the memory spaces defined in section 7
 of the Train Control Protocol Standard.
 
-Note that the 0xF9 space is optional.  An info message is issue if the 0xF9 space
+Note that the 0xF9 space is optional.  An info message is issued if the 0xF9 space
 is not present, but the check still passes.  The 0xFA space is required for the check to pass.
 
-This does not check the information in the 0xFA space defined by the 
+This does not check the content of the 0xFA space defined by the 
 Function Definition Information Standard.
 
 \begin{enumerate}
@@ -197,29 +197,35 @@ to enquire about the status of space 0xFA.
 This section assumes that the F0 function is available in the train node.
 The FDI is not used to confirm that.
 
-This section assumes that the 0xF9 memory space is available in the train node.
-If the 0xF9 space is marked as not present, the check passes.
+Note that the 0xF9 space is optional.  An info message is issued if the 0xF9 space
+is not present, but the check still passes.
 
 This uses the message definition from section 4.3 of the Standard 
 and the interaction defined in section 6.3.
 
 \begin{enumerate}
 
-    \item Set function 0 "on"
+    \item Set function 0 ``off'' with a Set Function command.
 
-    \item Check byte 0 in the 0xF9 memory space for a non-zero value.
+    \item Write byte 0 in the 0xF9 memory space to 1.
 
-    \item Write byte 0 in the 0xF9 memory space to zero.
-
-    \item Check that function 0 is "off".
+    \item Check that function 0 is ``on'' with a Query Function command.
 
 \end{enumerate}
+
+Note the language in the standard that says 
+``A Train Node representing a DCC locomotive ... may, 
+but is not required to provide the last written data upon a read command.''
+This prevents checking that a Set Function command changes the corresponding
+value in the F9 memory space.
 
 
 \subsection{Check Controller Configuration command and response}
 
 \begin{enumerate}
 
+    \item Send a Set Speed 0 to the node being checked.
+    
     \item Send a Train Control Assign Controller command with the checker's Node ID.
     \item Check for a Train Control Assign Controller reply with OK in the flags.
 
@@ -230,21 +236,16 @@ and the interaction defined in section 6.3.
     \item Send a Train Control Release Controller command
     \item Check for a Train Control Query Controller response with a zero Node ID
         in the Active Controller field.
-    
-    \item Send a Train Control Assign Controller command with the checker's Node ID.
-    \item Check for a Train Control Assign Controller reply with OK in the flags.
+
+    \item Send a Train Control Query Controller command
+    \item Check for a Train Control Query Controller response with zeros
+        in the Active Controller field.
 
 \end{enumerate}
 
-Note:  There needs to be additional checking of the Controller Changing Notify 
-    added here.
-
 In any case, including if some check fails, end by sending a Train Control Release
-    Controller command.
+Controller command.
 
-\subsection{Check Listener Configuration command and response}
-
-This section is still to be written.
 
 \subsection{Check Train Control Management command and response}
 
@@ -266,5 +267,10 @@ This assumes that the node being checked has not been reserved by another node.
     \item Send a Train Control Management Release command.  No response is expected.
 
 \end{enumerate}
+
+
+\subsection{Check Listener Configuration command and response}
+
+This section is still to be written.
 
 \end{document}  
