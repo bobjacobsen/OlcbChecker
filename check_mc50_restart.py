@@ -16,6 +16,9 @@ from openlcb.message import Message
 from openlcb.mti import MTI
 from openlcb.pip import PIP
 
+from openlcb.canbus.canframe import CanFrame
+from openlcb.canbus.controlframe import ControlFrame
+
 from queue import Empty
 
 import olcbchecker.setup
@@ -64,6 +67,14 @@ def check():
                 break
         except Empty:
             logger.warning("Failure - did not receive Initialization Complete")
+            
+            # is this a train node that doesn't come up again after reset until
+            # accessed?
+
+            # send an AME frame to get alias and possibly revive virtual node
+            frame = CanFrame(ControlFrame.AME.value, olcbchecker.setup.canLink.localAlias, destination.toArray())
+            olcbchecker.setup.sendCanFrame(frame)
+
             return 3
             
     logger.info("Passed")

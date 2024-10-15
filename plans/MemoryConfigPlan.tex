@@ -125,4 +125,10 @@ The checker sends a Reset/Reboot Command and then checks that a Node Initializat
 Complete message is received to indicate a reboot.  This may or may not have been
 preceded by a Datagram Received OK response.
 
+If a Node Initialization Complete message has not been received after a timeout,
+the checker sends an AME with the device being checked's node ID.  Some virtual node
+systems may need this as a prompt to recreate the virtual node.  The checker
+then waits for an AMR with the device being checked's node ID, followed by a 
+Node Initialization Complete message from that node.
+
 \end{document}  
