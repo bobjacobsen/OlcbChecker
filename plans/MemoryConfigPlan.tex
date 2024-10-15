@@ -56,7 +56,7 @@ the checker sends a Get Address Space Information Command datagram.  It then che
 \item That a Get Address Space Information Reply datagram is received,
 \item The reply datagram is at least eight bytes long,
 \item That the reply datagram refers to the same memory space as the request,
-\item That the reserved bits in byte 7 are zero.
+\item That the reserved bits in byte 7 are correct.
 \item That if the low bit of byte 7 is 1, there's a low address present in bytes 8-11.
 \end{enumerate}
 

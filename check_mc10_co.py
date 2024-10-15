@@ -123,7 +123,7 @@ def check():
         logger.warning ("Failure - improper command bits set")
         return (3)
     
-    if (reply.data[4]&0x0C) != 0 :
+    if (reply.data[4]&0xFE) != 0xE2 :
         logger.warning ("Failure - improper write bits set")
         return (3)
     
