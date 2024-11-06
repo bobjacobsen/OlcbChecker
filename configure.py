@@ -151,7 +151,11 @@ match (trace) :
         logger.setLevel(logging.DEBUG)
 
 # check that a connection has been configured
-if (devicename is None and hostname is None ) or (devicename is not None and hostname is not None) :
-    print ("Exactly one of host name and device name must be specified")
+if (devicename is None and hostname is None ) :
+    print ("Either the host address or the device name must be specified")
+    options()
+    sys.exit(2)
+if (devicename is not None and hostname is not None) :
+    print ("You can only specify the host address or the device name, not both")
     options()
     sys.exit(2)
