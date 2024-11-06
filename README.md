@@ -39,6 +39,12 @@ git clone https://github.com/bobjacobsen/python-openlcb.git
 ln -s python-openlcb/openlcb OlchChecker/openlcb
 ```
 
+If you want to connect to your OpenLCB network via a serial adapter, you need the `pyserial` module.  If you don't have that already, do
+
+```
+python3 -m pip install pyserial
+```
+
 The CDI and FDI checks require the `xmlschema` module.  If you don't have that already, do
 
 ```
@@ -47,4 +53,4 @@ python3 -m pip install xmlschema
 
 Output is done via the Python `logging` module.  The scripts are self-configuring. If you want special output formats or locations, configure the logging package before calling the specific tests.
 
-To configure this to your hardware, you can copy the `defaults.py` file to `localoverrides.py` and edit it with appropriate values.  Alternately you can run the `control_setup.py` script and provide the needed values interactively.
+To configure OlcbChecker for your hardware, you can copy the `defaults.py` file to `localoverrides.py` and edit it with appropriate values.  Alternately you can run the `control_setup.py` script and provide the needed values interactively.

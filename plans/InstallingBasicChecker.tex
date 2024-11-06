@@ -49,7 +49,7 @@ Expand the downloaded file in a suitable place.
 
 \subsection{Prerequisites}
 
-You need to have Python 3.10 installed to run the program. Consult your
+You need to have Python 3.10 or later installed to run the program. Consult your
 computer's documentation for how to install that.  Many computers already
 have it installed.
 
@@ -64,6 +64,14 @@ python3.10 -m pip install --editable python-openlcb
 \end{verbatim}
 This will create a python-openlcb directory containing the most recent version of the software
 and make that available as a `openlcb` Python module.
+
+If you want to connect to your OpenLCB network via a serial adapter, 
+the `pyserial' Python module must be installed. To do that,
+enter\footnote{This is the command for Linux nad MacOS; the Windows command may be different.}
+
+\begin{verbatim}
+python3.10 -m pip install pyserial
+\end{verbatim}
 
 To run the CDI checks, the `xmlschema' Python module must be installed. To do that,
 enter\footnote{This is the command for Linux nad MacOS; the Windows command may be different.}
