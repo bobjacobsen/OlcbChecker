@@ -62,7 +62,7 @@ def check():
         if alias != frame.header & 0xFFF :
             logger.warning ("failure - alias did not match in 2nd CID frame")
             return 3
-        if NodeID(frame.data) != NodeID(targetnodeid) :
+        if len(frame.data) != 0 :
             logger.warning ("Failure - 2nd CID shall not carry data")
             return 3
         cid2 = (frame.header & 0xFFF000) >> 12
@@ -74,7 +74,7 @@ def check():
         if alias != frame.header & 0xFFF :
             logger.warning ("failure - alias did not match in 3rd CID frame")
             return 3
-        if NodeID(frame.data) != NodeID(targetnodeid) :
+        if len(frame.data) != 0 :
             logger.warning ("Failure - 3rd CID shall not carry data")
             return 3
         cid3 = (frame.header & 0xFFF000) >> 12
@@ -86,7 +86,7 @@ def check():
         if alias != frame.header & 0xFFF :
             logger.warning ("failure - alias did not match in 4th CID frame")
             return 3
-        if NodeID(frame.data) != NodeID(targetnodeid) :
+        if len(frame.data) != 0 :
             logger.warning ("Failure - 4th CID shall not carry data")
             return 3
         cid4 = (frame.header & 0xFFF000) >> 12
@@ -118,7 +118,10 @@ def check():
             return 3
             
         if NodeID(nodeId) != NodeID(frame.data) :
-            logger.warning("Failure - Node ID mismatch:{} {}".format(NodeID(nodeId), NodeID(frame.data)))
+            logger.warning("Failure - Node ID mismatch in CID frames:{} {}".format(NodeID(nodeId), NodeID(frame.data)))
+            return 3
+        if NodeID(targetnodeid) != NodeID(frame.data) :
+            logger.warning("Failure - Node ID does not match target:{} {}".format(NodeID(nodeId), NodeID(targetnodeid)))
             return 3
         
     except Empty:
