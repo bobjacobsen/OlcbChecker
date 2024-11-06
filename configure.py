@@ -91,6 +91,8 @@ except getopt.GetoptError as err:
     print (str(err)) # will print something like "option -a not recognized"
     options()
     sys.exit(2)
+hostpresent = False
+devicepresent = False
 for opt, arg in opts:
     if opt in ("-h", "--help"):
         options()
@@ -107,6 +109,11 @@ for opt, arg in opts:
         targetnodeid = arg
     elif opt in ("-d", "--device"):
         hostname = None # only one
+        devicepresent = True
+        if hostpresent :
+            print ("You can only specify the host address or the device name, not both")
+            options()
+            sys.exit(2)
         devicename = arg
     elif opt in ("-o", "--ownnode"):
         ownnodeid = arg
@@ -117,6 +124,11 @@ for opt, arg in opts:
     elif opt in ("-a", "--address"):
         devicename = None # only one
         hostname = arg
+        hostpresent = True
+        if devicepresent :
+            print ("You can only specify the host address or the device name, not both")
+            options()
+            sys.exit(2)
         parts = arg.split(":")
         if len(parts) == 2:
             hostname = parts[0]
