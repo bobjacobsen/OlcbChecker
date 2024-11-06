@@ -22,6 +22,8 @@ def check():
 
     logger = logging.getLogger("FRAME")
 
+    targetnodeid = olcbchecker.setup.configure.targetnodeid
+
     timeout = 0.3
 
     olcbchecker.purgeFrames()
@@ -43,6 +45,9 @@ def check():
         if (frame.header & 0xFF_000_000) != 0x170_00_000 :
             logger.warning ("Failure - frame was not 1st CID frame")
             return 3
+        if len(frame.data) != 0 :
+            logger.warning ("Failure - 1st CID shall not carry data")
+            return 3
         cid1 = (frame.header & 0xFFF000) >> 12
         alias = frame.header & 0xFFF
         
@@ -57,6 +62,9 @@ def check():
         if alias != frame.header & 0xFFF :
             logger.warning ("failure - alias did not match in 2nd CID frame")
             return 3
+        if NodeID(frame.data) != NodeID(targetnodeid) :
+            logger.warning ("Failure - 2nd CID shall not carry data")
+            return 3
         cid2 = (frame.header & 0xFFF000) >> 12
     
         frame = olcbchecker.getFrame()
@@ -65,6 +73,9 @@ def check():
             return 3
         if alias != frame.header & 0xFFF :
             logger.warning ("failure - alias did not match in 3rd CID frame")
+            return 3
+        if NodeID(frame.data) != NodeID(targetnodeid) :
+            logger.warning ("Failure - 3rd CID shall not carry data")
             return 3
         cid3 = (frame.header & 0xFFF000) >> 12
     
@@ -75,6 +86,9 @@ def check():
         if alias != frame.header & 0xFFF :
             logger.warning ("failure - alias did not match in 4th CID frame")
             return 3
+        if NodeID(frame.data) != NodeID(targetnodeid) :
+            logger.warning ("Failure - 4th CID shall not carry data")
+            return 3
         cid4 = (frame.header & 0xFFF000) >> 12
     
         # check for RID frame
@@ -82,6 +96,9 @@ def check():
         if (frame.header & 0xFF_FFF_000) != 0x10_700_000 :
             logger.warning ("Failure - frame was not RID frame")
             return 3
+        if len(frame.data) != 0 :
+            logger.warning ("RID frame shall not contain data")
+            return 3        
         if alias != frame.header & 0xFFF :
             logger.warning ("failure to match alias in RID frame")
             return 3

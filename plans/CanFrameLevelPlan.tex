@@ -27,9 +27,10 @@ go through a node reservation sequence.
 
 \begin{enumerate}
 \item All frames carry the same source alias
-\item The sequence of four RID frames, a CID frame, and AMD frame are sent
-\item The Node ID in the RID frames matches the Node ID in the AMD frame
-\item That the Node ID matches that of the node being checked
+\item The sequence of four CID frames, a RID frame, and AMD frame are sent
+\item The Node ID in the four CID frames matches the Node ID in the AMD frame
+\item The CID frames and RID frame have no data content
+\item That the AMD Node ID matches that of the node being checked
 \item Neither the alias\footnote{See section 6.3 of the Standard} 
 nor the Node ID\footnote{See section 5.12 of the Unique Identifiers Standard.}
 is zero.
