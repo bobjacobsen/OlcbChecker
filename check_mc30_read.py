@@ -91,11 +91,13 @@ def sendAndCheckResponse(destination, request, length) :
         try :
             reply = getReplyDatagram(destination)
         except Exception as e:
+            logger = logging.getLogger("MEMORY")
             logger.warning(str(e))
             return (3)
         
         # check length of returned datagram
         if len(reply.data) != len(request) -1 + length :
+            logger = logging.getLogger("MEMORY")
             logger.warning("Failure - length was {}, expected {}".format(len(reply.data), len(request) -1 + length) )
             return 3
         
@@ -104,6 +106,7 @@ def sendAndCheckResponse(destination, request, length) :
         
         checkLen = len(request)-1
         if expectedReply[:checkLen] != reply.data[:checkLen] :
+            logger = logging.getLogger("MEMORY")
             logger.warning("Failure - header was {}, expected {}".format(reply.data[:checkLen]), expectedReply[:checkLen])
             return 3
             

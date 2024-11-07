@@ -88,19 +88,23 @@ def checkLockReply(destination, node, logger) :
     try :
         reply = getReplyDatagram(destination)
     except Exception as e:
+        logger = logging.getLogger("MEMORY")
         logger.warning (str(e))
         return (3)
     # check that the reply is OK
     if len(reply.data) < 8 :
+        logger = logging.getLogger("MEMORY")
         logger.warning ("Failure - reply was too short")
         return (3)
         
     if reply.data[0] != 0x20 or reply.data[1]!= 0x8A :
+        logger = logging.getLogger("MEMORY")
         logger.warning ("Failure - improper command set")
         return (3)
     
     # check for expected node ID
     if reply.data[2:] != node :
+        logger = logging.getLogger("MEMORY")
         logger.warning ("Failure - Unexpects node ID {}, expected {}".format(reply.data[2:], node))    
     # is OK
     return 0
