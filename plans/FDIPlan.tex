@@ -44,9 +44,11 @@ If they do not agree, the check fails.
 
 The check then compares the first two lines of the content against the 
 definition in section 5. 
-Any version of the CDI schema is accepted.
+The location of the schema in the xsi:noNamespaceSchemaLocation attribute 
+must match the Standard.
+Any valid version number for the FDI schema is accepted.
 
 The check then validates the content against the FDI XML Schema
-given in the xsi:noNamespaceSchemaLocation attribute.
+retrieved from the given FDI schema location.
 
 \end{document}  

@@ -129,12 +129,13 @@ def check():
             
             # if read failed, the check failed - no 0 read?
             if reply.data[1] == 0x58 :
-                logger.warning("Failure - FDI read operation failed.  Perhaps no terminating zero byte?")
-                retval = 3
+                logger.warning("Failure - FDI read operation reply indicates read failed. Perhaps no terminating zero byte?")
+                retval = retval+1
                 break
                 
         except Exception as e:
             logger.warning(e)
+            # this returns immediately because we can't continue
             return (3)
         
         content.extend(reply.data[7:]) 
@@ -155,10 +156,10 @@ def check():
         length = reply.data[3]*2568256*256+reply.data[4]*256*256+reply.data[5]*256+reply.data[6]
     else :
         logger.warning("Failure - address space 0xFA did not verify")
-        retval = 3
+        retval = retval+1
     if len(content) != length :
         logger.warning("Failure - length of data read {} does not match address space length {}".format(len(content), length))
-        retval = 3
+        retval = retval+1
     
     # check starting line
     # although the Standard is more specific, we accept
@@ -166,17 +167,17 @@ def check():
     #    optional attributes, like encoding, after the initial version attribute
     if not result.translate(str.maketrans("'",'"')).startswith('<?xml version="1.0"') :
         logger.warning("Failure - First line not correct")
-        retval = 3
+        retval = retval+1
         
     # retrieve schema name and check
     key = "xsi:noNamespaceSchemaLocation="
     start = result.find(key)
     quote = result[start+len(key)]  # could be ', could be "
     end = result.find(quote, start+len(key)+1)
-    schema = result[start+len(key)+1:end]
-    if not schema.startswith("https://openlcb.org/schema/fdi/1") :
-        logger.error("Failure - unexpected schema location: "+schema)
-        retval = 3
+    schemaLocation = result[start+len(key)+1:end]
+    if not schemaLocation.startswith("https://openlcb.org/schema/fdi/1") :
+        logger.error("Failure - unexpected schema location: "+schemaLocation)
+        retval = retval+1
     
  
     # tempory write to file; this needs to be changed to in-memory
@@ -185,13 +186,15 @@ def check():
     temp.close()
     
     try :
-        xmlschema.validate('tempFDI.xml', schema)
+        xmlschema.validate('tempFDI.xml', schemaLocation)
     except Exception as e:
         logger.warning("Failure - FDI XML "+str(e))
-        return 3
+        retval = retval+1
     
-    if retval == 0 : logger.info("Passed")
-    else : logger.info("Failed, see above")
+    if retval == 0 : 
+        logger.info("Passed")
+    else : 
+        logger.info("Failed {} checks, see above".format(str(retval)))
     return retval
 
 if __name__ == "__main__":
