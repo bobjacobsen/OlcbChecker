@@ -176,11 +176,16 @@ There are currently two ways to connect the program to your OpenLCB network:
 \item Via a GridConnect-format TCP/IP connection.
 \end{enumerate}
 
+Note:  Some checks involve resetting the node being checked.
+If you're using a GridConnect-format TCP/IP connection, this will break the
+connection and cause those checks to fail.  If it's possible to do so, it's
+better to run the checks using a USB-CAN adapter and a CAN cable.
+
 For a USB-CAN connector, define the devicename to be the address of the device in your computer,
 e.g. /dev/cu.usbmodemCC570001B1 or COM7.
 
 For a TCP/IP link, define the hostname to be the IP address or host name to be used
-for connecting.
+for connecting, e.g. 192.168.0.200 or localhost.
 
 You must specify one or the other of hostname and device name, but not both.
 When you enter one, the other will be set to None.
@@ -197,20 +202,6 @@ Do you want to save the new settings? (y/n)
  >> y
 Stored
 Quit and restart the program to put them into effect
-
-OpenLCB checking program
- s Setup
-
- 0 Frame Transport checking
- 1 Message Network checking
- 2 SNIP checking
- 3 Event Transport checking
- 4 Datagram Transport checking
- 5 Memory Configuration checking
- 6 CDI checking
-
- q  Quit
->>
 \end{verbatim}
 
 Quit and restart the program to put your changes into effect.
@@ -255,7 +246,13 @@ OpenLCB checking program
  3 Event Transport checking
  4 Datagram Transport checking
  5 Memory Configuration checking
- 6 CDI checking
+ 6 Configuration Definition Information (CDI) checking
+ 7 Train Control checking
+ 8 Train Search checking
+ 9 Function Definition Information (FDI) checking
+  
+ a Run all in sequence
+ 
 \end{verbatim}
 
 It's generally best to run them in order, as issues flagged by earlier
@@ -295,7 +292,7 @@ There are several kinds of Python scripts in the package.
 \begin{enumerate}
 \item Scripts named check\_*.py, which hold the checks for each specific step.
     The naming contention is e.g. check\_fr20\_ame.py which is the 2nd (20)
-    check of the frame level (fr) and somes some AME checking (ame).
+    check of the frame level (fr) and does some AME checking (ame).
     \footnote{The numbers are spaced by 10 to allow us to add new scripts in between.}
     These can be individually run e.g. to rapidly exercise a feature for debugging.
 \item Scripts name control\_*.py which hold the simple keyboard-oriented
