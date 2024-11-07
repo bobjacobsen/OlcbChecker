@@ -162,12 +162,15 @@ match (trace) :
     case _:
         logger.setLevel(logging.DEBUG)
 
-# check that a connection has been configured
-if (devicename is None and hostname is None ) :
-    print ("Either the host address or the device name must be specified")
-    options()
-    sys.exit(2)
-if (devicename is not None and hostname is not None) :
-    print ("You can only specify the host address or the device name, not both")
-    options()
-    sys.exit(2)
+# check that a connection has been configured unless told not to
+import builtins
+if (not hasattr(builtins, "olcbchecker_bypass_a_or_d_check")) or not builtins.olcbchecker_bypass_a_or_d_check:
+    # in this case, the  bypass_a_or_d_check hasn't been set or is False
+    if devicename is None and hostname is None :
+        print ("Either the host address or the device name must be specified")
+        options()
+        sys.exit(2)
+    if devicename is not None and hostname is not None :
+        print ("You can only specify the host address or the device name, not both")
+        options()
+        sys.exit(2)

@@ -33,8 +33,9 @@ def main() :
 
         if ('devicename' not in local_variables or local_variables['devicename'] == None) and ('hostname' not in local_variables or local_variables['hostname'] == None) :
             print("\nPlease provide either hostname or devicename")
-        print ("\nc change setting\nh help\nr return\n")
-        match input(">> ").lower() :
+        print ("\nc change setting\nh help\nq quit\n")
+        received = input(">> ").lower()
+        match received :
             case "c" :
                 variable = input("enter variable name\n>> ")
                 if variable == "" : continue # if you don't enter a variable, go back and avoid error
@@ -59,7 +60,9 @@ def main() :
                             else:
                                 f.write ('{} = "{}"\n'.format(s, local_variables.get(s)))                            
                         f.close()
-                        print("Stored\nQuit and restart the program to put them into effect")
+                        print("Stored\nPlease quit and restart the program to put them into effect")
+                        import sys
+                        sys.exit(0)
                     else :
                         print("Not stored\n")
                 return

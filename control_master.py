@@ -6,8 +6,6 @@ Top level of checking suite
 import sys
 import logging
 
-import olcbchecker.setup
-
 # We only import each specific option as it's 
 # invoked to reduce startup time and propagation of errors
 # during development
@@ -27,7 +25,7 @@ def prompt() :
     print(" 8 Train Search checking")
     print(" 9 Function Definition Information (FDI) checking")
     print("  ")
-    print(" a run all in sequence")
+    print(" a Run all in sequence")
     print("  ")
     print(" q  Quit")
     
@@ -61,9 +59,14 @@ def checkAll() :
     return total;
     
 def main() :
+    # do the setup, including argument parsing
+    import olcbchecker.setup
+
+    # if immediate running has been requested, do that
     if olcbchecker.setup.configure.runimmediate :
         return (checkAll())
         
+    # Otherwise, show the menu and process input
     '''
     loop to check against individual standards
     '''
@@ -124,6 +127,25 @@ def main() :
             
     return
 if __name__ == "__main__":
+    # check options to see if a connection is specified
+    import builtins
+    builtins.olcbchecker_bypass_a_or_d_check = True
+    import configure
+    
+    if configure.devicename is None and configure.hostname is None :
+        print ("With neither an address nor device specified, you can")
+        print ("only set the options, so we'll take you directly to")
+        print ("that menu.  You can restart with the -a or -d option")
+        print ("(or -h for additional help), or configure using the")
+        print ("following menu.")
+        print ("")
+        import control_setup
+        control_setup.main()
+        # can't continue without reset
+        sys.exit(0)
+        
+    # run the tests or show the menu
+    import olcbchecker
     result = main()
     olcbchecker.setup.interface.close()
     sys.exit(result)
