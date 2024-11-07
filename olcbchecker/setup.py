@@ -49,8 +49,12 @@ def receiveFrame(frame) :
 class ReportingCanLink (CanPhysicalLayerGridConnect) :
     def sendCanFrame(self, frame): 
         if trace >= 30 : print("   SL: "+str(frame) )
-        super().sendCanFrame(frame)
-
+        try :
+            super().sendCanFrame(frame)
+        except :
+            print ("Error sending CAN Frame, connection lost")
+            import sys
+            sys.exit(10)
 
 canPhysicalLayerGridConnect = ReportingCanLink(sendToSocket)
 canPhysicalLayerGridConnect.registerFrameReceivedListener(receiveFrame)
