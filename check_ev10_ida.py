@@ -61,7 +61,7 @@ def check():
             received = olcbchecker.getMessage() # timeout if no entries
             # is this a reply?
             if received.mti not in producerIdMTIs and received.mti not in consumerIdMTIs and received.mti != MTI.Producer_Consumer_Event_Report :
-                    logger.warning ("Failure - Unexpected message {}".format(received))
+                logger.warning ("Unexpected message {}, are extra nodes present?".format(received))
                 
             if destination != received.source : # check source in message header
                 logger.warning ("Failure - Unexpected source of reply message: {} {}".format(received, received.source))
