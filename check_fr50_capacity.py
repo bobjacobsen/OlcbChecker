@@ -78,6 +78,7 @@ def check():
             logger.warning ("Failure - Did not receive Verified Node ID reply for test 1")
             return(3)
 
+    olcbchecker.purgeMessages()
 
     # send 2nd test
     
@@ -106,6 +107,7 @@ def check():
             logger.warning ("Failure - Did not receive Verified Node ID reply for test 2")
             return(3)
 
+    olcbchecker.purgeMessages()
 
     # send 3rd test
     beforeMessage = Message(MTI.Identify_Consumer , NodeID(olcbchecker.ownnodeid()), destination, [0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01])
