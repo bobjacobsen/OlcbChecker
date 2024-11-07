@@ -42,8 +42,8 @@ def check():
     # Ensure that train node 12 exists
     # Send a search Identify Producer with search nibbles 0x12.FF.FF and 
     # Allocate, Exact, Address Only, Any/Default protocol 0xE0.
-    message = Message(MTI.Producer_Consumer_Event_Report , NodeID(olcbchecker.ownnodeid()), destination,
-                [0x09,0x00,0x99,0xFF,   0x12, 0xFF, 0xFF, 0xE0])
+    message = Message(MTI.Identify_Producer , NodeID(olcbchecker.ownnodeid()), destination,
+                [0x09,0x00,0x99,0xFF,   0xFF, 0xFF, 0x12, 0xE0])
     olcbchecker.sendMessage(message)
 
     try :
@@ -51,9 +51,9 @@ def check():
         # we expect a reply Producer Identified Valid
         while True :
             # if PIV, check that event ID has been produced
-            if received.mti is MTI.Producer_Identified_Valid :
+            if received.mti is MTI.Producer_Identified_Active :
                 eventID = EventID(received.data)
-                if eventID != [0x09,0x00,0x99,0xFF,   0x12, 0xFF, 0xFF, 0xE0] :
+                if eventID != EventID([0x09,0x00,0x99,0xFF,   0xFF, 0xFF, 0x12, 0xE0]) :
                     logger.warning ("Failure - PCER without Producer Identified: {}".format(eventID))
                     return(3)
                 else :
@@ -65,11 +65,13 @@ def check():
     except Empty:
         logger.warning ("Failure - Did not receive answer when creating node")
         return(3)
-        
+
+    olcbchecker.purgeMessages()
+
     # Send a search Identify Producer with search nibbles 0x12.FF.FF and 
     # protocol byte Allocate plus reserved values 0xF0.
-    message = Message(MTI.Producer_Consumer_Event_Report , NodeID(olcbchecker.ownnodeid()), destination,
-                [0x09,0x00,0x99,0xFF,   0x12, 0xFF, 0xFF, 0xF0])
+    message = Message(MTI.Identify_Producer , NodeID(olcbchecker.ownnodeid()), destination,
+                [0x09,0x00,0x99,0xFF,   0xFF, 0xFF, 0x12, 0xF0])
     olcbchecker.sendMessage(message)
 
     try :
@@ -79,11 +81,13 @@ def check():
         return(3)
     except Empty:
         pass
-        
+
+    olcbchecker.purgeMessages()
+      
     # Send a search Identify Producer with search nibbles 0x12.FF.FF and 
     # protocol byte Allocate plus reserved values 0xF8.
-    message = Message(MTI.Producer_Consumer_Event_Report , NodeID(olcbchecker.ownnodeid()), destination,
-                [0x09,0x00,0x99,0xFF,   0x12, 0xFF, 0xFF, 0xF8])
+    message = Message(MTI.Identify_Producer , NodeID(olcbchecker.ownnodeid()), destination,
+                [0x09,0x00,0x99,0xFF,   0xFF, 0xFF, 0x12, 0xF8])
     olcbchecker.sendMessage(message)
 
     try :
@@ -93,11 +97,13 @@ def check():
         return(3)
     except Empty:
         pass
-        
+    
+    olcbchecker.purgeMessages()
+    
     # Send a search Identify Producer with search nibbles 0x12.FF.FF and 
     #protocol byte Allocate plus reserved values 0xE3.
-    message = Message(MTI.Producer_Consumer_Event_Report , NodeID(olcbchecker.ownnodeid()), destination,
-                [0x09,0x00,0x99,0xFF,   0x12, 0xFF, 0xFF, 0xE3])
+    message = Message(MTI.Identify_Producer , NodeID(olcbchecker.ownnodeid()), destination,
+                [0x09,0x00,0x99,0xFF,   0xFF, 0xFF, 0x12, 0xE3])
     olcbchecker.sendMessage(message)
 
     try :

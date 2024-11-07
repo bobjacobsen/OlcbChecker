@@ -32,18 +32,18 @@ drop all virtual nodes and prepare the device for this check.
 
 \begin{enumerate}
 
-\item Send a search Identify Producer with search nibbles 0x12.FF.FF and 
+\item Send a search Identify Producer with search nibbles 0xFF.FF.12 and 
     not-Allocate, Exact, Address Only, Any/Default protocol 0x60.
     
 \item Wait one second for a reply.  There should not be one.
 
-\item Send a search Identify Producer with search nibbles 0x12.FF.FF and 
+\item Send a search Identify Producer with search nibbles 0xFF.FF.12 and 
     Allocate, Exact, Address Only, Any/Default protocol 0xE0.
 
 \item Wait up to one second for a reply.  A Producer Identified Valid for the same event ID
     should be received.
 
-\item Send a search Identify Producer with search nibbles 00x12.FF.FF and 
+\item Send a search Identify Producer with search nibbles 0xFF.FF.12 and 
     not Allocate, Exact, Address Only, Any/Default protocol 0x60.
 
 \item Wait up to one second for a reply.  A Producer Identified Valid for the same event ID
@@ -58,20 +58,11 @@ in section 6.3 of the Standard.
 
 \begin{enumerate}
 
-\item Ensure node with address 12 exists; may have been created in the previous check.
+\item Ensure node with address 123 exists; may have been created in the previous check.
 
     \begin{enumerate}
-    \item Send a search Identify Producer with search nibbles 0x12.FF.FF and 
+    \item Send a search Identify Producer with search nibbles 0xFF.F1.23 and 
         Allocate, Exact, Address Only, Any/Default protocol 0xE0.
-
-    \item Wait up to one second for a reply.  A Producer Identified Valid for the same event ID
-        should be received.
-    \end{enumerate}
-
-\item Search not-allocate for partial match on 2; should exist
-    \begin{enumerate}
-    \item Send a search Identify Producer with search nibbles 0x2F.FF.FF and 
-        not-Allocate, Exact, Address Only, Any/Default protocol 0x60.
 
     \item Wait up to one second for a reply.  A Producer Identified Valid for the same event ID
         should be received.
@@ -79,8 +70,17 @@ in section 6.3 of the Standard.
 
 \item Search not-allocate for partial match on 1; should exist
     \begin{enumerate}
-    \item Send a search Identify Producer with search nibbles 0x1F.FF.FF and 
-        not-Allocate, Exact, Address Only, Any/Default protocol 0x60.
+    \item Send a search Identify Producer with search nibbles 0xFF.FF.F1 and 
+        not-Allocate, not-Exact, Address Only, Any/Default protocol 0x20.
+
+    \item Wait up to one second for a reply.  A Producer Identified Valid for the same event ID
+        should be received.
+    \end{enumerate}
+
+\item Search not-allocate for partial match on 12; should exist
+    \begin{enumerate}
+    \item Send a search Identify Producer with search nibbles 0xFF.FF.12 and 
+        not-Allocate, not-Exact, Address Only, Any/Default protocol 0x20.
 
     \item Wait up to one second for a reply.  A Producer Identified Valid for the same event ID
         should be received.
@@ -102,14 +102,14 @@ Having 0xA through 0xE in a search nibble should result in no matches.
 \item Ensure node with address 12 exists; may have been created in the previous check.
 
     \begin{enumerate}
-    \item Send a search Identify Producer with search nibbles 0x12.FF.FF and 
+    \item Send a search Identify Producer with search nibbles 0xFF.FF.FF.12 and 
         Allocate, Exact, Address Only, Any/Default protocol 0xE0.
 
     \item Wait up to one second for a reply.  A Producer Identified Valid for the same event ID
         should be received.
     \end{enumerate}
 
-\item Send a search Identify Producer with search nibbles 0x0B.FF.FF and 
+\item Send a search Identify Producer with search nibbles 0xFF.FF.FC and 
     Allocate, Exact, Address Only, Any/Default protocol 0xE0.
 
 \item Wait one second for a reply.  There should not be one.
@@ -127,24 +127,24 @@ Having reserved values in the protocol nibble should result in no matches.
 \item Ensure node with address 12 exists; may have been created in the previous check.
 
     \begin{enumerate}
-    \item Send a search Identify Producer with search nibbles 0x12.FF.FF and 
+    \item Send a search Identify Producer with search nibbles 0xFF.FF.12 and 
         Allocate, Exact, Address Only, Any/Default protocol 0xE0.
 
     \item Wait up to one second for a reply.  A Producer Identified Valid for the same event ID
         should be received.
     \end{enumerate}
 
-\item Send a search Identify Producer with search nibbles 0x12.FF.FF and 
+\item Send a search Identify Producer with search nibbles 0xFF.FF.12 and 
     protocol byte Allocate plus reserved values 0xF0.
 
 \item Wait one second for a reply.  There should not be one.
 
-\item Send a search Identify Producer with search nibbles 0x12.FF.FF and 
+\item Send a search Identify Producer with search nibbles 0xFF.FF.12 and 
     protocol byte Allocate plus reserved values 0xF8.
 
 \item Wait one second for a reply.  There should not be one.
 
-\item Send a search Identify Producer with search nibbles 0x12.FF.FF and 
+\item Send a search Identify Producer with search nibbles 0xFF.FF.12 and 
     protocol byte Allocate plus reserved values 0xE3.
 
 \item Wait one second for a reply.  There should not be one.
