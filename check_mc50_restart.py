@@ -38,7 +38,11 @@ def check():
     ###############################
     # checking sequence starts here
     ###############################
-    
+
+    if olcbchecker.setup.configure.skip_interactive :
+        logger.info("Interactive test skipped")
+        return 0
+
     # check if PIP says this is present
     if olcbchecker.isCheckPip() : 
         pipSet = olcbchecker.gatherPIP(destination)
