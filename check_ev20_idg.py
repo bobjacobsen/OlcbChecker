@@ -59,12 +59,13 @@ def check():
     while True :
         try :
             received = olcbchecker.getMessage() # timeout if no entries
-            # is this a reply?
+            # is this a reply? - If not, silently ignore it
             if received.mti not in producerIdMTIs and received.mti not in consumerIdMTIs and received.mti != MTI.Producer_Consumer_Event_Report :
-                logger.warning ("Unexpected message {}, are extra nodes present?".format(received))
+                # logger.warning ("Unexpected {}, are extra nodes present?".format(received))
+                continue
                 
             if destination != received.source : # check source in message header
-                logger.info ("Unexpected source of reply message: {} {}".format(received, received.source))
+                # global request might get replies from other nodes; ignore those.
                 continue
 
             if received.mti in producerIdMTIs :
@@ -135,6 +136,7 @@ def check():
     return 0
 
 if __name__ == "__main__":
+    import olcbchecker
     result = check()
     olcbchecker.setup.interface.close()
     sys.exit(result)
