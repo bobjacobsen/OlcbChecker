@@ -21,14 +21,13 @@ def options() :
     #   TODO finish this up
     print ("Available options are:")
     print ("")
-    print ("-h, --help print this message")
-    print ("")
+    print ("-h, --help print this message and quit")
+    print ("-v, --version print version information")
     print ("-a, --address followed by a host[:port] IP address for GridConnect access.")
     print ("                This is mutually exclusive with the -d --device option")
     print ("-d, --device followed by a serial port device name.")
     print ("                This is mutually exclusive with the -h --hostname option")
     print ("-t, --targetnode followed by a nodeID for the device being checked in 01.23.45.67.89.0A form")
-    print ("")
     print ("-r, --run run the tests instead of presenting a menu")
     print ("")
     print ("Less frequently needed:")
@@ -85,7 +84,7 @@ import getopt, sys
 runimmediate = False
 
 try:
-    opts, remainder = getopt.getopt(sys.argv[1:], "d:n:o:t:T:a:pPhiIr", ["host=", "device=", "ownnode=", "targetnode=", "trace=", "help"])
+    opts, remainder = getopt.getopt(sys.argv[1:], "d:n:o:t:T:a:pPhiIrv", ["host=", "device=", "ownnode=", "targetnode=", "trace=", "help", "version"])
 except getopt.GetoptError as err:
     # print help information and exit:
     print (str(err)) # will print something like "option -a not recognized"
@@ -97,6 +96,9 @@ for opt, arg in opts:
     if opt in ("-h", "--help"):
         options()
         sys.exit(0)
+    elif opt in ("-v", "--version"):
+        import print_git_info
+        # runs when imported
     elif opt == "-p":
         checkpip = False
     elif opt == "-P":
