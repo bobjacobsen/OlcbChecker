@@ -3,7 +3,6 @@
 # print the git identification for the current code, if any
 import subprocess
 
-# we log to 'warning' because the default logging does not display info level
 import logging
 
 logger = logging.getLogger("OLCBCHECKER")
@@ -30,6 +29,6 @@ else :
         logger.error("Unexpected error "+str(retval)+" retrieving tag for "+sha)
     else :
         if tag != "" :
-            logger.warning("OlcbChecker Tag: "+tag)
+            logger.info("OlcbChecker Tag: "+tag)
         else :
-            logger.warning("OlcbChecker Revision: "+sha)
+            logger.info("OlcbChecker Revision: "+sha)

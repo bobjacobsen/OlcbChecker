@@ -280,6 +280,31 @@ so that its start-up sequence can be checked for validity.
 It waits for about 30 seconds, and if it still hasn't seen anything, the
 check fails.
 
+\section{Logging}
+
+Output is defined by a `logging.conf' file in the main directory.
+
+By default, it logs to two places:
+\begin{enumerate}
+\item To the console, i.e. the terminal screen.  The logging level and format
+for this is defined by the `consoleHandler' and `consoleFormatter' clauses.
+By default, this shows INFO and above messages preceeded by the name of the 
+check module being run.
+\item To the `log.txt' file. This file is restarted every run, so it 
+contains only the most recent content. The logging level and format
+for this is defined by the `fileHandler' and `fileFormatter' clauses.
+By default, this shows INFO and above messages preceeded by the 
+time, the name of the check module being run, and the logging level of the message.
+\end{enumerate}
+
+The -T option can be used to override this.  Setting this option to
+various values sets the minimum logging level:
+\begin{itemize}
+\item 0 Only WARN and ERROR messages
+\item 10 INFO, WARN and ERROR messages.  This is the default set by the logging.conf file.
+\item 20 Includes also DEBUG level messages.
+\end{itemize}
+
 \section{Technical Information}
 
 Your selected defaults are stored in the localoverrides.py file.

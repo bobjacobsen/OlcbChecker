@@ -15,6 +15,7 @@ The sequence of operations is:
 
 import os
 import logging
+import logging.config
 
 def options() :
     print ("")
@@ -42,7 +43,7 @@ def options() :
     print ("-i skip interactive tests")
     print ("")
 
-# First get the defaults.py file,
+# To start option configuration, get the defaults.py file,
 try:
     import defaults
 except:
@@ -148,13 +149,11 @@ for opt, arg in opts:
             options()
             sys.exit(2)
 
+# configure the logger(s)
+logging.config.fileConfig('logging.conf', disable_existing_loggers=True)
+
 # configure logging based on trace level:  This is temporary
 logger = logging.getLogger()  # Logger
-logger_handler = logging.StreamHandler()  # Handler for the logger
-logger.addHandler(logger_handler)
-
-# First, generic formatter:
-logger_handler.setFormatter(logging.Formatter('%(name)s: %(message)s'))
 
 match (trace) :
     case 0:
