@@ -44,7 +44,7 @@ def check():
             logger.warning ("Failed in setup, no PIP information received")
             return (2)
         if not PIP.TRAIN_CONTROL_PROTOCOL in pipSet :
-            logger.info("Passed - due to Train Control not in PIP")
+            logger.info("Passed - due to Train Control protocol not in PIP")
             return(0)
 
     # pull any early received messages

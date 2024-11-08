@@ -94,17 +94,17 @@ def check():
     ###############################
     
     # check if PIP says this is present
-    pipSet = olcbchecker.gatherPIP(destination)  # needed for CDI check later
+    pipSet = olcbchecker.gatherPIP(destination)  # needed for FDI check later
     if olcbchecker.isCheckPip() : 
         if pipSet is None:
             logger.warning ("Failed in setup, no PIP information received")
             return (2)
-        if not PIP.MEMORY_CONFIGURATION_PROTOCOL in pipSet :
+        if not PIP.TRAIN_CONTROL_PROTOCOL in pipSet :
             logger.info("Passed - due to Train Control protocol not in PIP")
             return(0)
 
     # For each of these spaces, will sent a "Get Address Space Information Command" and check reply
-    spaces = [0xFA, 0xF9] # space required by memory _configuration_ standard
+    spaces = [0xFA, 0xF9] # space required by train control - 0xF9 is optional but checked
 
     for space in spaces: 
 
