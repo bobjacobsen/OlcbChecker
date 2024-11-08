@@ -43,6 +43,9 @@ def options() :
     print ("-i skip interactive tests")
     print ("")
 
+# configure the logger(s)
+logging.config.fileConfig('logging.conf', disable_existing_loggers=True)
+
 # To start option configuration, get the defaults.py file,
 try:
     import defaults
@@ -148,9 +151,6 @@ for opt, arg in opts:
                       file=sys.stderr)
             options()
             sys.exit(2)
-
-# configure the logger(s)
-logging.config.fileConfig('logging.conf', disable_existing_loggers=True)
 
 # configure logging based on trace level:  This is temporary
 logger = logging.getLogger()  # Logger
