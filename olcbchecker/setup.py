@@ -15,6 +15,9 @@ from openlcb.nodeid import NodeID
 from queue import Queue
 from queue import Empty
 
+import logging
+logger = logging.getLogger("TRACE")
+
 # get and process options
 import configure
 
@@ -33,26 +36,26 @@ else :
     interface.connect(configure.devicename)
     
 if trace >= 20 :
-    print("RM, SM are message level receive and send; RL, SL are link (frame) interface; RR, SR are raw socket interface")
+    logger.debug("RM, SM are message level receive and send; RL, SL are link (frame) interface; RR, SR are raw socket interface")
 
 def sendToSocket(string) :
-    if trace >= 40 : print("      SR: "+string.strip())
+    if trace >= 40 : logger.debug("      SR: "+string.strip())
     interface.send(string)
 
 def sendCanFrame(frame) :
     canPhysicalLayerGridConnect.sendCanFrame(frame)
 
 def receiveFrame(frame) : 
-    if trace >= 30 : print("   RL: "+str(frame) )
+    if trace >= 30 : logger.debug("   RL: "+str(frame) )
     frameQueue.put(frame)
 
 class ReportingCanLink (CanPhysicalLayerGridConnect) :
     def sendCanFrame(self, frame): 
-        if trace >= 30 : print("   SL: "+str(frame) )
+        if trace >= 30 : logger.debug("   SL: "+str(frame) )
         try :
             super().sendCanFrame(frame)
         except :
-            print ("Error sending CAN Frame, connection lost")
+            logger.error ("Error sending CAN Frame, connection lost")
             import sys
             sys.exit(10)
 
@@ -60,7 +63,7 @@ canPhysicalLayerGridConnect = ReportingCanLink(sendToSocket)
 canPhysicalLayerGridConnect.registerFrameReceivedListener(receiveFrame)
 
 def processMessage(msg):
-    if trace >= 20 : print("RM: {} from {} {}".format(msg, msg.source, msg.data))
+    if trace >= 20 : logger.debug("RM: {} from {} {}".format(msg, msg.source, msg.data))
     messageQueue.put(msg)
    
 canLink = CanLink(NodeID(configure.ownnodeid))
@@ -80,12 +83,12 @@ def receiveLoop() :
             input = interface.receive()
         except (ConnectionResetError, RuntimeError) :
             # connection broken, have to stop processing
-            print("\nLCC Connection Broken\n")
+            logger.info("LCC Connection Broken")
             break
         except :
-            print("\nLCC connection ends")
+            logger.warning("LCC connection ends")
             break
-        if trace >= 40 : print("      RR: "+input.strip())
+        if trace >= 40 : logger.debug("      RR: "+input.strip())
         # pass to link processor
         canPhysicalLayerGridConnect.receiveString(input)
 

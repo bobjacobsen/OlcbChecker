@@ -7,13 +7,21 @@ the setup and configure modules
 
 from queue import Empty
 import sys
+import logging
+import logging.config
+
+# configure the logger(s)
+logging.config.fileConfig('logging.conf', disable_existing_loggers=True)
+logging.getLogger("xmlschema").setLevel(logging.WARNING) # suppress verbosity
+
+logger = logging.getLogger("TRACE") # for logging in this file
 
 def trace() :
     return setup.configure.trace
 
 def sendMessage(message) :
     if trace() >= 20 :
-        print("SM: {} {}".format(message, message.data))
+        logger.debug("SM: {} {}".format(message, message.data))
     setup.canLink.sendMessage(message)
 
 def getMessage(timeout=0.8) :
@@ -85,7 +93,7 @@ def getTargetID(timeout=0.3) :
                     destination = received.source
             except Empty:
                 break
-        if trace() >= 20 : print ("ID of node being checked: ", destination)
+        if trace() >= 20 : logger.debug("ID of node being checked: ", destination)
     else: # was provided in configure
         destination = NodeID(targetnodeid())
     purgeMessages()
@@ -132,13 +140,13 @@ def gatherPIP(destination, timeout=0.3, always = False) :
                         received.data[1] << 16 | \
                         received.data[2] <<8|  \
                         received.data[3]
-                print("PIP reports:")
+                logger.info("PIP reports:")
                 list = PIP.contentsNamesFromInt(result)
                 for e in list :
-                    print (" ",e)
+                    logger.info (" ",e)
 
             purgeMessages()
             return PIP.setContentsFromList(received.data)
         except Empty:
-            print ("Failure - no reply to PIP request")
+            logger.warning ("Failure - no reply to PIP request")
             return None

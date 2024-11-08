@@ -15,7 +15,6 @@ The sequence of operations is:
 
 import os
 import logging
-import logging.config
 
 def options() :
     print ("")
@@ -42,9 +41,6 @@ def options() :
     print ("-I execute interactive tests")
     print ("-i skip interactive tests")
     print ("")
-
-# configure the logger(s)
-logging.config.fileConfig('logging.conf', disable_existing_loggers=True)
 
 # To start option configuration, get the defaults.py file,
 try:
@@ -153,7 +149,7 @@ for opt, arg in opts:
             sys.exit(2)
 
 # configure logging based on trace level:  This is temporary
-logger = logging.getLogger()  # Logger
+logger = logging.getLogger('root')  # Root Logger
 
 match (trace) :
     case 0:

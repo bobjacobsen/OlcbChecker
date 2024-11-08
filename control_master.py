@@ -53,9 +53,9 @@ def checkAll() :
     total += min(control_fdi.checkAll(),1)
     
     if total > 0 :
-        print ("\n{} sections had failures".format(total))
+        logger.info("{} sections had failures".format(total))
     else :
-        print ("\nAll sections passed")
+        logger.info("All sections passed")
     return total;
     
 def main() :
