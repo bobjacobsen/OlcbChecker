@@ -53,7 +53,7 @@ def getReplyDatagram(destination) :
                 raise Exception("Failure - Original Datagram rejected")
 
         except Empty:
-            raise Exception("Failure - no reply to original request")
+            raise Exception("Failure - no reply to read request")
     
     # now wait for the reply datagram
     while True :
