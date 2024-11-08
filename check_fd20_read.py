@@ -176,7 +176,7 @@ def check():
     end = result.find(quote, start+len(key)+1)
     schemaLocation = result[start+len(key)+1:end]
     if not schemaLocation.startswith("https://openlcb.org/schema/fdi/1") :
-        logger.error("Failure - unexpected schema location: "+schemaLocation)
+        logger.error("Failure - unexpected schema URL: "+schemaLocation)
         retval = retval+1
     
  
