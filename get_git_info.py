@@ -36,7 +36,7 @@ else :
             message = "OlcbChecker Revision: "+sha
 
         try :
-            import gitx
+            import git
             repo = git.Repo('.')
             diff = repo.git.diff('HEAD')
             if diff :
