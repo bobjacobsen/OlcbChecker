@@ -13,6 +13,7 @@ import logging.config
 # configure the logger(s)
 logging.config.fileConfig('logging.conf', disable_existing_loggers=True)
 logging.getLogger("xmlschema").setLevel(logging.WARNING) # suppress verbosity
+logging.getLogger("git.cmd").setLevel(logging.INFO) # suppress verbosity
 
 logger = logging.getLogger("TRACE") # for logging in this file
 
