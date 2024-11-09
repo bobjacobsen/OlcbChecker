@@ -29,18 +29,33 @@ Please feel free to add extra pages as needed.
     \item Does the device use standard CAN transceiver(s) from recognized vendors?
     \item Does the device use standard CAN controller(s) from recognized vendors?
     \item If the device has more than two LCC jacks, how are they to be used?
+    \item Is the device properly labeled with power sourcing and/or sinking current labels?
+        Are the current values listed on the label(s) correct?
+    \item Does the device obey the timing constraints listed in the Standard?
+    \item Does the device use or provide a DCC signal on the optional conductors?
 \end{enumerate}
 
 \section{CAN Frame Transfer Layer}
 \begin{enumerate}
+    \item Does the node transmit extended-format remote frames (frames with RTR set)?
+    \item How does the device signal the detection of a duplicate node ID?
+            (See section 6.2.6 of the Standard)
+    \item Does the device report changes in the CAN link status? 
+            (See section 6.2.7 of the Standard)
     \item Does the device use the recommended algorithm for generating alias values?
-    \begin{enumerate}
-        \item If not, please describe how the node meets the requirements of the 
-            CAN Frame Level Standard 
-    \end{enumerate}
+        \begin{enumerate}
+            \item If not, please describe how the node meets the requirements of the 
+                CAN Frame Level Standard section 6.3.
+        \end{enumerate}
 \end{enumerate}
 
 \section{Message Transport Layer}
+\begin{enumerate}
+    \item Standard section 3.5.4 requires that "OpenLCB nodes shall indicate an 
+        error when they detect an incoming message with a Source Node ID
+        equal to their own". How does this device do that?
+    \item Does the device meet the timing requirements in section 3.7 Delays and Timeouts?
+\end{enumerate}
 
 \section{Simple Node Information Protocol}
 \subsection{Simple Node Information Protocol Producers}
