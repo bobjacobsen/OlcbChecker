@@ -1,6 +1,6 @@
 # Makefile for converting tex to pdf
 
-INPUTS = $(wildcard *Plan.tex) PlanMaster.tex InstallingBasicChecker.tex
+INPUTS = $(wildcard *Plan.tex) PlanMaster.tex InstallingBasicChecker.tex ImplementorQuestionnaire.tex
 OUTPUTS = $(patsubst %.tex,%.pdf,$(INPUTS))
 
 # Bring all PDFs up to date
