@@ -97,7 +97,7 @@ for opt, arg in opts:
         options()
         sys.exit(0)
     elif opt in ("-v", "--version"):
-        import print_git_info
+        import get_git_info
         # runs when imported
     elif opt == "-p":
         checkpip = False

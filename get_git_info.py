@@ -2,6 +2,7 @@
 
 # print the git identification for the current code, if any
 import subprocess
+import git
 
 import logging
 
@@ -28,7 +29,18 @@ else :
         # unexpected error, sha in wrong format?
         logger.error("Unexpected error "+str(retval)+" retrieving tag for "+sha)
     else :
+        # check whether any tracked files are changed
         if tag != "" :
-            logger.info("OlcbChecker Tag: "+tag)
+            message = "OlcbChecker Tag: "+tag
         else :
-            logger.info("OlcbChecker Revision: "+sha)
+            message = "OlcbChecker Revision: "+sha
+
+        try :
+            import gitx
+            repo = git.Repo('.')
+            diff = repo.git.diff('HEAD')
+            if diff :
+                message = message + " with additional changes"
+        except :
+            logger.error("gitpython package not present, can't look for changes in local files")
+        logger.info(message)
