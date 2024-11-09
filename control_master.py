@@ -6,6 +6,9 @@ Top level of checking suite
 import sys
 import logging
 
+# do the setup, including argument parsing
+import olcbchecker.setup
+
 # We only import each specific option as it's 
 # invoked to reduce startup time and propagation of errors
 # during development
@@ -59,8 +62,6 @@ def checkAll() :
     return total;
     
 def main() :
-    # do the setup, including argument parsing
-    import olcbchecker.setup
 
     # if immediate running has been requested, do that
     if olcbchecker.setup.configure.runimmediate :
