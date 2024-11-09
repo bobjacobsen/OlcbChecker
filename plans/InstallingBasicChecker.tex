@@ -65,6 +65,14 @@ python3.10 -m pip install --editable python-openlcb
 This will create a python-openlcb directory containing the most recent version of the software
 and make that available as a `openlcb` Python module.
 
+In order for the -v option to check for changes to your local files, 
+you need to have the `gitpython' Python module installed. To do that,
+enter\footnote{This is the command for Linux nad MacOS; the Windows command may be different.}
+
+\begin{verbatim}
+python3.10 -m pip install gitpython
+\end{verbatim}
+
 If you want to connect to your OpenLCB network via a serial adapter, 
 the `pyserial' Python module must be installed. To do that,
 enter\footnote{This is the command for Linux nad MacOS; the Windows command may be different.}
@@ -114,6 +122,11 @@ OpenLCB checking program
  4 Datagram Transport checking
  5 Memory Configuration checking
  6 CDI checking
+ 7 Train Control checking
+ 8 Train Search checking
+ 9 Function Definition Information (FDI) checking
+  
+ a Run all in sequence
 
  q  Quit
 >>
@@ -149,12 +162,12 @@ enter variable name
 enter new value
 >> 02.01.57.00.04.9A
 The current settings are:
-  hostname = None
   portnumber = 12021
   devicename = None
-  targetnodeid = 02.01.57.00.04.9A
+  targetnodeid = None
   ownnodeid = 03.00.00.00.00.01
   checkpip = True
+  skip_interactive = False
   trace = 10
 
 c change setting
@@ -279,6 +292,10 @@ the Initialization checking requests that you restart the node
 so that its start-up sequence can be checked for validity.
 It waits for about 30 seconds, and if it still hasn't seen anything, the
 check fails.
+\footnote{The -i option will bypass the
+checks that require operator intervention.  
+You can also set this as a default via the `skip\_interactive' variable.
+}
 
 \section{Logging}
 
