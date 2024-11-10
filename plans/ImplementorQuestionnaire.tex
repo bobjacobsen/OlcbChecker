@@ -66,8 +66,27 @@ Please feel free to add extra pages as needed.
         information? (See Section 5.2 of the Standard.)
 \end{enumerate}
 
+\section{Event Transport Protocol}
+\begin{enumerate}
+    \item If there are default values configured for Event IDs in the device,
+        from what range are those allocated? Is that a range that has been
+        allocated to the manufacturer?
+    \item  If there are default values configured for Event IDs in the device,
+        are those different for every device produced? How is uniqueness
+        guaranteed?
+\end{enumerate}
 
-\section{CDI}
+\section{Datagram Transport Protocol}
+\begin{enumerate}
+    \item 
+\end{enumerate}
+
+\section{Memory Configuration Protocol}
+\begin{enumerate}
+    \item 
+\end{enumerate}
+
+\section{Configuration Definition Information (CDI)}
 \subsection{CDI Producers}
 
 \subsection{CDI Consumers}
@@ -77,5 +96,25 @@ Please feel free to add extra pages as needed.
     \item Does the device properly handle additional, unknown elements? 
             (See Section 6 of the Standard)
 \end{enumerate}
+
+\section{Train Control Protocol}
+\begin{enumerate}
+    \item The Standard section 7.1 says that
+        ``A Train Node representing a DCC locomotive ... may, 
+        but is not required to provide the last written data upon a read command.''.
+        Does this device provide the data in that case?
+\end{enumerate}
+
+\section{Train Search Protocol}
+\begin{enumerate}
+    \item Does this device participate in the Train Search Protocol, 
+            either by making search requests or by replying to them?
+\end{enumerate}
+
+\section{Function Definition Information (FDI)}
+\begin{enumerate}
+    \item 
+\end{enumerate}
+
 
 \end{document}  
