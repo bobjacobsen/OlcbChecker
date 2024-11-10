@@ -74,6 +74,8 @@ Please feel free to add extra pages as needed.
     \item  If there are default values configured for Event IDs in the device,
         are those different for every device produced? How is uniqueness
         guaranteed?
+    \item Does this device produce Events With Payload?  If so, when?
+    \item Does this item consume Events With Payload?  If so, when?
 \end{enumerate}
 
 \section{Datagram Transport Protocol}
@@ -83,7 +85,9 @@ Please feel free to add extra pages as needed.
 
 \section{Memory Configuration Protocol}
 \begin{enumerate}
-    \item 
+    \item Does the device implement sections 4.17 and 4.18 of the Standard?
+          If not, what does the device do when it receives a Lock/Reserve Command 
+          datagram?
 \end{enumerate}
 
 \section{Configuration Definition Information (CDI)}
@@ -95,6 +99,17 @@ Please feel free to add extra pages as needed.
             5.1 of the Standard?
     \item Does the device properly handle additional, unknown elements? 
             (See Section 6 of the Standard)
+\end{enumerate}
+
+\section{Firmware Upgrade}
+\begin{enumerate}
+    \item If the device implements that Firmware Upgrade protocol,
+            please provide a valid upgrade file.
+\end{enumerate}
+
+\section{Broadcast Time}
+\begin{enumerate}
+    \item 
 \end{enumerate}
 
 \section{Train Control Protocol}
@@ -113,7 +128,8 @@ Please feel free to add extra pages as needed.
 
 \section{Function Definition Information (FDI)}
 \begin{enumerate}
-    \item 
+    \item Does the FDI information from this device use the 
+        deprecated "space" and "origin" attributes?
 \end{enumerate}
 
 
