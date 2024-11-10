@@ -6,8 +6,12 @@ import git
 
 import logging
 
-logger = logging.getLogger("OLCBCHECKER")
+if __name__ == "__main__":
+    # set up logging
+    logging.basicConfig(format='%(message)s', level=logging.INFO)
 
+logger = logging.getLogger("OLCBCHECKER")
+   
 # first get present SHA
 sha = ""
 p = subprocess.Popen('git rev-parse HEAD', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
