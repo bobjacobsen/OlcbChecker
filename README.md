@@ -1,3 +1,5 @@
+We strongly recommend that you read the [installation manual](plans/InstallingBasicChecker.pdf) for information on how to install and run these scripts.
+
 Run these from this directory with e.g.
 ```
 python3.10 control_master.py
@@ -19,8 +21,6 @@ Files whose names start with "control_" form a basic line-oriented user interfac
 
 All of those can be individually run from the command line.
 
-An installation document is available as [plans/InstallingBasicChecker.pdf](plans/InstallingBasicChecker.pdf)
-
 These checks require Python 3.10 or later.
 
 These checks require the `openlcb` Python module. That's not yet available via PIP, though eventually it will be.  To get it now, you have to obtain a copy from GitHub.  See the [installation document](plans/InstallingBasicChecker.pdf) for more detail, but briefly you can:
@@ -32,7 +32,7 @@ python3.10 -m pip install --editable python-openlcb
 cd (where you put OlcbChecker)
 ```
 
-Alternately, you can check out the python-openlcb and create a symbolic link from it's included `openlcb` directory to your `OlcbChecker` directory:
+Alternately, you can check out the python-openlcb and create a symbolic link from its included `openlcb` directory to your `OlcbChecker` directory:
 ```
 cd (where you put OlcbChecker)
 git clone https://github.com/bobjacobsen/python-openlcb.git
@@ -51,6 +51,13 @@ The CDI and FDI checks require the `xmlschema` module.  If you don't have that a
 python3 -m pip install xmlschema
 ```
 
-Output is done via the Python `logging` module.  The scripts are self-configuring. If you want special output formats or locations, configure the logging package before calling the specific tests.
+The `-v` option requires the `gitpython` module.  If you don't have that already, do
+
+```
+python3 -m pip install gitpython
+```
+
+Output is done via the Python `logging` module.  The scripts are self-configuring. If you want special output formats or locations, configure the logging package before calling the specific tests. See the "Logging" section in the [installation manual](plans/InstallingBasicChecker.pdf).
 
 To configure OlcbChecker for your hardware, you can copy the `defaults.py` file to `localoverrides.py` and edit it with appropriate values.  Alternately you can run the `control_setup.py` script and provide the needed values interactively.
+See the [installation manual](plans/InstallingBasicChecker.pdf).

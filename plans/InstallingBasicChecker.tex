@@ -49,11 +49,28 @@ Expand the downloaded file in a suitable place.
 
 \subsection{Prerequisites}
 
-You need to have Python 3.10 or later installed to run the program. Consult your
-computer's documentation for how to install that.  Many computers already
-have it installed.
+\subsubsection{Python 3}
+You need to have Python 3.10 or later installed to run the program. 
+Many computers already have it installed. 
+You can check the version you have installed with:
+\begin{verbatim}
+python3 --version
+\end{verbatim}
+Note that there are two dashes in front of `version' there. If that's
+not 3.10 or a later version, consult your
+computer's documentation for how to install a recent version of Python. 
 
-You have to manually install the `openlcb` module by checking out the
+In some cases, including some recent macOS computers, Python 3.10 is installed but
+is not the default version.  You can check whether Python 3.10 is available
+as a non-default installation with:
+\begin{verbatim}
+python3.10 --version
+\end{verbatim}
+We use that syntax below to cover this case.  If you do have Python 3.10 or later 
+installed as a default, you can use `python3` where the examples below have `python3.10`.
+
+\subsubsection{openlcb Python Module}
+You have to manually install the `openlcb' module by checking out the
 python-openlcb repository from GitHub.
 \footnote{This will eventually be available via PIP, but not yet.}
 To do this:
@@ -65,25 +82,31 @@ python3.10 -m pip install --editable python-openlcb
 This will create a python-openlcb directory containing the most recent version of the software
 and make that available as a `openlcb` Python module.
 
-In order for the -v option to check for changes to your local files, 
-you need to have the `gitpython' Python module installed. To do that,
-enter\footnote{This is the command for Linux nad MacOS; the Windows command may be different.}
+Alternately, you can check out the python-openlcb 
+and create a symbolic link from its included `openlcb' directory to your `OlcbChecker' directory:
+\begin{verbatim}
+cd (where you put OlcbChecker)
+git clone https://github.com/bobjacobsen/python-openlcb.git
+ln -s python-openlcb/openlcb OlchChecker/openlcb
+\end{verbatim}
 
+\subsubsection{Other Python Modules}
+In order for OlcbChecker's -v option to check for changes to your local files, 
+you need to have the `gitpython' Python module installed. To do that,
+enter:
 \begin{verbatim}
 python3.10 -m pip install gitpython
 \end{verbatim}
 
 If you want to connect to your OpenLCB network via a serial adapter, 
 the `pyserial' Python module must be installed. To do that,
-enter\footnote{This is the command for Linux nad MacOS; the Windows command may be different.}
-
+enter:
 \begin{verbatim}
 python3.10 -m pip install pyserial
 \end{verbatim}
 
 To run the CDI checks, the `xmlschema' Python module must be installed. To do that,
-enter\footnote{This is the command for Linux nad MacOS; the Windows command may be different.}
-
+enter:
 \begin{verbatim}
 python3.10 -m pip install xmlschema
 \end{verbatim}
@@ -106,6 +129,29 @@ Depending on your Python installation, this simpler form may also work:
 ./control_master.py
 \end{verbatim}
 
+\section{Required Equipment}
+
+It's generally best to have the device being checked (DBC)
+as the only device on the OpenLCB network.
+
+If a direct CAN connection will be used,
+a supported USB-CAN adapter is required
+\footnote{The checker has been checked with the
+\href{https://www.rr-cirkits.com/description/LCC-usb-flyer.pdf}{RR-CirKits LCC buffer-USB}
+and the \href{https://www.sprog-dcc.co.uk/lcc-start-page}{SPROG DCC Ltd LCC-USB adapter}
+but others with similar operational characteristics will probably work.
+}.
+Connect the adapter to your computer as indicated in its instructions.
+Connect the adapter to the DBC using a single UTP cable
+and attach two CAN terminators.
+
+If a TCP/IP GridConnect connection will be used,
+configure the DBC to connect to the TCP/IP hub when restarted. Note that if
+the DBC is providing the hub for the connection and restarting the DBC
+breaks connections to that hub, several of the checks will indicate problems
+due to the connection breaking.
+
+Provide power to the DBC using its recommended equipment and connections.
 
 \section{Configuring the Checker Program}
 
@@ -180,8 +226,8 @@ r return
 Get the proper value from either a label on the device, or from its documentation.
 \footnote{Some checks, but not all, can determine the node ID themselves if you leave
     the value as None. This is only reliable if there's just one node on your OpenLCB
-    network.  Note that some OpenLCB hubs add a node of their own to the node
-    being checked.}
+    network.  Note that some OpenLCB hubs and serial adapters 
+    add a node of their own to the node being checked.}
 
 There are currently two ways to connect the program to your OpenLCB network:
 \begin{enumerate}
@@ -221,32 +267,6 @@ Quit and restart the program to put your changes into effect.
 
 \section{Running Checks}
 
-\subsection{Required Equipment}
-
-It's generally best to have the device being checked (DBC)
-as the only device on the OpenLCB network.
-
-If a direct CAN connection will be used,
-a supported USB-CAN adapter is required
-\footnote{The checker has been checked with the
-\href{https://www.rr-cirkits.com/description/LCC-usb-flyer.pdf}{RR-CirKits LCC buffer-USB}
-and the \href{https://www.sprog-dcc.co.uk/lcc-start-page}{SPROG DCC Ltd LCC-USB adapter}
-but others with similar operational characteristics will probably work.
-}.
-Connect the adapter to your computer as indicated in its instructions.
-Connect the adapter to the DBC using a single UTP cable
-and attach two CAN terminators.
-
-If a TCP/IP GridConnect connection will be used,
-configure the DBC to connect to the TCP/IP hub when restarted. Note that if
-the DBC is providing the hub for the connection and restarting the DBC
-breaks connections to that hub, several of the checks will indicate problems
-due to the connection breaking.
-
-Provide power to the DBC using its recommended equipment and connections.
-
-\subsection{The Checking Sequence}
-
 The checks are categorized by the Standard they primarily check:
 
 \begin{verbatim}
@@ -285,6 +305,11 @@ Frame Transport Standard checking
 \end{verbatim}
 
 ``Run all in sequence" is usually a good starting point.
+\footnote{
+    The `-r' option on the command line can be used to 
+    automatically run all the checks in a particular
+    control file instead of presenting the interactive prompts.
+}
 
 The checker may prompt you to reset/restart the node or to
 compare something to the node documentation. For example,
@@ -292,7 +317,7 @@ the Initialization checking requests that you restart the node
 so that its start-up sequence can be checked for validity.
 It waits for about 30 seconds, and if it still hasn't seen anything, the
 check fails.
-\footnote{The -i option will bypass the
+\footnote{The `-i' option will bypass the
 checks that require operator intervention.  
 You can also set this as a default via the `skip\_interactive' variable.
 }
@@ -305,8 +330,7 @@ By default, it logs to two places:
 \begin{enumerate}
 \item To the console, i.e. the terminal screen.  The logging level and format
 for this is defined by the `consoleHandler' and `consoleFormatter' clauses.
-By default, this shows INFO and above messages preceeded by the name of the 
-check module being run.
+By default, this shows INFO and above messages.
 \item To the `log.txt' file. This file is restarted every run, so it 
 contains only the most recent content. The logging level and format
 for this is defined by the `fileHandler' and `fileFormatter' clauses.
@@ -314,17 +338,22 @@ By default, this shows INFO and above messages preceeded by the
 time, the name of the check module being run, and the logging level of the message.
 \end{enumerate}
 
-The -T option can be used to override this.  Setting this option to
-various values sets the minimum logging level:
+The -T option can be used to override the default settings temporarily.  
+Setting this option to various values sets the minimum logging level:
 \begin{itemize}
-\item 0 Only WARN and ERROR messages
-\item 10 INFO, WARN and ERROR messages.  This is the default set by the logging.conf file.
-\item 20 Includes also DEBUG level messages.
+\item 0 - Only WARN and ERROR messages
+\item 10 -  INFO, WARN and ERROR messages.  This is the default set by the logging.conf file.
+\item 20 - The contents of level 10, plus DEBUG level messages. 
+        Messages to and from the OpenLCB network are included at this level.
+\item 30 - The contents of level 20, plus the contents of frames to and from the 
+        OpenLCB network.
+\item 40 - The contents of level 30, plus any physical-layer traces that are available.
 \end{itemize}
 
 \section{Technical Information}
 
 Your selected defaults are stored in the localoverrides.py file.
+
 The original values are stored in the defaults.py file.
 
 Should something corrupt the localoverrides.py file,
@@ -335,12 +364,16 @@ There are several kinds of Python scripts in the package.
 \item Scripts named check\_*.py, which hold the checks for each specific step.
     The naming contention is e.g. check\_fr20\_ame.py which is the 2nd (20)
     check of the frame level (fr) and does some AME checking (ame).
-    \footnote{The numbers are spaced by 10 to allow us to add new scripts in between.}
-    These can be individually run e.g. to rapidly exercise a feature for debugging.
-\item Scripts name control\_*.py which hold the simple keyboard-oriented
+    The numbers of the checks correspond to the sub-section number in the 
+    respective checking plan.
+    \footnote{The numbers are spaced by 10 to allow us to add additional
+        checking scripts for a particular subsection if needed someday.}
+    These can be individually run e.g. to rapidly exercise a specific feature for debugging.
+\item Scripts named control\_*.py which hold the simple keyboard-oriented
     program for running the check scripts.  control\_master.py is the
     main script, which invokes a control\_*.py script for each level of the
-    checking and setup.
+    checking and setup. The `-r' option can be used to automatically
+    run all the specific checks included in a particular control file.
 \item The olcbchecker directory and package contains general implementation
     files.
 \end{enumerate}
