@@ -144,7 +144,7 @@ def gatherPIP(destination, timeout=0.3, always = False) :
                 logger.info("PIP reports:")
                 list = PIP.contentsNamesFromInt(result)
                 for e in list :
-                    logger.info (" ",e)
+                    logger.info (" "+e)
 
             purgeMessages()
             return PIP.setContentsFromList(received.data)

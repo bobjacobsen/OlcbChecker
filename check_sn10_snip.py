@@ -138,6 +138,7 @@ def display(startIndex, endIndex, results, logger) :
     
 if __name__ == "__main__":
     result = check()
+    import olcbchecker
     olcbchecker.setup.interface.close()
     sys.exit(result)
     
