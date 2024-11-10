@@ -90,7 +90,7 @@ def check():
 
         except Empty:
             # no reply, error
-            logger.warning ("No reply for event: {}".format(event))
+            logger.warning ("Failure - No reply for event: {}".format(event))
             fail = True
         
     if fail : 

@@ -152,26 +152,33 @@ def check():
     # first, get definition - a previous check made sure it's there
     olcbchecker.sendMessage(Message(MTI.Datagram, NodeID(olcbchecker.ownnodeid()), destination, [0x20, 0x84, 0xFA]))
     reply = getReplyDatagram(destination)
+    
     if reply.data[1] == 0x87 :
         length = reply.data[3]*2568256*256+reply.data[4]*256*256+reply.data[5]*256+reply.data[6]
+        if len(content) != length :
+            logger.warning("Failure - length of data read {} does not match address space length {}".format(len(content), length))
+            retval = retval+1
     else :
         logger.warning("Failure - address space 0xFA did not verify")
         retval = retval+1
-    if len(content) != length :
-        logger.warning("Failure - length of data read {} does not match address space length {}".format(len(content), length))
-        retval = retval+1
     
+    if (result == "") :
+        logger.warning("Failure - no FDI information found - ending test")
+        return 1
+        
     # check starting line
     # although the Standard is more specific, we accept
     #    both ' and "
     #    optional attributes, like encoding, after the initial version attribute
     if not result.translate(str.maketrans("'",'"')).startswith('<?xml version="1.0"') :
-        logger.warning("Failure - First line not correct")
+        firstLine = result[0: result.find("\n")]
+        logger.warning("Failure - First line not correct: \""+firstLine+"\"")
         retval = retval+1
         
     # retrieve schema name and check
     key = "xsi:noNamespaceSchemaLocation="
     start = result.find(key)
+    print (result)
     quote = result[start+len(key)]  # could be ', could be "
     end = result.find(quote, start+len(key)+1)
     schemaLocation = result[start+len(key)+1:end]
