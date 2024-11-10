@@ -55,6 +55,7 @@ def checkAll() :
     import control_fdi
     total += min(control_fdi.checkAll(),1)
     
+    logger = logging.getLogger("OLCBCHECKER")
     if total > 0 :
         logger.info("{} sections had failures".format(total))
     else :
