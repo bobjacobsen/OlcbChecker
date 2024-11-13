@@ -166,7 +166,8 @@ def check():
     #    both ' and "
     #    optional attributes, like encoding, after the initial version attribute
     if not result.translate(str.maketrans("'",'"')).startswith('<?xml version="1.0"') :
-        logger.warning("Failure - First line not correct")
+        firstLine = result[0: result.find("\n")]
+        logger.warning("Failure - First line not correct: \""+firstLine+"\"")
         retval = retval+1
         
     # retrieve schema name and check
