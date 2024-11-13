@@ -25,8 +25,8 @@ This section checks the format of the reply message in Sections 4.2 and 5.1 of t
 It does this by issuing a Simple Node Information Request message, 
 accumulating the reply(s), and then checking:
     \begin{enumerate}
-    \item The message indicates its source is the DBC.
-    \item The message indicates its destination is the checking node.
+    \item The reply indicates its source is the DBC.
+    \item The reply indicates its destination is the checking node.
     \item The version byte at the start of the first section is either 1 or 4.
     \item The version byte at the start of the second section is either 1 or 2.
     \item There are exactly six zero bytes.
