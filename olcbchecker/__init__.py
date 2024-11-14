@@ -138,9 +138,11 @@ def gatherPIP(destination, timeout=0.3, always = False) :
             # success!
             if trace() >= 30 :
                 result = received.data[0] << 24 | \
-                        received.data[1] << 16 | \
-                        received.data[2] <<8|  \
-                        received.data[3]
+                        received.data[1] << 16 
+                if len(received.data) > 2 :
+                    result = result | (received.data[2] <<8)
+                if len(received.data) > 3 :
+                    result = result | (received.data[3])
                 logger.info("PIP reports:")
                 list = PIP.contentsNamesFromInt(result)
                 for e in list :
