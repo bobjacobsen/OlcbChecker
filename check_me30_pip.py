@@ -53,15 +53,17 @@ def check():
                 return(3)
         
             result = received.data[0] << 24 | \
-                        received.data[1] << 16 | \
-                        received.data[2] <<8|  \
-                        received.data[3]
+                    received.data[1] << 16 
+            if len(received.data) > 2 :
+                result = result | (received.data[2] <<8)
+            if len(received.data) > 3 :
+                result = result | (received.data[3])
             
             logger.info("PIP reports:")
             list = PIP.contentsNamesFromInt(result)
             for e in list :
                 logger.info ("  "+str(e))
-            if received.data[3] != 0 :
+            if (len(received.data) > 3) and (received.data[3] != 0) :
                 logger.warning ("Failure - Unexpected contents in 4th byte; 0x{:02X}".format(received.data[3]))
                 return(3)
             break
