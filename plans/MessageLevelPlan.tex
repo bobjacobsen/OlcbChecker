@@ -111,11 +111,13 @@ message in reply.
 
 This section checks the interaction in Standard section 3.5.4 Duplicate Node ID Discovery.
 
-It does this by sending a global Verify Node message with the source ID set to the DBC's ID.
+It does this by sending a global Verified Node ID message with the 
+identified node ID set to the DBC's ID. This message should have
+only been emitted by the DBC.
 
-It then checks for the well-known global event.  If it finds that, the check passes.
+The checker then looks for the well-known global event.  If it finds that, the check passes.
 If not, it prompts the operator to confirm that indication has been made 
-``using whatever indication technology is available'', e.g. via LEDs.
+``using whatever indication technology is available'', e.g. via LEDs or other form.
 
 \section{Frame Level Procedure}
 
