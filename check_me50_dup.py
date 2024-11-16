@@ -33,10 +33,6 @@ def check() :
     ###############################
     # checking sequence starts here
     ###############################
-
-    if olcbchecker.setup.configure.skip_interactive :
-        logger.info("Interactive test skipped")
-        return 0  
     
     # send a message with our alias but target's NodeID to see if it provokes a response
     message = Message(MTI.Verified_NodeID, NodeID(olcbchecker.ownnodeid()), None, destination.toArray()) # send from destination node
@@ -55,14 +51,28 @@ def check() :
                 
             break
         except Empty:
-            logger.warning ("Did not receive well-known event: Check for indication on node")
-            # this is a partial pass
-            return(0)
+            if olcbchecker.setup.configure.skip_interactive :
+                logger.warning ("Did not receive well-known event.")
+                logger.warning("    Interactive tests skipped, so not checking for indication on node.")
+                # fall through to pass result
+                break
+            else :
+                logger.warning ("Did not receive well-known event.")
+                logger.warning ("      Check for indication on node using some other form of indication. ")
+                logger.warning ("      Enter 'y' if present and 'n' if not.")
+                entry = input("  >> ").lower()
+                if entry == 'n' :
+                    # this is a failure
+                    logger.warning("Failure - no indication of duplicate Node ID")
+                    return (3)
+                # otherwise, fall though to a pass result
+                break
 
     logger.info("Passed")
     return 0
 
 if __name__ == "__main__":
     result = check()
+    import olcbchecker
     olcbchecker.setup.interface.close()
     sys.exit(result)
