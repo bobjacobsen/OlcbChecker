@@ -15,122 +15,146 @@ by getting specific implementation details from the device implementer.
 It should be filled out with details from the specific device being checked.
 It's divided into sections corresponding to the specific check plans.
 
+If the device does not implement a protocol, mark that section as "Not Applicable".
 Please feel free to add extra pages as needed.
 
 \section{Unique IDs}
-\begin{enumerate}
-    \item What is the Unique ID(s) of the node being checked?
-    \item Was the Unique ID(s) assigned from a range under the control of the implementor? Which?
-    \item Does the implementor assign different Unique IDs to individual nodes?
-\end{enumerate}
+    \begin{enumerate}
+        \item What is the Unique ID(s) of the device being checked?
+        \item Was the Unique ID(s) assigned from a range under the control of the implementor? 
+            Which?
+        \item Does the implementor assign different Unique IDs to individual nodes?
+    \end{enumerate}
 
 \section{CAN Physical Layer}
-\begin{enumerate}
-    \item Does the device use standard CAN transceiver(s) from recognized vendors?
-    \item Does the device use standard CAN controller(s) from recognized vendors?
-    \item If the device has more than two LCC jacks, how are they to be used?
-    \item Is the device properly labeled with power sourcing and/or sinking current labels?
-        Are the current values listed on the label(s) correct?
-    \item Does the device obey the timing constraints listed in the Standard?
-    \item Does the device use or provide a DCC signal on the optional conductors?
-\end{enumerate}
+    \begin{enumerate}
+        \item Does the device use standard CAN transceiver(s) from recognized vendors?
+        \item Does the device use standard CAN controller(s) from recognized vendors?
+        \item If the device has more than two LCC jacks, how are they to be used?
+        \item Is the device properly labeled with power sourcing and/or sinking current labels?
+            Are the current values listed on the label(s) correct?
+        \item Does the device obey the timing constraints listed in the Standard?
+        \item Does the device use or provide a DCC signal on the optional conductors?
+    \end{enumerate}
 
 \section{CAN Frame Transfer Layer}
-\begin{enumerate}
-    \item Does the node transmit extended-format remote frames (frames with RTR set)?
-    \item How does the device signal the detection of a duplicate node ID?
-            (See section 6.2.6 of the Standard)
-    \item Does the device report changes in the CAN link status? 
-            (See section 6.2.7 of the Standard)
-    \item Does the device use the recommended algorithm for generating alias values?
-        \begin{enumerate}
-            \item If not, please describe how the node meets the requirements of the 
-                CAN Frame Level Standard section 6.3.
-        \end{enumerate}
-\end{enumerate}
+    \begin{enumerate}
+        \item Does the node transmit extended-format remote frames (frames with RTR set)?
+        \item How does the device signal the detection of a duplicate node ID?
+                (See section 6.2.6 of the Standard)
+        \item Does the device report changes in the CAN link status? 
+                (See section 6.2.7 of the Standard)
+        \item Does the device use the recommended algorithm for generating alias values?
+            \begin{enumerate}
+                \item If not, please describe how the node meets the requirements of the 
+                    CAN Frame Level Standard section 6.3.
+            \end{enumerate}
+    \end{enumerate}
 
 \section{Message Transport Layer}
-\begin{enumerate}
-    \item Standard section 3.5.4 requires that "OpenLCB nodes shall indicate an 
-        error when they detect an incoming message with a Source Node ID
-        equal to their own". How does this device do that?
-    \item Does the device meet the timing requirements in section 3.7 Delays and Timeouts?
-\end{enumerate}
+    \begin{enumerate}
+        \item Standard section 3.5.4 requires that "OpenLCB nodes shall indicate an 
+            error when they detect an incoming message with a Source Node ID
+            equal to their own". How does this device do that?
+        \item Does the device meet the timing requirements in section 3.7 Delays and Timeouts?
+    \end{enumerate}
 
 \section{Simple Node Information Protocol}
-\subsection{Simple Node Information Protocol Producers}
-
-\subsection{Simple Node Information Protocol Consumers}
-\begin{enumerate}
-    \item Does the device properly decode future versions of the SNIP
-        information? (See Section 5.2 of the Standard.)
-\end{enumerate}
+    \subsection{Simple Node Information Protocol Providing Devices}
+        \begin{enumerate}
+            \item Does the device provide its SNIP information using
+                the deprecated multi-message form, or does it use
+                the preferred single-message form?
+        \end{enumerate}
+    \subsection{Simple Node Information Protocol Consumers}
+        \begin{enumerate}
+            \item Does the device properly decode future versions of the SNIP
+                information? (See Section 5.2 of the Standard.)
+        \end{enumerate}
 
 \section{Event Transport Protocol}
-\begin{enumerate}
-    \item If there are default values configured for Event IDs in the device,
-        from what range are those allocated? Is that a range that has been
-        allocated to the manufacturer?
-    \item  If there are default values configured for Event IDs in the device,
-        are those different for every device produced? How is uniqueness
-        guaranteed?
-    \item Does this device produce Events With Payload?  If so, when?
-    \item Does this item consume Events With Payload?  If so, when?
-\end{enumerate}
+    \begin{enumerate}
+        \item If there are default values configured for Event IDs in the device,
+            from what range are those allocated? Is that a range that has been
+            allocated to the manufacturer?
+        \item  If there are default values configured for Event IDs in the device,
+            are those different for every device produced? How is uniqueness
+            guaranteed?
+        \item Does this device produce Events With Payload?  If so, when?
+        \item Does this item consume Events With Payload?  If so, when?
+    \end{enumerate}
 
 \section{Datagram Transport Protocol}
-\begin{enumerate}
-    \item 
-\end{enumerate}
+    \begin{enumerate}
+        \item Does the device receive and process datagrams?
+            \begin{enumerate}
+                \item If so, please provide the contents of a datagram that
+                    will elicit a positive response, and the contents of a 
+                    datagram that will elicit a negative response.
+            \end{enumerate}
+    \end{enumerate}
 
 \section{Memory Configuration Protocol}
-\begin{enumerate}
-    \item Does the device implement sections 4.17 and 4.18 of the Standard?
-          If not, what does the device do when it receives a Lock/Reserve Command 
-          datagram?
-\end{enumerate}
+    \begin{enumerate}
+        \item Does the device implement sections 4.17 and 4.18 of the Standard?
+              If not, what does the device do when it receives a Lock/Reserve Command 
+              datagram?
+    \end{enumerate}
 
 \section{Configuration Definition Information (CDI)}
-\subsection{CDI Producers}
-
-\subsection{CDI Consumers}
-\begin{enumerate}
-    \item Does the device decode and display all the element types in section 
-            5.1 of the Standard?
-    \item Does the device properly handle additional, unknown elements? 
-            (See Section 6 of the Standard)
-\end{enumerate}
+    \subsection{CDI Providing Devices}
+    \subsection{CDI Using Devices}
+        \begin{enumerate}
+            \item Does the device decode and display all the element types in section 
+                    5.1 of the Standard? 
+            \item What does the device do with the optional "hint" elements?
+            \item Does the device properly handle additional, unknown elements? 
+                    (See Section 6 of the Standard)
+        \end{enumerate}
 
 \section{Firmware Upgrade}
-\begin{enumerate}
-    \item If the device implements that Firmware Upgrade protocol,
-            please provide a valid upgrade file.
-\end{enumerate}
+    \begin{enumerate}
+        \item If the device implements that Firmware Upgrade protocol,
+                please provide a valid upgrade file that will be used
+                during testing.
+    \end{enumerate}
 
 \section{Broadcast Time}
-\begin{enumerate}
-    \item 
-\end{enumerate}
+    \begin{enumerate}
+        \item Does the device use Broadcast Time information?
+            \begin{enumerate}
+                \item If so, which of the four defined clocks are used?
+                \item What does the device do if no fast clock node is available
+                    on the LCC network?
+            \end{enumerate}
+        \item Does the device provide Broadcast Time information?
+            \begin{enumerate}
+                \item If so, which of the four defined clocks are provided?
+            \end{enumerate}
+        
+    \end{enumerate}
 
 \section{Train Control Protocol}
-\begin{enumerate}
-    \item The Standard section 7.1 says that
-        ``A Train Node representing a DCC locomotive ... may, 
-        but is not required to provide the last written data upon a read command.''.
-        Does this device provide the data in that case?
-\end{enumerate}
+    \begin{enumerate}
+        \item The Standard section 7.1 says that
+            ``A Train Node representing a DCC locomotive ... may, 
+            but is not required to provide the last written data upon a read command.''.
+            Does this device provide the data in that case?
+    \end{enumerate}
 
 \section{Train Search Protocol}
-\begin{enumerate}
-    \item Does this device participate in the Train Search Protocol, 
-            either by making search requests or by replying to them?
-\end{enumerate}
+    \begin{enumerate}
+        \item Does this device participate in the Train Search Protocol
+            by making search requests?
+        \item Does this device participate in the Train Search Protocol
+            by replying to search requests?
+    \end{enumerate}
 
 \section{Function Definition Information (FDI)}
-\begin{enumerate}
-    \item Does the FDI information from this device use the 
-        deprecated "space" and "origin" attributes?
-\end{enumerate}
+    \begin{enumerate}
+        \item Does the FDI information from this device use the 
+            deprecated "space" and "origin" attributes?
+    \end{enumerate}
 
 
 \end{document}  
