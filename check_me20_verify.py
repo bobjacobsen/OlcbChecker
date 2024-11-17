@@ -31,7 +31,10 @@ def check():
     destination = olcbchecker.getTargetID()
 
     # Will we be checking PIP?
-    pipSet = olcbchecker.gatherPIP(destination)
+    pipSet = olcbchecker.gatherPIP(destination, always=True)
+    if pipSet is None:
+        logger.warning("Failure - PIP reply is required for this check")
+        return (1)
 
     ###############################
     # checking sequence starts here
@@ -61,14 +64,13 @@ def check():
                 return(3)
             
             # check against PIP
-            if pipSet is not None :
-                simple = PIP.SIMPLE_PROTOCOL in pipSet
-                if simple and received.mti == MTI.Verified_NodeID :
-                    logger.warning ("Failure - PIP says Simple Node but didn't receive correct MTI")
-                    return(3) 
-                elif (not simple) and received.mti == MTI.Verified_NodeID_Simple :
-                    logger.warning ("Failure - PIP says not Simple Node but didn't receive correct MTI")
-                    return(3) 
+            simple = PIP.SIMPLE_PROTOCOL in pipSet
+            if simple and received.mti == MTI.Verified_NodeID :
+                logger.warning ("Failure - PIP says Simple Node but didn't receive correct MTI")
+                return(3) 
+            elif (not simple) and received.mti == MTI.Verified_NodeID_Simple :
+                logger.warning ("Failure - PIP says not Simple Node but didn't receive correct MTI")
+                return(3) 
 
             break
         except Empty:
@@ -137,5 +139,6 @@ def check():
 
 if __name__ == "__main__":
     result = check()
+    import olcbchecker
     olcbchecker.setup.interface.close()
     sys.exit(result)

@@ -136,7 +136,7 @@ def check():
     return 0
 
 if __name__ == "__main__":
-    import olcbchecker
     result = check()
+    import olcbchecker
     olcbchecker.setup.interface.close()
     sys.exit(result)
