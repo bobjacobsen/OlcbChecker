@@ -89,7 +89,7 @@ def check():
                         return(3)
                 break
             except Empty:
-                logger.warning ("Failure - no reply to PIP request")
+                logger.warning ("Failure - no reply to sent Datagram")
                 return(3)
 
     logger.info("Passed")
