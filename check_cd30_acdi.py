@@ -191,7 +191,7 @@ def check():
 
     if snip_in_pip and acdi_in_pip and memory_config_present :
     
-        # send an SNIP request message to provoke response
+        # send a SNIP request message to provoke response
         message = Message(MTI.Simple_Node_Ident_Info_Request, NodeID(olcbchecker.ownnodeid()), destination)
         olcbchecker.sendMessage(message)
 
@@ -221,22 +221,22 @@ def check():
 
         # now check the results against previously acquired data
         if not manufacturerName == snip.manufacturerName :
-            logger.warning("Failure - SNIP and ACDI manufacturer name did not match")
+            logger.warning("Failure - SNIP ["+snip.manufacturerName+"] and ACDI manufacturer name ["+manufacturerName+"] did not match")
             return (3)
         if not modelName == snip.modelName :
-            logger.warning("Failure - SNIP and ACDI model name did not match")
+            logger.warning("Failure - SNIP ["+snip.modelName+"] and ACDI model name ["+modelName+"] did not match")
             return (3)
         if not hardwareVersion == snip.hardwareVersion :
-            logger.warning("Failure - SNIP and ACDI hardware Version did not match")
+            logger.warning("Failure - SNIP ["+snip.hardwareVersion+"] and ACDI hardware version ["+hardwareVersion+"] did not match")
             return (3)
         if not softwareVersion == snip.softwareVersion :
-            logger.warning("Failure - SNIP and ACDI software version did not match")
+            logger.warning("Failure - SNIP ["+snip.softwareVersion+"] and ACDI software version ["+softwareVersion+"] did not match")
             return (3)
         if not userProvidedNodeName == snip.userProvidedNodeName :
-            logger.warning("Failure - SNIP and ACDI user provided node name did not match")
+            logger.warning("Failure - SNIP ["+snip.userProvidedNodeName+"] and ACDI user node name ["+userProvidedNodeName+"] did not match")
             return (3)
-        if not manufacturerName == snip.manufacturerName :
-            logger.warning("Failure - SNIP and ACDI user provided description did not match")
+        if not userProvidedDescription == snip.userProvidedDescription :
+            logger.warning("Failure - SNIP ["+snip.userProvidedDescription+"] and ACDI user description ["+userProvidedDescription+"] did not match")
             return (3)
     
 
