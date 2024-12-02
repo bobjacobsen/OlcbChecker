@@ -28,7 +28,8 @@ def prompt() :
     print(" 8 Train Search checking")
     print(" 9 Function Definition Information (FDI) checking")
     print("  ")
-    print(" a Run all in sequence")
+    print(" t Run all in sequence without three train protocols")
+    print(" a Run all in sequence including train protocols")
     print("  ")
     print(" q  Quit")
     
@@ -61,7 +62,31 @@ def checkAll() :
     else :
         logger.info("All sections passed")
     return total;
+   
+def checkAllNoTrains() :
+    total = 0
+    import control_frame
+    total += min(control_frame.checkAll(),1)
+    import control_message
+    total += min(control_message.checkAll(),1)
+    import control_snip
+    total += min(control_snip.checkAll(),1)
+    import control_events
+    total += min(control_events.checkAll(),1)
+    import control_datagram
+    total += min(control_datagram.checkAll(),1)
+    import control_memory
+    total += min(control_memory.checkAll(),1)
+    import control_cdi
+    total += min(control_cdi.checkAll(),1)
     
+    logger = logging.getLogger("OLCBCHECKER")
+    if total > 0 :
+        logger.info("{} sections had failures".format(total))
+    else :
+        logger.info("All sections passed")
+    return total;
+ 
 def main() :
 
     # if immediate running has been requested, do that
@@ -120,6 +145,9 @@ def main() :
                 import control_fdi
                 control_fdi.main()
                        
+            case "t" : 
+                checkAllNoTrains()    
+                                  
             case "a" : 
                 checkAll()     
                                   
