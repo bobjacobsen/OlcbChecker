@@ -163,7 +163,7 @@ def check():
         retval = retval+1
     
     if (result == "") :
-        logger.warning("Failure - no FDI information found - ending test")
+        logger.warning("Failure - no FDI information found - ending check")
         return 1
         
     # check starting line

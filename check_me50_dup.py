@@ -53,7 +53,7 @@ def check() :
         except Empty:
             if olcbchecker.setup.configure.skip_interactive :
                 logger.warning ("Did not receive well-known event.")
-                logger.warning("    Interactive tests skipped, so not checking for indication on node.")
+                logger.warning("    Interactive checks skipped, so not checking for indication on node.")
                 # fall through to pass result
                 break
             else :

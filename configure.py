@@ -28,7 +28,7 @@ def options() :
     print ("-d, --device followed by a serial port device name.")
     print ("                This is mutually exclusive with the -h --hostname option")
     print ("-t, --targetnode followed by a nodeID for the device being checked in 01.23.45.67.89.0A form")
-    print ("-r, --run run the tests instead of presenting a menu")
+    print ("-r, --run run the checks instead of presenting a menu")
     print ("")
     print ("Less frequently needed:")
     print ("")
@@ -38,8 +38,8 @@ def options() :
     print ("-o, --ownnode followed by a nodeID for the checking device in 01.23.45.67.89.0A form")
     print ("-p do not check results against PIP bits")
     print ("-P do check results against PIP bits")
-    print ("-I execute interactive tests")
-    print ("-i skip interactive tests")
+    print ("-I execute interactive checks")
+    print ("-i skip interactive checks")
     print ("")
 
 # To start option configuration, get the defaults.py file,

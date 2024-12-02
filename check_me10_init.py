@@ -35,7 +35,7 @@ def check():
     ###############################
 
     if olcbchecker.setup.configure.skip_interactive :
-        logger.info("Interactive test skipped")
+        logger.info("Interactive check skipped")
         return 0  
 
     # prompt operator to restart node

@@ -18,7 +18,7 @@ from queue import Empty
 
 import olcbchecker.setup
 
-def sendTestMessages(beforeMessage, checkMessage, afterMesage):
+def sendCheckMessages(beforeMessage, checkMessage, afterMesage):
     BEFORE_COUNT = 300;
     AFTER_COUNT  = BEFORE_COUNT;
     
@@ -51,11 +51,11 @@ def check():
     # checking sequence starts here
     ###############################
 
-    # send 1st test
+    # send 1st check
     beforeMessage = Message(MTI.Producer_Consumer_Event_Report , NodeID(olcbchecker.ownnodeid()), destination, [0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01])
     checkMessage  = Message(MTI.Verify_NodeID_Number_Addressed  , NodeID(olcbchecker.ownnodeid()), destination)
     afterMesage   = Message(MTI.Producer_Consumer_Event_Report , NodeID(olcbchecker.ownnodeid()), destination, [0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01])
-    sendTestMessages(beforeMessage, checkMessage, afterMesage)
+    sendCheckMessages(beforeMessage, checkMessage, afterMesage)
     
     # check for reply
     while True :
@@ -66,26 +66,26 @@ def check():
             # this is a Verified Node ID message, success
 
             if destination != received.source : # check source in message header
-                logger.warning ("Failure - Unexpected source of reply message in test 1: {} {}".format(received, received.source))
+                logger.warning ("Failure - Unexpected source of reply message in check 1: {} {}".format(received, received.source))
                 return(3)
         
             if len(received.data) < 6:
-                logger.warning ("Failure - Unexpected length of reply message in test 1: {} {}".format(received, received.data))
+                logger.warning ("Failure - Unexpected length of reply message in check 1: {} {}".format(received, received.data))
                 return(3)
 
             break
         except Empty:
-            logger.warning ("Failure - Did not receive Verified Node ID reply for test 1")
+            logger.warning ("Failure - Did not receive Verified Node ID reply for check 1")
             return(3)
 
     olcbchecker.purgeMessages()
 
-    # send 2nd test
+    # send 2nd check
     
     beforeMessage = Message(MTI.Verify_NodeID_Number_Addressed , NodeID(olcbchecker.ownnodeid()), NodeID(olcbchecker.ownnodeid()), [0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01])
     checkMessage  = Message(MTI.Verify_NodeID_Number_Global  , NodeID(olcbchecker.ownnodeid()), None)
     afterMesage   = Message(MTI.Verify_NodeID_Number_Addressed , NodeID(olcbchecker.ownnodeid()), NodeID(olcbchecker.ownnodeid()), [0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01])
-    sendTestMessages(beforeMessage, checkMessage, afterMesage)
+    sendCheckMessages(beforeMessage, checkMessage, afterMesage)
     
     # check for reply
     while True :
@@ -99,21 +99,21 @@ def check():
                 continue # there might be other nodes replying to the global request
         
             if len(received.data) < 6:
-                logger.warning ("Failure - Unexpected length of reply message in test 2: {} {}".format(received, received.data))
+                logger.warning ("Failure - Unexpected length of reply message in check 2: {} {}".format(received, received.data))
                 return(3)
 
             break
         except Empty:
-            logger.warning ("Failure - Did not receive Verified Node ID reply for test 2")
+            logger.warning ("Failure - Did not receive Verified Node ID reply for check 2")
             return(3)
 
     olcbchecker.purgeMessages()
 
-    # send 3rd test
+    # send 3rd check
     beforeMessage = Message(MTI.Identify_Consumer , NodeID(olcbchecker.ownnodeid()), destination, [0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01])
     checkMessage  = Message(MTI.Verify_NodeID_Number_Global  , NodeID(olcbchecker.ownnodeid()), None)
     afterMesage   = Message(MTI.Identify_Consumer , NodeID(olcbchecker.ownnodeid()), destination, [0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01])
-    sendTestMessages(beforeMessage, checkMessage, afterMesage)
+    sendCheckMessages(beforeMessage, checkMessage, afterMesage)
     
     # check for reply
     while True :
@@ -127,12 +127,12 @@ def check():
                 continue # there might be other nodes replying to the global request
         
             if len(received.data) < 6:
-                logger.warning ("Failure - Unexpected length of reply message in test 3: {} {}".format(received, received.data))
+                logger.warning ("Failure - Unexpected length of reply message in check 3: {} {}".format(received, received.data))
                 return(3)
 
             break
         except Empty:
-            logger.warning ("Failure - Did not receive Verified Node ID reply for test 3")
+            logger.warning ("Failure - Did not receive Verified Node ID reply for check 3")
             return(3)
 
 

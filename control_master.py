@@ -146,7 +146,7 @@ if __name__ == "__main__":
         # can't continue without reset
         sys.exit(0)
         
-    # run the tests or show the menu
+    # run the checks or show the menu
     import olcbchecker
     result = main()
     olcbchecker.setup.interface.close()

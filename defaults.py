@@ -18,7 +18,7 @@ checkpip = True
 # False means the checks are run regardless of whether the protocol is included in PIP or not
 
 skip_interactive = False
-# True means that tests that _require_ human interaction are skipped when running all
+# True means that checks that _require_ human interaction are skipped when running all
 
 trace = 10
 # higher numbers are more output:

@@ -57,7 +57,7 @@ The `-v` option requires the `gitpython` module.  If you don't have that already
 python3 -m pip install gitpython
 ```
 
-Output is done via the Python `logging` module.  The scripts are self-configuring. If you want special output formats or locations, configure the logging package before calling the specific tests. See the "Logging" section in the [installation manual](plans/InstallingBasicChecker.pdf).
+Output is done via the Python `logging` module.  The scripts are self-configuring. If you want special output formats or locations, configure the logging package before calling the specific checks. See the "Logging" section in the [installation manual](plans/InstallingBasicChecker.pdf).
 
 To configure OlcbChecker for your hardware, you can copy the `defaults.py` file to `localoverrides.py` and edit it with appropriate values.  Alternately you can run the `control_setup.py` script and provide the needed values interactively.
 See the [installation manual](plans/InstallingBasicChecker.pdf).
