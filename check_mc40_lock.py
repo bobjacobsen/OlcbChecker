@@ -105,7 +105,9 @@ def checkLockReply(destination, node, logger) :
     # check for expected node ID
     if reply.data[2:] != node :
         logger = logging.getLogger("MEMORY")
-        logger.warning ("Failure - Unexpects node ID {}, expected {}".format(reply.data[2:], node))    
+        logger.warning ("Failure - Unexpects node ID {}, expected {}".format(reply.data[2:], node))  
+        return (3)  
+
     # is OK
     return 0
 
