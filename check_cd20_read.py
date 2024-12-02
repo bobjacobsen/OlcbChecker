@@ -157,7 +157,7 @@ def check():
     else :
         logger.warning("Failure - address space 0xFF did not verify")
         retval = retval+1
-    if len(content) != length :
+    if len(content)+1 != length :  # +1 for the null character we stripped
         logger.warning("Failure - length of data read {} does not match address space length {}".format(len(content), length))
         retval = retval+1
         
