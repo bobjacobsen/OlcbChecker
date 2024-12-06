@@ -15,7 +15,7 @@ by getting specific implementation details from the device implementer.
 It should be filled out with details from the specific device being checked.
 It's divided into sections corresponding to the specific check plans.
 
-If the device does not implement a protocol, mark that section as "Not Applicable".
+If the device does not implement a protocol, mark that section as ``Not Applicable''.
 Please feel free to add extra pages as needed.
 
 \section{Unique IDs}
@@ -54,9 +54,9 @@ Please feel free to add extra pages as needed.
 
 \section{Message Transport Layer}
     \begin{enumerate}
-        \item Standard section 3.5.4 requires that "OpenLCB nodes shall indicate an 
+        \item Standard section 3.5.4 requires that ``OpenLCB nodes shall indicate an 
             error when they detect an incoming message with a Source Node ID
-            equal to their own". How does this device do that?
+            equal to their own''. How does this device do that?
         \item Does the device meet the timing requirements in section 3.7 Delays and Timeouts?
     \end{enumerate}
 
@@ -104,11 +104,17 @@ Please feel free to add extra pages as needed.
 
 \section{Configuration Definition Information (CDI)}
     \subsection{CDI Providing Devices}
+        \begin{enumerate}
+            \item Does the device have an \xml{ACDI} element in the CDI that it provides?
+                If so, does it also provide separate definition elements for the
+                values in the ACDI?
+        \end{enumerate}
     \subsection{CDI Using Devices}
         \begin{enumerate}
             \item Does the device decode and display all the element types in section 
-                    5.1 of the Standard? 
-            \item What does the device do with the optional "hint" elements?
+                    5.1 of the Standard? If not, which does it not display
+                    and what does it to with those?
+            \item What does the device do with the optional ``hint'' elements?
             \item Does the device properly handle additional, unknown elements? 
                     (See Section 6 of the Standard)
         \end{enumerate}
@@ -155,7 +161,7 @@ Please feel free to add extra pages as needed.
 \section{Function Definition Information (FDI)}
     \begin{enumerate}
         \item Does the FDI information from this device use the 
-            deprecated "space" and "origin" attributes?
+            deprecated ``space'' and ``origin'' attributes?
     \end{enumerate}
 
 
