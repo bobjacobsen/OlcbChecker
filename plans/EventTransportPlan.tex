@@ -113,4 +113,20 @@ produce and consume by appropriate messages. This then checks:
 \item That any PCER messages that are sent show the DBC as their source.
 \end{enumerate}
 
+\subsection{Events With Payload}
+
+This section checks that PCER Events With Payload can be processed by 
+the node. Because there is no standard way to force an arbitrary
+node to produce or consume PCER Events With Payload, this only checks
+that the node can coexist with PCER Events With Payload on the network.
+
+\begin{enumerate}
+\item Produce a PCER Event with Payload of 4 bytes. Check that that node does not reinitialize.
+\item Produce a PCER Event with Payload of 8 bytes. Check that that node does not reinitialize.
+\item Produce a PCER Event with Payload of 12 bytes. Check that that node does not reinitialize.
+\item Produce a PCER Event with Payload of 16 bytes. Check that that node does not reinitialize.
+\item Produce a PCER Event with Payload of 20 bytes. Check that that node does not reinitialize.
+\item Produce a PCER Event with Payload of 24 bytes. Check that that node does not reinitialize.
+\end{enumerate}
+
 \end{document}  
