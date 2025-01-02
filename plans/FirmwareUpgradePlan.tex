@@ -40,13 +40,14 @@ At this time, only the datagram-based transfers are checked.
     node being checked.
 \item The checker confirms that the PIP Firmware Upgrade active bit is set.
 \item The checker uses Memory Write operations of 64 bytes to download the contents of the firmware file.
+    to memory space 0xEF.
 \item The checker resets the node being checked using a Memory Configuration 
     datagram command “Unfreeze” with an argument of Firmware Space 0xEF.    
     A Datagram Received reply may or many not be received in response.
 \item The checker waits up to 20 seconds for a Node Initialization Complete message from the 
     node being checked.
 \item The checker confirms that the PIP Firmware Upgrade active bit is reset.
-\item The checked uses SNIP to retrieve the software version and displays that for manual 
+\item The checker uses SNIP to retrieve the software version and displays that for manual 
     validation.
 \end{enumerate}
 
