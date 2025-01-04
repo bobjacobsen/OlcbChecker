@@ -53,7 +53,7 @@ First this check sends a Consumer Identified message for the 01:24AM  July 22, 2
 
 Then it sets the clock to 01:23 AM on July 22, 2023 with the rate set to 5X and the clock running.
 
-It then waits up to 30 seconds for the production of the 01;24AM Report Time Event.
+It then waits up to 30 seconds for the production of the 01:24AM Report Time Event.
 If the event is not received, or it contains the wrong contents, the check fails.
 
 \subsection{Startup Sequence checking}
@@ -64,7 +64,7 @@ The node being checked is manually restarted.
 
 The resulting message traffic is then checked for the required elements:
 \begin{enumerate}
-\item The Producer Range Identified and Consumer Range Identified messages, in either order.
+\item The relevant Producer Range Identified and Consumer Range Identified messages, in either order.
 \item A Clock Synchronization sequence as defined in section 6.3.
 \end{enumerate}
 
