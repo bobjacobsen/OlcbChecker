@@ -22,7 +22,7 @@ def options() :
     print ("Available options are:")
     print ("")
     print ("-h, --help print this message and quit")
-    print ("-v, --version print version information")
+    print ("-v, --version print version information and continue")
     print ("-a, --address followed by a host[:port] IP address for GridConnect access.")
     print ("                This is mutually exclusive with the -d --device option")
     print ("-d, --device followed by a serial port device name.")
