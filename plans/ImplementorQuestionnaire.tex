@@ -12,17 +12,18 @@ Some information about construction of the node being checked can't readily be o
 from active checks on the LCC bus. Some information is needed to make those active 
 checks effective.  This questionnaire is meant to deal with both of those
 by getting specific implementation details from the device implementer.
-It should be filled out with details from the specific device being checked.
-It's divided into sections corresponding to the specific check plans.
 
+This questionnaire should be filled out with details from the specific device being checked.
 If the device does not implement a protocol, mark that section as ``Not Applicable''.
+
+This is divided into sections corresponding to the specific check plans.
+
 Please feel free to add extra pages as needed.
 
 \section{Unique IDs}
     \begin{enumerate}
         \item What is the Unique ID(s) of the device being checked?
         \item Was the Unique ID(s) assigned from a range under the control of the implementor? 
-            Which?
         \item Does the implementor assign different Unique IDs to individual nodes?
     \end{enumerate}
 
@@ -32,9 +33,14 @@ Please feel free to add extra pages as needed.
         \item Does the device use standard CAN controller(s) from recognized vendors?
         \item If the device has more than two LCC jacks, how are they to be used?
         \item Is the device properly labeled with power sourcing and/or sinking current labels?
-            Are the current values listed on the label(s) correct?
+            \begin{enumerate}
+                \item Are the current values listed on the label(s) correct?
+            \end{enumerate}
         \item Does the device obey the timing constraints listed in the Standard?
         \item Does the device use or provide a DCC signal on the optional conductors?
+            \begin{enumerate}
+                \item If so, does the item have the correct markings?
+            \end{enumerate}
     \end{enumerate}
 
 \section{CAN Frame Transfer Layer}
@@ -79,10 +85,16 @@ Please feel free to add extra pages as needed.
             from what range are those allocated? Is that a range that has been
             allocated to the manufacturer?
         \item  If there are default values configured for Event IDs in the device,
-            are those different for every device produced? How is uniqueness
+            are those different for every device manufactured? How is uniqueness
             guaranteed?
-        \item Does this device produce Events With Payload?  If so, when?
-        \item Does this item consume Events With Payload?  If so, when?
+        \item Does this device produce Events With Payload?  
+            \begin{enumerate}
+                \item If so, when?
+            \end{enumerate}
+        \item Does this item consume Events With Payload?
+            \begin{enumerate}
+                \item If so, when?
+            \end{enumerate}
     \end{enumerate}
 
 \section{Datagram Transport Protocol}
@@ -105,6 +117,7 @@ Please feel free to add extra pages as needed.
 \section{Configuration Definition Information (CDI)}
     \subsection{CDI Providing Devices}
         \begin{enumerate}
+            \item Which version of the CDI schema does this node provide?
             \item Does the device have an \xml{ACDI} element in the CDI that it provides?
                 If so, does it also provide separate definition elements for the
                 values in the ACDI?
@@ -160,6 +173,7 @@ Please feel free to add extra pages as needed.
 
 \section{Function Definition Information (FDI)}
     \begin{enumerate}
+        \item Which version of the FDI schema does this node produce?
         \item Does the FDI information from this device use the 
             deprecated ``space'' and ``origin'' attributes?
     \end{enumerate}
