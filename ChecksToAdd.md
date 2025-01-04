@@ -1,6 +1,6 @@
 The following items should be added to check plans:
 
- - Add multi-PIP and multi-SNIP to message capacity check
+ - Add multi-PIP and multi-SNIP cases to message capacity check
  - Check datagram error and overlap handling
     - Overlapping datagrams from two sources are properly handled or errored
     - Datagrams with incorrect first-middle-last are properly errored and can be followed with valid ones
@@ -10,6 +10,7 @@ The following items should be added to check plans:
  - Check the Memory Configuration write under mask functionally if it is flagged as present 
  - ACDI should check that the user space is writable, goes to SNIP, reads back
    - Also can be used for general memory write checks
+ - Train Control checks subsection 11 needs a detailed plan
 
 The following items should be added to the check scripts:
 
@@ -18,3 +19,4 @@ The following items should be added to the check scripts:
  - Section 3 Frame Level of the Message Level plan not implemented
  - Is the Message Level duplicate test really checking the right thing?
  - CDI section 2.4 not implemented
+ - Code the Train Control checks for subsection 8, 9, 10, 11
