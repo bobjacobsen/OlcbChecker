@@ -1,6 +1,12 @@
 We strongly recommend that you read the [installation manual](plans/InstallingBasicChecker.pdf) for information on how to install and run these scripts.
 
-Run these from this directory with e.g.
+Plans describing the various checks and procedures are available as PDF files in the [plans/](plans/) directory. 
+
+Some manual checks are made via a [questionnaire](plans/ImplementorQuestionnaire.pdf).
+There's a list of checks still to be added/updated in the 
+[ChecksToAdd.md file](ChecksToAdd.md).
+
+Run the automated checks from this directory with e.g.
 ```
 python3.10 control_master.py
 ```
@@ -12,8 +18,6 @@ or, depending on your Python installation, the shorter
 The "-h" option will display the full set of available options.
 
 The main program is "control_master.py"
-
-Plans describing the various checks and procedures are available as PDF files in the [plans/](plans/) directory.
 
 Files whose names start with "check_" are the individual section checks.
 
@@ -42,19 +46,19 @@ ln -s python-openlcb/openlcb OlchChecker/openlcb
 If you want to connect to your OpenLCB network via a serial adapter, you need the `pyserial` module.  If you don't have that already, do
 
 ```
-python3 -m pip install pyserial
+python3.10 -m pip install pyserial
 ```
 
 The CDI and FDI checks require the `xmlschema` module.  If you don't have that already, do
 
 ```
-python3 -m pip install xmlschema
+python3.10 -m pip install xmlschema
 ```
 
 The `-v` option requires the `gitpython` module.  If you don't have that already, do
 
 ```
-python3 -m pip install gitpython
+python3.10 -m pip install gitpython
 ```
 
 Output is done via the Python `logging` module.  The scripts are self-configuring. If you want special output formats or locations, configure the logging package before calling the specific checks. See the "Logging" section in the [installation manual](plans/InstallingBasicChecker.pdf).
