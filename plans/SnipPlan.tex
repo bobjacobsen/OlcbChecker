@@ -34,4 +34,16 @@ accumulating the reply(s), and then checking:
     \item There are no data byte(s) after the sixth zero byte.
     \end{enumerate}
 
+\subsection{SNIP capacity checking}
+
+This section checks that overlapping SNIP requests can be processed.
+
+The check starts by sending three Simple Node Information Request messages from three separate node IDs
+        as fast as possible, i.e. at line rate allowing for interleaved replies,
+        followed by checking for three replies.  
+        These can be either 
+        Simple Node Information Reply message(s), 
+        or Optional Interaction Rejected message(s).  In either
+        case, the mandatory fields in the messages are checked for correctness.
+
 \end{document}  

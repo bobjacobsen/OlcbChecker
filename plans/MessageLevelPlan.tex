@@ -78,6 +78,19 @@ DBC's documentation.
 
 \item Sending a Protocol Support Inquiry message addressed to a different address from the DBC
         and checking for the absence of a reply.
+        
+\item Sending three Protocol Support Inquiry messages from three separate node IDs
+        as fast as possible, i.e. at line rate allowing for interleaved replies, 
+        followed by checking for three replies.  These can be either Protocol Support 
+        Response message(s), 
+        Terminate Due to Error message(s)
+        or Optional Interaction Rejected\footnote{
+            Protocol Support Inquiry is not an \underline{optional} message per se, 
+            so this check may be excessively accepting. See section 3.5.3 and
+            section 3.5.1 of the Message Network Standard for background.
+        }
+        message(s).  In either
+        case, the mandatory fields in the messages are checked for correctness.
 \end{enumerate}
 
 

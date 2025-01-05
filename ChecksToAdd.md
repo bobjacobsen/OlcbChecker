@@ -1,9 +1,10 @@
 The following items should be added to check plans:
 
  - Add multi-PIP and multi-SNIP cases to message capacity check
+ - Check that Event Protocol, EWP on bus doesn't cause crashes (regardless of whether node uses EWP or even EventProtocol)
  - Check datagram error and overlap handling
     - Overlapping datagrams from two sources are properly handled or errored
-    - Datagrams with incorrect first-middle-last are properly errored and can be followed with valid ones
+    - Datagrams with incorrect first-middle-last are properly errored and can be followed with valid ones (even if the node doesn't PIP declare Datagram protocol)
  - Check errors and error handling in section 4.3 of the Memory Configuration Standard
    - Invoking error messages by sending datagram reads with parameters outside the range
    - Send a datagram with the first byte a protocol number that does not exist (not 0x20) and checking the returned error
@@ -16,7 +17,9 @@ The following items should be added to the check scripts:
 
  - Implement the Firmware Update check plan
  - Implement the Broadcast Time check plan
+ - The three-PIP message part of the PIP section in the Message Level plan is not implemented.
  - Section 3 Frame Level of the Message Level plan not implemented
  - Is the Message Level duplicate test really checking the right thing?
+ - The three-SNIP message part of the SNIP check is not implemented.
  - CDI section 2.4 not implemented
  - Code the Train Control checks for subsection 8, 9, 10, 11
