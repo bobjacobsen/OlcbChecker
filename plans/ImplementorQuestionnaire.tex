@@ -31,21 +31,22 @@ Please feel free to add extra pages as needed.
     \begin{enumerate}
         \item Does the device use standard CAN transceiver(s) from recognized vendors?
         \item Does the device use standard CAN controller(s) from recognized vendors?
-        \item If the device has more than two LCC jacks, how are they to be used?
-        \item Is the device properly labeled with power sourcing and/or sinking current labels?
-            \begin{enumerate}
-                \item Are the current values listed on the label(s) correct?
-            \end{enumerate}
-        \item Does the device obey the timing constraints listed in the Standard?
+        \item Are the CAN jacks wired in parallel as required by Standard section 4?
+            If the device has more than two LCC jacks, how are they to be used?
+        \item Does the device obey the timing constraints listed in the Standard section 5?
         \item Does the device use or provide a DCC signal on the optional conductors?
             \begin{enumerate}
                 \item If so, does the item have the correct markings?
+            \end{enumerate}
+        \item Is the device properly labeled with power sourcing and/or sinking current labels?
+            \begin{enumerate}
+                \item Are the current values listed on the label(s) correct?
             \end{enumerate}
     \end{enumerate}
 
 \section{CAN Frame Transfer Layer}
     \begin{enumerate}
-        \item Is this node's operation compatible with unrelated Standard CAN frames
+        \item Is this node's operation compatible with Standard CAN frames
             (i.e. not Extended CAN frames) on the CAN bus?
         \item Does the node transmit extended-format remote frames (frames with RTR set)?
         \item Does the node transmit overload frames?
@@ -147,8 +148,6 @@ Please feel free to add extra pages as needed.
         \item Does the device use Broadcast Time information?
             \begin{enumerate}
                 \item If so, which of the four defined clocks are used?
-                \item What does the device do if no fast clock node is available
-                    on the LCC network?
             \end{enumerate}
         \item Does the device provide Broadcast Time information?
             \begin{enumerate}
