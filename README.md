@@ -27,21 +27,7 @@ All of those can be individually run from the command line.
 
 These checks require Python 3.10 or later.
 
-These checks require the `openlcb` Python module. That's not yet available via PIP, though eventually it will be.  To get it now, you have to obtain a copy from GitHub.  See the [installation document](plans/InstallingBasicChecker.pdf) for more detail, but briefly you can:
-
-```
-cd (somewhere)
-git clone https://github.com/bobjacobsen/python-openlcb.git
-python3.10 -m pip install --editable python-openlcb
-cd (where you put OlcbChecker)
-```
-
-Alternately, you can check out the python-openlcb and create a symbolic link from its included `openlcb` directory to your `OlcbChecker` directory:
-```
-cd (where you put OlcbChecker)
-git clone https://github.com/bobjacobsen/python-openlcb.git
-ln -s python-openlcb/openlcb OlchChecker/openlcb
-```
+These checks require the `openlcb` Python module. To simplify installation, version 0.2.0 of that package has been directly included as the `openlcb` directory.
 
 If you want to connect to your OpenLCB network via a serial adapter, you need the `pyserial` module.  If you don't have that already, do
 

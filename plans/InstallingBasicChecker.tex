@@ -49,7 +49,7 @@ Expand the downloaded file in a suitable place.
 
 \subsection{Prerequisites}
 
-\subsubsection{Python 3}
+\subsubsection{Python 3.10}
 You need to have Python 3.10 or later installed to run the program. 
 Many computers already have it installed. 
 You can check the version you have installed with:
@@ -70,25 +70,9 @@ We use that syntax below to cover this case.  If you do have Python 3.10 or late
 installed as a default, you can use `python3` where the examples below have `python3.10`.
 
 \subsubsection{openlcb Python Module}
-You have to manually install the `openlcb' module by checking out the
-python-openlcb repository from GitHub.
-\footnote{This will eventually be available via PIP, but not yet.}
-To do this:
-\begin{verbatim}
-cd (where you want to put it)
-git clone https://github.com/bobjacobsen/python-openlcb.git
-python3.10 -m pip install --editable python-openlcb
-\end{verbatim}
-This will create a python-openlcb directory containing the most recent version of the software
-and make that available as a `openlcb` Python module.
-
-Alternately, you can check out the python-openlcb 
-and create a symbolic link from its included `openlcb' directory to your `OlcbChecker' directory:
-\begin{verbatim}
-cd (where you put OlcbChecker)
-git clone https://github.com/bobjacobsen/python-openlcb.git
-ln -s python-openlcb/openlcb OlchChecker/openlcb
-\end{verbatim}
+The ``openlcb'' Python module is needed. It is unfortunately
+not available (yet) via PIP, so to simplify installation of the 
+checked we have directly included it as the top-level ``openlcb'' directly.
 
 \subsubsection{Other Python Modules}
 In order for OlcbChecker's -v option to check for changes to your local files, 
