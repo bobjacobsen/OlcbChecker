@@ -1,7 +1,7 @@
 The following items should be added to check plans, then check scripts:
 
  - Add multi-PIP and multi-SNIP cases to message capacity check
- - Check that Event Protocol, EWP on bus doesn't cause crashes (regardless of whether node uses EWP or even EventProtocol)
+ - Check that Event Protocol, EWP on bus doesn't cause crashes (regardless of whether node uses EWP or even EventProtocol) - written up in Event plan 2.6, needs implementation
  - Check datagram error and overlap handling
     - Overlapping datagrams from two sources are properly handled or errored
     - Datagrams with incorrect first-middle-last are properly errored and can be followed with valid ones 
@@ -20,6 +20,7 @@ The following items should be added to check plans, then check scripts:
 
 The following items should be added to the check scripts:
 
+ - Implement 2.5 and 2.6 of Event Transfer plan
  - Implement the Firmware Update check plan
  - Implement the Broadcast Time check plan
  - The three-PIP message part of the PIP section in the Message Level plan is not implemented.
@@ -30,3 +31,7 @@ The following items should be added to the check scripts:
  - Code the Train Control checks for subsection 8, 9, 10, 11
  
 
+To be considered:
+ - should we be checking the timeout field for a memory read datagram reply?
+ - should we be checking that the flags for memory write, etc datagram reply are correct?
+ 
