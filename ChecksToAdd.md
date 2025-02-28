@@ -18,6 +18,8 @@ The following items should be added to check plans, then check scripts:
     - This includes splitting the checking document and control_memory.py file to separately do client and server checking.  Not quite sure how to include that in "run all" though.
     - This came up in a discusion of checking for proper handling of the returned "extended timout" field and related operation. See https://groups.io/g/openlcb/message/16746 for a good discussion of what can be checked.
 
+- Teach and Learn need compatibility checks 
+
 The following items should be added to the check scripts:
 
  - Implement 2.5 and 2.6 of Event Transfer plan
