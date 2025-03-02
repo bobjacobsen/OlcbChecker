@@ -64,7 +64,7 @@ def check():
                 # but this wasn't the right one, get another
                 continue
                 
-            # got the right one, so now have it's orignal alias
+            # got the right one, so now have it's original alias
             originalAlias = reply1.header&0xFFF
             break
  
