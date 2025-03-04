@@ -140,7 +140,8 @@ def check():
         
         content.extend(reply.data[6:]) 
         address = address+LENGTH
-         
+        
+    receivedContentLength = len(content)
     # here have CDI, perhaps plus a few zeros.
     # convert to string
     result = ""
@@ -157,8 +158,8 @@ def check():
     else :
         logger.warning("Failure - address space 0xFF did not verify")
         retval = retval+1
-    if len(content)+1 != length :  # +1 for the null character we stripped
-        logger.warning("Failure - length of data read {} does not match address space length {}".format(len(content), length))
+    if receivedContentLength != length :  # +1 for the null character we stripped
+        logger.warning("Failure - length of data read {} does not match address space length {}".format(receivedContentLength, length))
         retval = retval+1
         
     # check starting line

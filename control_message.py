@@ -5,6 +5,7 @@ Simple runner for message network checks
 '''
 import sys
 import logging
+import time
 
 import olcbchecker.setup
 
@@ -31,6 +32,10 @@ def checkAll(logger=logging.getLogger("MESSAGE")) :
     logger.info("Node Initialized checking")
     result += check_me10_init.check()
 
+    # node may be sending lots of e.g. producer identified, so 
+    # wait for a bit
+    time.sleep(5.)
+    
     logger.info("Verify Node checking")
     result += check_me20_verify.check()
 
