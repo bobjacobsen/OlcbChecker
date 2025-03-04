@@ -121,12 +121,19 @@ node to produce or consume PCER Events With Payload, this only checks
 that the node can coexist with PCER Events With Payload on the network.
 
 \begin{enumerate}
-\item Produce a PCER Event with Payload of 4 bytes. Check that that node does not reinitialize.
-\item Produce a PCER Event with Payload of 8 bytes. Check that that node does not reinitialize.
-\item Produce a PCER Event with Payload of 12 bytes. Check that that node does not reinitialize.
-\item Produce a PCER Event with Payload of 16 bytes. Check that that node does not reinitialize.
-\item Produce a PCER Event with Payload of 20 bytes. Check that that node does not reinitialize.
-\item Produce a PCER Event with Payload of 24 bytes. Check that that node does not reinitialize.
+\item Produce a PCER Event with Payload of 12 bytes, 
+    e.g the initial 8 bytes and an additional 4 in a 2nd frame.
+\item Produce a PCER Event with Payload of 16 bytes.
+\item Produce a PCER Event with Payload of 20 bytes.
+\item Produce a PCER Event with Payload of 24 bytes.
 \end{enumerate}
+
+After those have been sent, the check waits 30 seconds to see if there are any additional
+transmissions, including but not limited to an alias-allocation series or a Node
+Initialized message. If any are seen, that indicates the node has reinitialized
+and the check fails.
+
+The operator is also prompted to check whether the node indicates that it has
+restarted, e.g. via LEDs or a screen.  If it has, the check fails.
 
 \end{document}  
