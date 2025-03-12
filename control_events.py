@@ -12,6 +12,9 @@ import check_ev10_ida
 import check_ev20_idg
 import check_ev30_ip
 import check_ev40_ic
+import check_ev50_ini
+import check_ev60_ewp
+import check_ev70_lrn
 
 def prompt() :
     print("\nEvent Exchange Standard checking")
@@ -20,6 +23,9 @@ def prompt() :
     print(" 2 Identify Event Global checking")
     print(" 3 Identify Producer checking")
     print(" 4 Identify Consumer checking")
+    print(" 5 Initial Advertisement checking")
+    print(" 6 Events With Payload checking")
+    print(" 7 Learn Event checking")
     print("  ")
     print(" q go back")
 
@@ -37,6 +43,15 @@ def checkAll(logger=logging.getLogger("EVENTS")) :
 
     logger.info("Identify Consumer checking")
     result += check_ev40_ic.check()
+
+    logger.info("Initial Advertisement checking")
+    result += check_ev50_ini.check()
+
+    logger.info("Events With Payload checking")
+    result += check_ev60_ewp.check()
+
+    logger.info("Learn Event checking")
+    result += check_ev70_lrn.check()
 
     if result == 0 :
         logger.info("Success - all event checks passed")
@@ -70,6 +85,15 @@ def main() :
             case "4" :
                 print("\nIdentify Consumer checking")
                 check_ev40_ic.check()
+            case "5" :
+                print("\nInitial Advertisement checking")
+                check_ev50_ini.check()
+            case "6" :
+                print("\nEvents With Payload checking")
+                check_ev60_ewp.check()
+            case "7" :
+                print("\nLearn Event checking")
+                check_ev70_lrn.check()
            
             case  "a" :
                 checkAll(logger)

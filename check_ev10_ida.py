@@ -23,6 +23,8 @@ def check():
     # set up the infrastructure
 
     import olcbchecker.setup
+    from olcbchecker.utils import checkAgainstIdList
+
     logger = logging.getLogger("EVENTS")
 
     # pull any early received messages
@@ -52,9 +54,11 @@ def check():
     producerIdMTIs = [MTI.Producer_Identified_Unknown, MTI.Producer_Identified_Active, MTI.Producer_Identified_Inactive, MTI.Producer_Range_Identified]
     consumerIdMTIs = [MTI.Consumer_Identified_Unknown, MTI.Consumer_Identified_Active, MTI.Consumer_Identified_Inactive, MTI.Consumer_Range_Identified]
     
+    # sets of received Event IDs
     producerReplys = set(())
-    producedEvents = set(())
+    producedRanges = set(())
     consumerReplys = set(())
+    consumerRanges = set(())
     
     while True :
         try :
@@ -69,24 +73,28 @@ def check():
                 continue
                 
             if received.mti in producerIdMTIs :
-                    producerReplys.add(received)
-                    producedEvents.add(EventID(received.data))
+                if received.mti ==  MTI.Producer_Range_Identified :
+                    producedRanges.add(EventID(received.data))
+                else :
+                    producerReplys.add(EventID(received.data))
                     
             if received.mti in consumerIdMTIs :
-                    consumerReplys.add(received)
+                if received.mti ==  MTI.Consumer_Range_Identified :
+                    consumerRanges.add(EventID(received.data))
+                else :
+                    consumerReplys.add(EventID(received.data))
 
             # if PCER, check that event ID has been produced
             if received.mti is MTI.Producer_Consumer_Event_Report :
                 eventID = EventID(received.data)
-                # TODO:  the following does not properly check against a Producer Range Identified
-                if eventID not in producedEvents :
+                if not checkAgainstIdList(producerReplys, producedRanges, eventID):
                     logger.warning ("Failure - PCER without Producer Identified: {}".format(eventID))
                     return(3)
         except Empty:
             # stopped getting messages, proceed
             break
 
-    if len(producerReplys) == 0 and len(consumerReplys) == 0 :
+    if len(producerReplys) == 0 and len(producedRanges) == 0 and len(consumerReplys) == 0 and len(consumerRanges) == 0 :
         logger.warning ("Warning - Did not receive any Identify messages.")
         logger.warning ("          Check node documentation to see if it")
         logger.warning("           should be producing or consuming events.")

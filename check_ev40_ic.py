@@ -65,8 +65,8 @@ def check():
                 logger.warning ("Failure - Unexpected source of reply message: {} {}".format(received, received.source))
                 return(3)
 
-            if received.mti in consumerIdMTIs :
-                    consumedEvents.add(EventID(received.data))
+            consumedEvents.add(EventID(received.data))
+            
         except Empty:
             # stopped getting messages, proceed
             break

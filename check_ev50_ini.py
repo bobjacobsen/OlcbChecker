@@ -1,9 +1,9 @@
 #!/usr/bin/env python3.10
 '''
-This uses a CAN link layer to check Identify Events Global
+This checks event identification after startup
 
 Usage:
-python3.10 check_ev20_idg.py
+python3.10 check_ev50_ini.py
 
 The -h option will display a full list of options.
 '''
@@ -37,20 +37,36 @@ def check():
     # checking sequence starts here
     ###############################
 
-    # check if PIP says this is present
-    if olcbchecker.isCheckPip() : 
-        pipSet = olcbchecker.gatherPIP(destination)
-        if pipSet is None:
-            logger.warning ("Failed in setup, no PIP information received")
-            return (2)
-        if not PIP.EVENT_EXCHANGE_PROTOCOL in pipSet :
-            logger.info("Passed - due to Event Exchange not in PIP")
-            return(0)
+    # If not running interactive checks, this is considered to pass
+    
+    if olcbchecker.setup.configure.skip_interactive :
+        logger.info("Interactive check skipped")
+        return 0
+        
+    # prompt operator to restart node to start process
+    print("Please reset/restart the checked node now")
 
-    # send an Identify Events Global  message to provoke response - previously checked to work
-    message = Message(MTI.Identify_Events_Global , NodeID(olcbchecker.ownnodeid()), None)
-    olcbchecker.sendMessage(message)
+    # wait for Initialization Complete
+    
+    timeout = 30
+    while True :
+        try :
+            received = olcbchecker.getMessage(30) # timeout if no entries
 
+            if destination != received.source : # check source in message header
+                # wait might get messages from other nodes, ignore them
+                timeout = timeout/2   # don't wait as long this time so we're not stuck in a loop
+                continue
+
+            if received.mti == MTI.Initialization_Complete : break  # move on to checks
+            if received.mti == MTI.Initialization_Complete_Simple : break  # move on to checks
+        
+        except Empty:
+            # stopped getting messages, this is a fail
+            logger.warning("Failure - Did not see node initialize")
+            return (3)
+
+    # then do the checks
     producerIdMTIs = [MTI.Producer_Identified_Unknown, MTI.Producer_Identified_Active, MTI.Producer_Identified_Inactive, MTI.Producer_Range_Identified]
     consumerIdMTIs = [MTI.Consumer_Identified_Unknown, MTI.Consumer_Identified_Active, MTI.Consumer_Identified_Inactive, MTI.Consumer_Range_Identified]
     

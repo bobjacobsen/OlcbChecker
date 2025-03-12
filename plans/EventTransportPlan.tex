@@ -40,20 +40,40 @@ It then checks
 \item That those show the DBC node as their source.
 \end{enumerate}
 
+During this process,  any received PCER messages with the DBC as their source are compared against
+previously received Producer Identified and Producer Range Identified messages.
+If the Event ID carried by the PCER message has not been identified by 
+a previous message, the check fails.
+
 \subsection{Identify Events Global}
 
 This section checks the unaddressed (global) interaction in Standard section 6.2 and
 the message formats in Standard section 4.3 through 4.8.
 
 The check starts by sending an Identify Events unaddressed (global) message.
+
+While acquiring the replies to the global message,
+any received PCER messages with the DBC as their source are compared against
+previously received Producer Identified and Producer Range Identified messages.
+If the Event ID carried by the PCER message has not been identified by 
+a previous message, the check fails.
+
 It then checks
 
 \begin{enumerate}
 \item That one or more Producer Identified, Producer Range Identified, 
         Consumer Identified and/or Consumer Range Identified messages are returned,
 \item That those show the DBC node as their source,
-\item That these identify the same events produced and consumed as the 
+\item That these identify the same events and ranges produced and consumed as the 
         addressed form of the Identify Events message.
+
+        While doing the comparison, any Producer Identified or Consumer Identified
+        messages that lie within the range defined by a previous Producer Range 
+        Identified or Consumer Range Identified message, respectively, are ignored
+        as redundant; those do not need to exactly match.
+        \footnote{Fast clocks, for example, may identify the full range
+                    of events they produce, then also identify specific
+                    time-varying events within those ranges.}
 \end{enumerate}
 
 \subsection{Identify Producer}
@@ -61,32 +81,39 @@ It then checks
 This section checks the interaction in Standard section 6.3, and
 the message formats in Standard section 4.5 through 4.7.
 
-The check proceeds by sending multiple Identify Producers messages for 
-the zero or more individual event IDs returned by an Identify Events message 
+The check proceeds by sending an Identify Producer messages for each of
+the zero or more individual event IDs identified as being produced by an Identify Events message 
 addressed to the DBC. If there are none of these, this check passes. If there
 are one or more, it then checks:
 
 \begin{enumerate}
-\item That exactly one reply is received for each Identify Producers message sent.
+\item That exactly one Producer Identified reply is received
+    for each Identify Producers message sent.
 \item That those show the DBC node as their source,
 \item That these identify the same event ID as the corresponding Identify message.
 \end{enumerate}
+
+Other messages received during this test are ignored.
 
 \subsection{Identify Consumer}
 
 This section checks the interaction in Standard section 6.4, and
 the message formats in Standard section 4.2 through 4.4.
 
-The check proceeds by sending multiple Identify Consumers messages for 
-the zero or more individual event IDs returned by an Identify Events message 
+The check proceeds by sending an Identify Consumers message for each of
+the zero or more individual event IDs identified as being consumed by an Identify Events message 
 addressed to the DBC. If there are none of these, this check passes. If there
 are one or more, it then checks:
 
 \begin{enumerate}
-\item That exactly one reply is received for each Identify Consumers message sent.
+\item That exactly one Consumer Identified reply is received 
+    for each Identify Consumers message sent.
 \item That those show the DBC node as their source,
 \item That these identify the same event ID as the corresponding Identify message.
 \end{enumerate}
+
+Other messages received during this 
+test are ignored.
 
 \subsection{Initial Advertisement}
 
@@ -108,15 +135,19 @@ produce and consume by appropriate messages. This then checks:
     and Consumer Identified Range messages produced at node startup are the same
     as the ones emitted in response to an addressed Identify Events,
 \item That those messages show the DBC as their source.
-\item That no Producer Consumer Event Report messages are sent before the 
-    corresponding producer has been identified.
-\item That any PCER messages that are sent show the DBC as their source.
 \end{enumerate}
+
+During this process,  any received PCER messages with the DBC as their source are compared against
+previously received Producer Identified and Producer Range Identified messages.
+If the Event ID carried by the PCER message has not been identified by 
+a previous message, the check fails.
 
 \subsection{Events With Payload}
 
-This section checks that PCER Events With Payload can be processed by 
-the node. Because there is no standard way to force an arbitrary
+This section checks that PCER Events With Payload can successfully be processed by 
+the node. 
+
+Because there is no standard way to force an arbitrary
 node to produce or consume PCER Events With Payload, this only checks
 that the node can coexist with PCER Events With Payload on the network.
 
@@ -126,6 +157,30 @@ that the node can coexist with PCER Events With Payload on the network.
 \item Produce a PCER Event with Payload of 16 bytes.
 \item Produce a PCER Event with Payload of 20 bytes.
 \item Produce a PCER Event with Payload of 24 bytes.
+\item Produce a PCER Event with Payload of 256 bytes.
+\end{enumerate}
+
+After those have been sent, the check waits 30 seconds to see if there are any additional
+transmissions, including but not limited to an alias-allocation series or a Node
+Initialized message. If any are seen, that indicates the node has reinitialized
+and the check fails.
+
+The operator is also prompted to check whether the node indicates that it has
+restarted, e.g. via LEDs or a screen.  If it has, the check fails.
+
+\subsection{Learn Event}
+
+This section checks that the DBC is compatible with the
+Learn Event messages in Sections 4.9 and 6.5 of the Standard.
+
+Because there is no standard way to force an arbitrary
+node to send or process Learn Event messages,
+this only checks
+that the node can coexist with Learn Event messages on the network.
+
+\begin{enumerate}
+\item Send a Learn Event message with 
+    an Event ID  formed from the checker's Unique ID (Node ID).
 \end{enumerate}
 
 After those have been sent, the check waits 30 seconds to see if there are any additional
