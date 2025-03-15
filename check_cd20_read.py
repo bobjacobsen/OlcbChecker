@@ -128,7 +128,7 @@ def check():
             reply = getReplyDatagram(destination)
 
             # if read failed, the check failed - no 0 read?
-            if reply.data[1] == 0x58 :
+            if (reply.data[1] & 0xF8) == 0x58 :
                 logger.warning("Failure - CDI read operation failed.  Perhaps no terminating zero byte?")
                 retval = retval+1
                 break
@@ -158,14 +158,15 @@ def check():
     else :
         logger.warning("Failure - address space 0xFF did not verify")
         retval = retval+1
-    if receivedContentLength != length :  # +1 for the null character we stripped
+
+    if receivedContentLength != length :  # including null if we stripped one
         logger.warning("Failure - length of data read {} does not match address space length {}".format(receivedContentLength, length))
         retval = retval+1
         
     # check starting line
     # although the Standard is more specific, we accept
     #    both ' and "
-    #    optional attributes, like encoding, after the initial version attribute
+    #    plus optional attributes, like encoding, after the initial version attribute
     if not result.translate(str.maketrans("'",'"')).startswith('<?xml version="1.0"') :
         firstLine = result[0: result.find("\n")]
         logger.warning("Failure - First line not correct: \""+firstLine+"\"")
