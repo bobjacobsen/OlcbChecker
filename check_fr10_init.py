@@ -55,7 +55,7 @@ def check():
             logger.warning("Failure - Zero alias not permitted")
             return 3
     
-        frame = olcbchecker.getFrame()
+        frame = olcbchecker.getFrame(1)
         if (frame.header & 0xFF_000_000) != 0x16_000_000 :
             logger.warning ("Failure - frame was not 2nd CID frame")
             return 3
@@ -67,7 +67,7 @@ def check():
             return 3
         cid2 = (frame.header & 0xFFF000) >> 12
     
-        frame = olcbchecker.getFrame()
+        frame = olcbchecker.getFrame(1)
         if (frame.header & 0xFF_000_000) != 0x15_000_000 :
             logger.warning ("Failure - frame was not 3rd CID frame")
             return 3
@@ -79,7 +79,7 @@ def check():
             return 3
         cid3 = (frame.header & 0xFFF000) >> 12
     
-        frame = olcbchecker.getFrame()
+        frame = olcbchecker.getFrame(1)
         if (frame.header & 0xFF_000_000) != 0x14_000_000 :
             logger.warning ("Failure - frame was not 4th CID frame")
             return 3
@@ -92,7 +92,7 @@ def check():
         cid4 = (frame.header & 0xFFF000) >> 12
     
         # check for RID frame
-        frame = olcbchecker.getFrame(0.7)  # might be delayed
+        frame = olcbchecker.getFrame(2)  # might be delayed
         if (frame.header & 0xFF_FFF_000) != 0x10_700_000 :
             logger.warning ("Failure - frame was not RID frame")
             return 3
@@ -104,7 +104,7 @@ def check():
             return 3
     
         # check for AMD frame
-        frame = olcbchecker.getFrame(0.7) # might be delayed
+        frame = olcbchecker.getFrame(2) # might be delayed
         if (frame.header & 0xFF_FFF_000) != 0x10_701_000 :
             logger.warning ("Failure - frame was not AMD frame")
             return 3
