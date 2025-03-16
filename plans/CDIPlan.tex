@@ -47,9 +47,11 @@ has the Memory Configuration bit reset in PIP, fails this check.
 \pipsetFootnote
 
 This check reads the information from the 0xFF memory space
-until it encounters a null character.
+until the read command returns early, indicating the end of the memory
+or a negative reply is returned.
 \begin{enumerate}
 \item If the space is not available, or there are no bytes of content in it, the check fails.
+\item If the read is terminated by a negative reply, the check fails.
 \item If the read sequence terminates early, without ending in a null character, the check fails.
 \end{enumerate}
  
