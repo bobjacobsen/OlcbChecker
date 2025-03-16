@@ -142,13 +142,19 @@ def check():
         address = address+LENGTH
         
     receivedContentLength = len(content)
-    # here have CDI, perhaps plus a few zeros.
+    # here have CDI, perhaps plus a final zero
     # convert to string
     result = ""
+    foundNull = False
     for one in content:  
-        if one == 0 : break
+        if one == 0 : 
+            foundNull = True
+            break
         result = result+chr(one)
-
+    if not foundNull :
+        logger.warning("Did not find null at end of CDI")
+        retval = retval+1
+        
     # check length against memory space definition of the highest valid address (i.e. length+1)
     # first, get definition - a previous check made sure it's there
     olcbchecker.sendMessage(Message(MTI.Datagram, NodeID(olcbchecker.ownnodeid()), destination, [0x20, 0x84, 0xFF]))
@@ -167,14 +173,14 @@ def check():
     # although the Standard is more specific, we accept
     #    both ' and "
     #    plus optional attributes, like encoding, after the initial version attribute
-    firstLine = result[0: result.find("\n")]
+    firstLine = result[0: result.find(">")+1]
     if not result.translate(str.maketrans("'",'"')).startswith('<?xml version="1.0"') :
         logger.warning("Failure - First line not correct: \""+firstLine+"\"")
         retval = retval+1
     
     # Courtesy notification of first line
-    if not result.startsWith('<?xml version="1.0"?>') :
-        logger.notify("Note: File starts with "+firstLine+" but should start with '<?xml version=\"1.0\"?>'")
+    if not result.startswith('<?xml version="1.0"?>') :
+        logger.info("Note: File starts with "+firstLine+" but recommend start with '<?xml version=\"1.0\"?>'")
         
     # retrieve schema name and check
     key = "xsi:noNamespaceSchemaLocation="
