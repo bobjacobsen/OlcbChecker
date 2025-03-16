@@ -149,7 +149,7 @@ def check():
         if one == 0 : break
         result = result+chr(one)
 
-    # check length against memory space definition.
+    # check length against memory space definition of the highest valid address (i.e. length+1)
     # first, get definition - a previous check made sure it's there
     olcbchecker.sendMessage(Message(MTI.Datagram, NodeID(olcbchecker.ownnodeid()), destination, [0x20, 0x84, 0xFF]))
     reply = getReplyDatagram(destination)
@@ -159,7 +159,7 @@ def check():
         logger.warning("Failure - address space 0xFF did not verify")
         retval = retval+1
 
-    if receivedContentLength != length :  # including null if we stripped one
+    if receivedContentLength != length :  # includes null if we stripped one
         logger.warning("Failure - length of data read {} does not match address space length {}".format(receivedContentLength, length))
         retval = retval+1
         
@@ -167,10 +167,14 @@ def check():
     # although the Standard is more specific, we accept
     #    both ' and "
     #    plus optional attributes, like encoding, after the initial version attribute
+    firstLine = result[0: result.find("\n")]
     if not result.translate(str.maketrans("'",'"')).startswith('<?xml version="1.0"') :
-        firstLine = result[0: result.find("\n")]
         logger.warning("Failure - First line not correct: \""+firstLine+"\"")
         retval = retval+1
+    
+    # Courtesy notification of first line
+    if not result.startsWith('<?xml version="1.0"?>') :
+        logger.notify("Note: File starts with "+firstLine+" but should start with '<?xml version=\"1.0\"?>'")
         
     # retrieve schema name and check
     key = "xsi:noNamespaceSchemaLocation="
@@ -187,10 +191,11 @@ def check():
     temp.write(result)
     temp.close()
     
+    # do the validation
     try :
         xmlschema.validate('tempCDI.xml', schemaLocation)
     except Exception as e:
-        logger.warning("Failure - CDI XML "+str(e))
+        logger.warning("Failure - CDI XML did not validate: "+str(e))
         return 3
     
     if retval == 0 :
