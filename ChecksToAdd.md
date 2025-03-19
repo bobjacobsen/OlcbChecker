@@ -21,8 +21,6 @@ The following items should be added to check plans, then check scripts:
     - This includes splitting the checking document and control_memory.py file to separately do client and server checking.  Not quite sure how to include that in "run all" though.
     - This came up in a discusion of checking for proper handling of the returned "extended timout" field and related operation. See https://groups.io/g/openlcb/message/16746 for a good discussion of what can be checked.
 
-- Does the CDI length test check for a trailing zero? Strings should be zero terminated
-
 - From discussion of a node that reserves multiple aliases
     - Check that the AMD responses for those have different node IDs
     - In Frame section 3, check for collisions on both aliases
