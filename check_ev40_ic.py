@@ -80,6 +80,10 @@ def check():
         try:
             while True : # in case we need to skip PCER messages
                 received = olcbchecker.getMessage() # timeout if no entries
+                # was a range reply received?  If so, warn
+                if received.mti == MTI.Consumer_Range_Identified :
+                    logger.info("Warning - received Consumer Range Idenfified in response to request")
+                    continue
                 # is this a reply? Some nodes emit PCER after verify
                 if received.mti not in consumerIdMTIs :
                     continue 
