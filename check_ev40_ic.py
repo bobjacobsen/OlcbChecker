@@ -94,7 +94,7 @@ def check():
 
         except Empty:
             # no reply, error
-            logger.warning ("Failure - No reply for event: {}".format(event))
+            logger.warning ("Failure - No Consumer Identified reply for event: {}".format(event))
             fail = True
         
     if fail : 
