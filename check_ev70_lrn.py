@@ -69,6 +69,8 @@ def check():
                 if selection.startswith('y') :
                     logger.warning("Failure - operator indicated issue")
                     return (3)
+            else :
+                logger.info("    Interactive checks skipped, so not checking for indication on node.")
         
             logger.info("Passed")
             return 0
