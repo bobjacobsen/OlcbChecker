@@ -28,8 +28,8 @@ def prompt() :
     print(" 8 Train Search checking")
     print(" 9 Function Definition Information (FDI) checking")
     print("  ")
-    print(" t Run all in sequence without three train protocols")
-    print(" a Run all in sequence including train protocols")
+    print(" a Run all in sequence without three train protocols")
+    print(" t Run all in sequence including three train protocols")
     print("  ")
     print(" q  Quit")
     
@@ -145,10 +145,10 @@ def main() :
                 import control_fdi
                 control_fdi.main()
                        
-            case "t" : 
+            case "a" : 
                 checkAllNoTrains()    
                                   
-            case "a" : 
+            case "t" : 
                 checkAll()     
                                   
             case "q" | "quit" : return

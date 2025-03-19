@@ -14,6 +14,7 @@ The following items should be added to check plans, then check scripts:
     
  - ACDI should check that the user space is writable, goes to SNIP, reads back
     - Also can be used as a general memory write checks
+    - But isn't SNIP supposed to be constant between reboots?
  
  - Train Control checks subsection 11 needs a detailed plan
 
