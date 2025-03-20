@@ -159,8 +159,9 @@ def check():
     # first, get definition - a previous check made sure it's there
     olcbchecker.sendMessage(Message(MTI.Datagram, NodeID(olcbchecker.ownnodeid()), destination, [0x20, 0x84, 0xFF]))
     reply = getReplyDatagram(destination)
+
     if reply.data[1] == 0x87 :
-        length = reply.data[3]*2568256*256+reply.data[4]*256*256+reply.data[5]*256+reply.data[6]+1 # datagram is highest address, doesn't include location 0 
+        length = reply.data[3]*256*256*256+reply.data[4]*256*256+reply.data[5]*256+reply.data[6]+1 # datagram is highest address, doesn't include location 0 
     else :
         logger.warning("Failure - address space 0xFF did not verify")
         retval = retval+1
@@ -188,7 +189,8 @@ def check():
     quote = result[start+len(key)]  # could be ', could be "
     end = result.find(quote, start+len(key)+1)
     schemaLocation = result[start+len(key)+1:end]
-    if not schemaLocation.startswith("http://openlcb.org/schema/cdi/1") :
+    # accept http or https, because we control that server
+    if not schemaLocation.startswith("https://openlcb.org/schema/cdi/1") and not schemaLocation.startswith("http://openlcb.org/schema/cdi/1"):
         logger.error("Failure - unexpected schema URL: "+schemaLocation)
         retval = retval+1
     

@@ -128,7 +128,7 @@ def check():
             reply = getReplyDatagram(destination)
             
             # if read failed, the check failed - no 0 read?
-            if reply.data[1] == 0x58 :
+            if (reply.data[1] & 0xF8) == 0x58 :
                 logger.warning("Failure - FDI read operation reply indicates read failed. Perhaps no terminating zero byte?")
                 retval = retval+1
                 break
@@ -140,13 +140,20 @@ def check():
         
         content.extend(reply.data[7:]) 
         address = address+LENGTH
-         
+
+    receivedContentLength = len(content)         
     # here have FDI, perhaps plus a few zeros.
     # convert to string
     result = ""
+    foundNull = False
     for one in content:  
-        if one == 0 : break
+        if one == 0 : 
+            foundNull = True
+            break
         result = result+chr(one)
+    if not foundNull :
+        logger.warning("Did not find null at end of FDI")
+        retval = retval+1
     
     # check length against memory space definition.
     # first, get definition - a previous check made sure it's there
@@ -154,10 +161,7 @@ def check():
     reply = getReplyDatagram(destination)
     
     if reply.data[1] == 0x87 :
-        length = reply.data[3]*2568256*256+reply.data[4]*256*256+reply.data[5]*256+reply.data[6]
-        if len(content) != length :
-            logger.warning("Failure - length of data read {} does not match address space length {}".format(len(content), length))
-            retval = retval+1
+        length = reply.data[3]*256*256*256+reply.data[4]*256*256+reply.data[5]*256+reply.data[6]
     else :
         logger.warning("Failure - address space 0xFA did not verify")
         retval = retval+1
@@ -165,24 +169,32 @@ def check():
     if (result == "") :
         logger.warning("Failure - no FDI information found - ending check")
         return 1
-        
+       
+    if receivedContentLength != length :  # includes null if we stripped one
+        logger.warning("Failure - length of data read {} does not match address space length {}".format(receivedContentLength, length))
+        retval = retval+1
+ 
     # check starting line
     # although the Standard is more specific, we accept
     #    both ' and "
     #    optional attributes, like encoding, after the initial version attribute
+    firstLine = result[0: result.find(">")+1]
     if not result.translate(str.maketrans("'",'"')).startswith('<?xml version="1.0"') :
-        firstLine = result[0: result.find("\n")]
         logger.warning("Failure - First line not correct: \""+firstLine+"\"")
         retval = retval+1
+    
+    # Courtesy notification of first line
+    if not result.startswith('<?xml version="1.0"?>') :
+        logger.info("Note: File starts with "+firstLine+" but recommend start with '<?xml version=\"1.0\"?>'")
         
     # retrieve schema name and check
     key = "xsi:noNamespaceSchemaLocation="
     start = result.find(key)
-    print (result)
     quote = result[start+len(key)]  # could be ', could be "
     end = result.find(quote, start+len(key)+1)
     schemaLocation = result[start+len(key)+1:end]
-    if not schemaLocation.startswith("https://openlcb.org/schema/fdi/1") :
+    # accept http or https, because we control that server
+    if not schemaLocation.startswith("https://openlcb.org/schema/fdi/1") and not schemaLocation.startswith("http://openlcb.org/schema/fdi/1") :
         logger.error("Failure - unexpected schema URL: "+schemaLocation)
         retval = retval+1
     

@@ -27,6 +27,8 @@ The following items should be added to check plans, then check scripts:
     - In Frame section 3, check for collisions on both aliases
     - check for _non_-permitted state just drops reservation by using an AME to that node
 
+- The FDI space might say it's read-only in the address-space reply. Or it might not. What does that mean for FDI checking?
+    
 ----------------------
 
 The following items should be added to the check scripts:
