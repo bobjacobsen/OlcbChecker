@@ -162,12 +162,6 @@ match (trace) :
 import builtins
 
 # check that a connection has been configured unless told not to
-print("in configure")
-print(devicename)
-print(hostname)
-print(targetnodeid)
-print(hasattr(builtins, "olcbchecker_bypass_a_or_d_check"))
-
 if (not hasattr(builtins, "olcbchecker_bypass_a_or_d_check")) or not builtins.olcbchecker_bypass_a_or_d_check:
     # in this case, the  bypass_a_or_d_check hasn't been set or is False
     if devicename is None and hostname is None :
