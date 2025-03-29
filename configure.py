@@ -159,8 +159,15 @@ match (trace) :
     case _:
         logger.setLevel(logging.DEBUG)
 
-# check that a connection has been configured unless told not to
 import builtins
+
+# check that a connection has been configured unless told not to
+print("in configure")
+print(devicename)
+print(hostname)
+print(targetnodeid)
+print(hasattr(builtins, "olcbchecker_bypass_a_or_d_check"))
+
 if (not hasattr(builtins, "olcbchecker_bypass_a_or_d_check")) or not builtins.olcbchecker_bypass_a_or_d_check:
     # in this case, the  bypass_a_or_d_check hasn't been set or is False
     if devicename is None and hostname is None :
@@ -169,5 +176,10 @@ if (not hasattr(builtins, "olcbchecker_bypass_a_or_d_check")) or not builtins.ol
         sys.exit(2)
     if devicename is not None and hostname is not None :
         print ("You can only specify the host address or the device name, not both")
+        
+#  check that a target node is configured
+if (not hasattr(builtins, "olcbchecker_bypass_a_or_d_check")) or not builtins.olcbchecker_bypass_a_or_d_check:
+    if not targetnodeid :
+        print ("A target node ID must be configured. See the -t option or targetnodeid symbol value")
         options()
         sys.exit(2)

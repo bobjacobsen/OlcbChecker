@@ -6,9 +6,6 @@ Top level of checking suite
 import sys
 import logging
 
-# do the setup, including argument parsing
-import olcbchecker.setup
-
 # We only import each specific option as it's 
 # invoked to reduce startup time and propagation of errors
 # during development
@@ -162,6 +159,11 @@ if __name__ == "__main__":
     builtins.olcbchecker_bypass_a_or_d_check = True
     import configure
     
+    print("in _main_")
+    print(configure.devicename)
+    print(configure.hostname)
+    print(configure.targetnodeid)
+    
     if configure.devicename is None and configure.hostname is None :
         print ("With neither an address nor device specified, you can")
         print ("only set the options, so we'll take you directly to")
@@ -173,6 +175,21 @@ if __name__ == "__main__":
         control_setup.main()
         # can't continue without reset
         sys.exit(0)
+        
+    if not configure.targetnodeid :
+        print ("Without a target node defined, you can")
+        print ("only set the options, so we'll take you directly to")
+        print ("that menu.  You can restart with the -t option")
+        print ("(or -h for additional help), or configure using the")
+        print ("following menu.")
+        print ("")
+        import control_setup
+        control_setup.main()
+        # can't continue without reset
+        sys.exit(0)
+
+    # do the setup, including argument parsing
+    import olcbchecker.setup
         
     # run the checks or show the menu
     import olcbchecker
