@@ -40,6 +40,7 @@ The following items should be added to the check scripts:
  - The three-PIP message part of the PIP section in the Message Level plan is not implemented.
  - The three-SNIP message part of the SNIP check is not implemented.
  - Section 3 Frame Level of the Message Level plan is not implemented
+ - check_me10_init.py is not checking against Simple bit in PIP
  - Is the Message Level duplicate check really checking the right thing?
  - CDI section 2.4 not implemented
  - Code the Train Control checks for subsection 8, 9, 10, 11
