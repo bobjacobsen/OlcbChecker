@@ -2,6 +2,8 @@ The following items should be added to check plans, then check scripts:
 
  - Add multi-PIP and multi-SNIP cases to message capacity check
  
+ - Check PIP simple bit against Verify Node ID -> Verified Node ID's Simple bit
+ 
  - Check datagram error and overlap handling
     - Overlapping datagrams from two sources are properly handled or errored
     - Datagrams with incorrect first-middle-last are properly errored and can be followed with valid ones 
