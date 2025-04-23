@@ -169,7 +169,7 @@ Please feel free to add extra pages as needed.
             \begin{enumerate}
                 \item If so, which of the four defined clocks are used?
             \end{enumerate}
-        \item Does the device provide Broadcast Time information?
+        \item Does the device produce Broadcast Time information?
             \begin{enumerate}
                 \item If so, which of the four defined clocks are provided?
             \end{enumerate}
@@ -178,10 +178,14 @@ Please feel free to add extra pages as needed.
 
 \section{Train Control Protocol}
     \begin{enumerate}
-        \item The Standard section 7.1 says that
-            ``A Train Node representing a DCC locomotive ... may, 
-            but is not required to provide the last written data upon a read command.''.
-            Does this device provide the data in that case?
+        \item Does the device use the Train Control Protocol by acting as a Throttle?
+        \item Does the device use the Train Control Protocol by acting as a Train?
+        \begin{enumerate}
+            \item The Standard section 7.1 says that
+                ``A Train Node representing a DCC locomotive ... may, 
+                but is not required to provide the last written data upon a read command.''.
+                Does this device provide the data in that case?
+        \end{enumerate}
     \end{enumerate}
 
 \section{Train Search Protocol}
@@ -194,9 +198,19 @@ Please feel free to add extra pages as needed.
 
 \section{Function Definition Information (FDI)}
     \begin{enumerate}
-        \item Which version of the FDI schema does this node produce?
-        \item Does the FDI information from this device use the 
-            deprecated ``space'' and ``origin'' attributes?
+        \item Does the device read FDI from other nodes?
+        \item Does the device provide FDI to be read by other nodes?
+        \begin{enumerate}
+            \item Which version of the FDI schema does this node provide?
+            \item Does the FDI information from this device use the 
+                deprecated ``space'' and ``origin'' attributes?
+        \end{enumerate}
+    \end{enumerate}
+
+\section{Other Interactions}
+    \begin{enumerate}
+        \item Does the device use any protocols in addition to the current
+            OpenLCB Standards?  For example, something documented in a Working Note.
     \end{enumerate}
 
 
