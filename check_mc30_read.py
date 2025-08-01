@@ -107,7 +107,7 @@ def sendAndCheckResponse(destination, request, length) :
         checkLen = len(request)-1
         if expectedReply[:checkLen] != reply.data[:checkLen] :
             logger = logging.getLogger("MEMORY")
-            logger.warning("Failure - header was {}, expected {}".format(reply.data[:checkLen]), expectedReply[:checkLen])
+            logger.warning("Failure - header was {}, expected {}".format(reply.data[:checkLen], expectedReply[:checkLen]) )
             return 3
             
         return 0
