@@ -43,7 +43,7 @@ def check():
         # check for AMD frame from expected node (might be more than one AMD frame)
         while True: 
             waitFor = "waiting for AMD frame in first part"
-            reply1 = olcbchecker.getFrame()
+            reply1 = olcbchecker.getFrame(1.0)
             if (reply1.header & 0xFF_FFF_000) != 0x10_701_000 :
                 logger.warning ("Failure - frame was not AMD frame in first part")
                 return 3
