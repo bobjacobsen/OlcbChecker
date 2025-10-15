@@ -79,6 +79,7 @@ def check():
     
     # wait for a possible Initialization Complete
     timeout = 30
+    logger.info("Wait for {} seconds to make sure node doesn't reinitialize".format(timeout))
     while True :
         try :
             received = olcbchecker.getMessage(30) # timeout if no entries
