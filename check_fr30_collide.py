@@ -103,7 +103,7 @@ def check():
         first = True  # controls check for CID 7 in first pass
         try :
             while True: 
-                reply2 = olcbchecker.getFrame()
+                reply2 = olcbchecker.getFrame(1.0)
 
                 if first :
                     first = False
@@ -162,7 +162,7 @@ def check():
         try :
             # check for AMD frame from expected node (might be more AMD frames from others)
             while True: 
-                reply3 = olcbchecker.getFrame()
+                reply3 = olcbchecker.getFrame(1.0)
                 if (reply3.header & 0xFF_FFF_000) != 0x10_701_000 :
                     # wasn't AMD, skip
                     continue
