@@ -94,7 +94,7 @@ Having reserved an alias, many nodes will put it into use with an AMD frame.
 If one is received, it will be checked to see if it contains the new alias
 and the DBC's node ID.
 
-Once traffic on the bus has paused, indicating the completion of 
+Once traffic on the bus has paused for one second, indicating the completion of 
 any allocation(s), the checker will emit an AME frame.
 \begin{enumerate}
 \item If an AMD has been received, there should be exactly one
@@ -107,6 +107,7 @@ Note: The Standards allow other initialization sequences, and this check
 is not completely general.  If a DBC doesn't pass, the sequence should
 be carefully examined in light of the CAN Frame Transfer Standard
 to determine if it's just an issue with the check logic.
+
 \subsection{Reserved Frame Bit}
 
 This section's checks cover Frame Transfer Standard sections 4, 6.1 and section 6.2.3., 
