@@ -66,6 +66,13 @@ def check():
             if (len(received.data) > 3) and (received.data[3] != 0) :
                 logger.warning ("Failure - Unexpected contents in 4th byte; 0x{:02X}".format(received.data[3]))
                 return(3)
+            # if doing interactive tests, prompt for checking against documentation
+            if not olcbchecker.setup.configure.skip_interactive :
+                logger.info("Does the above match the DBC documentation? y or n")
+                selection = input(">> ").lower()
+                if not selection.startswith('y') :
+                    logger.warning("Failure - operator indicated protocol list does not match")
+                    return (3)
             break
         except Empty:
             logger.warning ("Failure - no reply to PIP request")
