@@ -82,7 +82,7 @@ def check():
     logger.info("Wait for {} seconds to make sure node doesn't reinitialize".format(timeout))
     while True :
         try :
-            received = olcbchecker.getMessage(30) # timeout if no entries
+            received = olcbchecker.getMessage(timeout) # timeout if no entries
 
             if destination != received.source : # check source in message header
                 # wait might get messages from other nodes, ignore them
