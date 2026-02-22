@@ -43,9 +43,6 @@ def checkAll(logger=logging.getLogger("TRAIN_CONTROL")) :
     logger.info("Function checking")
     result += check_tr030_func.check()
 
-    logger.info("Listener configuration checking")
-    result += check_tr080_listener.check()
-
     logger.info("Emergency stop checking")
     result += check_tr040_estop.check()
 
@@ -57,6 +54,9 @@ def checkAll(logger=logging.getLogger("TRAIN_CONTROL")) :
 
     logger.info("Memory space checking")
     result += check_tr070_memspaces.check()
+
+    logger.info("Listener configuration checking")
+    result += check_tr080_listener.check()
 
     if result == 0 :
         logger.info("Success - all Train Control checks passed")
@@ -91,24 +91,24 @@ def main() :
                 check_tr030_func.check()
 
             case "4" :
-                print("\nListener configuration checking")
-                check_tr080_listener.check()
-
-            case "5" :
                 print("\nEmergency stop checking")
                 check_tr040_estop.check()
 
-            case "6" :
+            case "5" :
                 print("\nGlobal emergency stop checking")
                 check_tr050_gestop.check()
 
-            case "7" :
+            case "6" :
                 print("\nGlobal emergency off checking")
                 check_tr060_geoff.check()
 
-            case "8" :
+            case "7" :
                 print("\nMemory space checking")
                 check_tr070_memspaces.check()
+
+            case "8" :
+                print("\nListener configuration checking")
+                check_tr080_listener.check()
 
             case  "a" :
                 checkAll(logger)
