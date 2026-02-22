@@ -24,6 +24,7 @@ def prompt() :
     print(" 7 Train Control checking")
     print(" 8 Train Search checking")
     print(" 9 Function Definition Information (FDI) checking")
+    print("10 Broadcast Time Protocol checking")
     print("  ")
     print(" a Run all in sequence without three train protocols")
     print(" t Run all in sequence including three train protocols")
@@ -52,14 +53,16 @@ def checkAll() :
     total += min(control_trainsearch.checkAll(),1)
     import control_fdi
     total += min(control_fdi.checkAll(),1)
-    
+    import control_broadcasttime
+    total += min(control_broadcasttime.checkAll(),1)
+
     logger = logging.getLogger("OLCBCHECKER")
     if total > 0 :
         logger.info("{} sections had failures".format(total))
     else :
         logger.info("All sections passed")
     return total;
-   
+
 def checkAllNoTrains() :
     total = 0
     import control_frame
@@ -138,10 +141,14 @@ def main() :
                 import control_trainsearch
                 control_trainsearch.main()
                        
-            case "9" : 
+            case "9" :
                 import control_fdi
                 control_fdi.main()
-                       
+
+            case "10" :
+                import control_broadcasttime
+                control_broadcasttime.main()
+
             case "a" : 
                 checkAllNoTrains()    
                                   

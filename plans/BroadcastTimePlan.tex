@@ -10,16 +10,32 @@
     {https://nbviewer.org/github/openlcb/documents/blob/master/standards/BroadcastTimeS.pdf}
     {Broadcast Time Protocol Standard}
 
-\section{Broadcast Time Protocol Producer checking}
+\section{Node Type Selection}
 
-The Broadcast Time Protocol specifies the behavior of both producers and consumers of 
-broadcast time information.  
-The producer behavior is checked in this section.
+The Broadcast Time Protocol specifies the behavior of both producers (clock generators)
+and consumers (clock displays) of broadcast time information.
+A node under test is either a producer or a consumer.
 
-These checks should be done for each defined clock separately. 
+When the checking program is started, the tester is prompted to select the node type
+under test:
+\begin{itemize}
+\item \textbf{p} --- Clock Producer (generator): runs the producer checks described in section~\ref{sec:producer}.
+\item \textbf{c} --- Clock Consumer (display): runs the consumer checks described in section~\ref{sec:consumer}.
+\end{itemize}
+
+Only the checks applicable to the selected node type are run.
+Selecting ``Run all applicable checks'' will execute all checks for the selected type
+in sequence and produce a single pass/fail result.
+
+These checks should be done for each defined clock separately.
 For example, they can be run on the 01.01.00.00.01.00 Default Fast Clock
 followed by running them for the 01.01.00.00.01.01 Default Real-time Clock.
 Consult the device's documentation to see which clock IDs are defined.
+If the device does not support a particular clock ID, the checks for that clock ID
+should be skipped.
+
+\section{Broadcast Time Protocol Producer checking}
+\label{sec:producer}
 
 \checkProcedure{Broadcast Time Protocol Checking}
 
@@ -28,14 +44,23 @@ Consult the device's documentation to see which clock IDs are defined.
 This checks that the Clock Query defined in Section 6.4 of the Standard results in the
 Clock Synchronization sequence defined in section 6.3.
 
-The clock query is sent. 
-Then the specific reports in items 1 through 6 are checked for, in order.
+The clock query is sent.
+Then the specific reports in items 1 through 6 are checked for, in order:
+\begin{enumerate}
+\item Producer Identified Valid for Start or Stop Event ID,
+\item Producer Identified Valid for Report Rate event,
+\item Producer Identified Valid for Report Year event,
+\item Producer Identified Valid for Report Date event,
+\item Producer Identified Valid for Report Time event,
+\item Producer/Consumer Event Report for Report Time event for next minute, when it becomes valid.
+\end{enumerate}
 
-Note that the values of the time, date, rate, state are not checked in this step.
+Note that the values of the time, date, rate, state are not checked in this step,
+only that the correct sequence of messages is produced in the correct order.
 
 \subsection{Clock Set checking}
 
-This checks that the Clock Set operations defined in Section 6.5 of the Standard results 
+This checks that the Clock Set operations defined in Section 6.5 of the Standard results
 in new clock settings followed by the
 Clock Synchronization sequence defined in section 6.3.
 
@@ -44,9 +69,56 @@ This then sets the clock to 01:23 AM on July 22, 2023 with the rate set to 4X an
 The check then waits up to 4 seconds for a Clock Synchronization sequence, which it checks for
 the specific time, date, rate and state that was previously set.
 
+\subsection{Clock Set Immediate Report checking}
+
+This checks that the Clock Set operations defined in Section 6.5 of the Standard produce
+immediate Report events before the 3-second delayed synchronization sequence.
+
+The standard states that if a Set Time, Set Date, Set Year, or Set Rate Event is received,
+the clock generator shall make the change effective immediately, and produce the effective
+Report event.
+
+This check sends a Set Time event for 05:30 AM.
+It then verifies that a Report Time event for 05:30 AM is received within 1 second,
+before the full synchronization sequence arrives approximately 3 seconds later.
+
+\subsection{Multiple Set Commands checking}
+
+This checks that multiple Set commands received within 3 seconds result in only
+a single Clock Synchronization sequence, as defined in Section 6.5 of the Standard.
+
+The standard states that three seconds after the \emph{last} Set command has been received,
+the synchronization sequence shall be sent.
+
+This check sends a Set Time event, waits 1 second, then sends a Set Rate event.
+It then verifies that:
+\begin{enumerate}
+\item An immediate Report Time event is produced after the Set Time.
+\item An immediate Report Rate event is produced after the Set Rate.
+\item Only one Clock Synchronization sequence (section 6.3) is produced,
+      arriving approximately 3 seconds after the last Set command.
+\end{enumerate}
+
+\subsection{Clock Report Frequency checking}
+
+This checks the timing constraints on Report Time Events described in Section 6.2
+of the Standard.
+
+The standard states that while running, a clock generator shall send a Report Time Event
+no more frequently than once per real world minute and no less frequently than once per
+real world hour.
+
+This check sets the clock to 01:00 AM with the rate set to 4X and the clock running.
+It then monitors for Report Time Events over a period of at least 2 real world minutes
+and verifies:
+\begin{enumerate}
+\item At least one Report Time Event is received within the monitoring period.
+\item No two Report Time Events are received less than one real world minute apart.
+\end{enumerate}
+
 \subsection{Requested Time checking}
 
-This checks that the Report Time Event indicated in bullet 2 of section 6.2 is 
+This checks that the Report Time Event indicated in bullet 2 of section 6.2 is
 produced when requested.
 
 First this check sends a Consumer Identified message for the 01:24AM  July 22, 2023 event.
@@ -55,6 +127,25 @@ Then it sets the clock to 01:23 AM on July 22, 2023 with the rate set to 5X and 
 
 It then waits up to 30 seconds for the production of the 01:24AM Report Time Event.
 If the event is not received, or it contains the wrong contents, the check fails.
+
+\subsection{Date Rollover checking}
+
+This checks the date rollover behavior described in Section 6.2 of the Standard.
+
+The standard states that while running, a clock generator shall send a Date Rollover Event
+immediately prior to a rollover in the progression of time through hour 0 and minute 0,
+and three real seconds later send Report Year and Report Date Events.
+
+This check sets the clock to 23:58 PM on July 22, 2023 with the rate set to 10X
+and the clock running.
+
+It then waits for the progression of time through midnight and verifies:
+\begin{enumerate}
+\item A Date Rollover Event is received prior to the 00:00 Report Time Event.
+\item A Report Year Event is received approximately 3 real seconds after the rollover.
+\item A Report Date Event is received approximately 3 real seconds after the rollover,
+      showing July 23, 2023.
+\end{enumerate}
 
 \subsection{Startup Sequence checking}
 
@@ -65,34 +156,126 @@ The node being checked is manually restarted.
 The resulting message traffic is then checked for the required elements:
 \begin{enumerate}
 \item The relevant Producer Range Identified and Consumer Range Identified messages, in either order.
-\item A Clock Synchronization sequence as defined in section 6.3.
+\item A Clock Synchronization sequence as defined in section 6.3,
+      with all six messages present in the correct order.
 \end{enumerate}
 
-Note that the existence of the Clock Synchronization messages are checked, but not 
+Note that the existence of the Clock Synchronization messages are checked, but not
 their contents.  The Clock is allowed to start up with any time value.
 
 \section{Broadcast Time Protocol Consumer checking}
+\label{sec:consumer}
 
-The Broadcast Time Protocol specifies the behavior of both producers and consumers of 
-broadcast time information.  
+The Broadcast Time Protocol specifies the behavior of both producers and consumers of
+broadcast time information.
 The consumer behavior is checked in this section.
 
-These checks should be done for each defined clock separately. 
+These checks should be done for each defined clock separately.
 For example, they can be run on the 01.01.00.00.01.00 Default Fast Clock
 followed by running them for the 01.01.00.00.01.01 Default Real-time Clock.
 Consult the device's documentation to see which clock IDs are defined.
+If the device does not support a particular clock ID, the checks for that clock ID
+should be skipped.
+
+The consumer checks use the Identify Consumer message (MTI 0x08F4) from the
+Event Transport Standard to programmatically verify that the consumer node
+recognizes clock events.  When the consumer uses Consumer Range Identified
+(as section 6.1 of the Standard permits), the reply will be Consumer Identified
+Unknown.  When the consumer registers individual events, the reply may be
+Consumer Identified Active or Inactive.  Either Active or Unknown is accepted
+as confirmation that the consumer is tracking the clock.  No reply indicates
+the consumer does not consume the event, which is a failure.
+
+\subsection{Consumer Startup checking}
+
+This checks the startup behavior of a clock consumer as described in Section 6.1
+of the Standard.
+
+The standard states that clock consumers that wish to track the progression of time
+shall send a Consumer Range Identified message covering the whole 16-bit range of
+the clock's ``Specific Upper Part'', or send individual Consumer Identified messages
+for specific time events consumed.
+
+The node being checked is manually restarted.
+
+The resulting message traffic is then checked for:
+\begin{enumerate}
+\item One or more Consumer Range Identified or Consumer Identified messages
+      for the clock's event ID range, with the DUT as their source.
+\end{enumerate}
 
 \subsection{Synchronization Checking}
 
-This checks the response of the clock to the Clock Synchronization sequence defined
+This checks the response of the clock consumer to the Clock Synchronization sequence defined
 in section 6.3.
 
-The check sends the synchronization sequence for 
+The check sends the synchronization sequence for
     01:23 AM on July 22, 2023 with the rate set to 4X and the clock stopped.
-    
-The user is then prompted to check the consumer node's display, if any, to see if the
-same time, date, rate and/or state are being displayed.
+
+After allowing time for the consumer to process the sequence, an Identify Consumer
+message is sent for each of the following clock state event IDs:
+\begin{enumerate}
+\item Stop state (0xF001)
+\item Report Rate 4X (0x4010)
+\item Report Year 2023 (0x37E7)
+\item Report Date July 22 (0x2716)
+\item Report Time 01:23 (0x0117)
+\end{enumerate}
+
+For each, the consumer must reply with a Consumer Identified message echoing
+the queried event ID.  The reply may be Consumer Identified Active or
+Consumer Identified Unknown.  No reply, or a reply with the wrong event ID,
+is a failure.
+
+An additional Identify Consumer is sent for the Start event (0xF002) to verify
+it is also within the consumed range.
+
+\subsection{Stop and Start checking}
+
+This checks the response of the clock consumer to Stop and Start events.
+
+The check first sends a synchronization sequence for
+    01:23 AM on July 22, 2023 with the rate set to 4X and the clock running.
+
+\begin{enumerate}
+\item After the synchronization sequence, an Identify Consumer message is sent
+      for the Start event (0xF002).
+      The consumer must reply with Consumer Identified Active or Unknown,
+      confirming it consumes the Start event.
+
+\item A Stop Event (0xF001) is sent as a Producer/Consumer Event Report.
+
+\item An Identify Consumer message is sent for the Stop event (0xF001).
+      The consumer must reply with Consumer Identified Active or Unknown.
+
+\item A Start Event (0xF002) is sent as a Producer/Consumer Event Report.
+
+\item An Identify Consumer message is sent for the Start event (0xF002).
+      The consumer must reply with Consumer Identified Active or Unknown.
+\end{enumerate}
+
+Each query verifies that the consumer continues to respond for the clock
+events after receiving state changes.
+
+\subsection{Rate Change checking}
+
+This checks the response of the clock consumer to a rate change during operation.
+
+The check first sends a synchronization sequence for
+    01:23 AM on July 22, 2023 with the rate set to 1X and the clock running.
+
+\begin{enumerate}
+\item An Identify Consumer message is sent for the Report Rate 1X event (0x4004).
+      The consumer must reply with Consumer Identified Active or Unknown.
+
+\item A Report Rate event for 8X (0x4020) is sent as a Producer/Consumer Event Report.
+
+\item An Identify Consumer message is sent for the Report Rate 8X event (0x4020).
+      The consumer must reply with Consumer Identified Active or Unknown.
+\end{enumerate}
+
+Each query verifies that the consumer recognizes the rate events within the
+clock range.
 
 
-
-\end{document}  
+\end{document}
