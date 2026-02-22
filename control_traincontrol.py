@@ -15,6 +15,7 @@ import check_tr040_estop
 import check_tr050_gestop
 import check_tr060_geoff
 import check_tr070_memspaces
+import check_tr080_listener
 
 def prompt() :
     print("\nTrain Control Standard checking")
@@ -22,16 +23,17 @@ def prompt() :
     print(" 1 Events checking")
     print(" 2 Speed checking")
     print(" 3 Function checking")
-    print(" 4 Emergency stop checking")
-    print(" 5 Global emergency stop checking")
-    print(" 6 Global emergency off checking")
-    print(" 7 Memory space checking")
+    print(" 4 Listener configuration checking")
+    print(" 5 Emergency stop checking")
+    print(" 6 Global emergency stop checking")
+    print(" 7 Global emergency off checking")
+    print(" 8 Memory space checking")
     print("  ")
     print(" q go back")
 
 def checkAll(logger=logging.getLogger("TRAIN_CONTROL")) :
     result = 0
- 
+
     logger.info("Events checking")
     result += check_tr010_events.check()
 
@@ -40,6 +42,9 @@ def checkAll(logger=logging.getLogger("TRAIN_CONTROL")) :
 
     logger.info("Function checking")
     result += check_tr030_func.check()
+
+    logger.info("Listener configuration checking")
+    result += check_tr080_listener.check()
 
     logger.info("Emergency stop checking")
     result += check_tr040_estop.check()
@@ -57,12 +62,12 @@ def checkAll(logger=logging.getLogger("TRAIN_CONTROL")) :
         logger.info("Success - all Train Control checks passed")
     else:
         logger.warning("At least one Train Control check failed")
-        
+
     return result
-        
+
 def main() :
     logger = logging.getLogger("TRAIN_CONTROL")
-    
+
     if olcbchecker.setup.configure.runimmediate :
         return (checkAll(logger))
 
@@ -73,41 +78,45 @@ def main() :
         prompt()
         selection = input(">> ").lower()
         match selection :
-            case "1" : 
+            case "1" :
                 print("\nEvents checking")
                 check_tr010_events.check()
-           
-            case "2" : 
+
+            case "2" :
                 print("\nSpeed checking")
                 check_tr020_speed.check()
-           
-            case "3" : 
+
+            case "3" :
                 print("\nFunction checking")
                 check_tr030_func.check()
-           
-            case "4" : 
+
+            case "4" :
+                print("\nListener configuration checking")
+                check_tr080_listener.check()
+
+            case "5" :
                 print("\nEmergency stop checking")
                 check_tr040_estop.check()
-           
-            case "5" : 
+
+            case "6" :
                 print("\nGlobal emergency stop checking")
                 check_tr050_gestop.check()
-           
-            case "6" : 
+
+            case "7" :
                 print("\nGlobal emergency off checking")
                 check_tr060_geoff.check()
-           
-            case "7" : 
+
+            case "8" :
                 print("\nMemory space checking")
                 check_tr070_memspaces.check()
-           
+
             case  "a" :
                 checkAll(logger)
-            
+
             case "q" | "quit" : return
-            
+
             case _ : continue
-                   
+
     return
 
 if __name__ == "__main__":
