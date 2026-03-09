@@ -161,7 +161,7 @@ def check():
     reply = getReplyDatagram(destination)
     
     if reply.data[1] == 0x87 :
-        length = reply.data[3]*256*256*256+reply.data[4]*256*256+reply.data[5]*256+reply.data[6]
+        length = reply.data[3]*256*256*256+reply.data[4]*256*256+reply.data[5]*256+reply.data[6]+1
     else :
         logger.warning("Failure - address space 0xFA did not verify")
         retval = retval+1
