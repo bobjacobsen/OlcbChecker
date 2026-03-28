@@ -20,6 +20,13 @@ checkpip = True
 skip_interactive = False
 # True means that checks that _require_ human interaction are skipped when running all
 
+auto_reboot = False
+# True means that checks that need a restart will send the restart datagram instead of prompting the operator
+
+force_writes = False
+# True means write tests (e.g. write-under-mask, config memory write) will actually run.
+# When False, these tests are skipped to protect real hardware configuration.
+
 trace = 10
 # higher numbers are more output:
 #    0 only failures and errors
