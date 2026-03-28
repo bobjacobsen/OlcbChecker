@@ -40,6 +40,8 @@ def options() :
     print ("-P do check results against PIP bits")
     print ("-I execute interactive checks")
     print ("-i skip interactive checks")
+    print ("--auto-reboot  use restart datagram for reboot tests instead of prompting operator")
+    print ("-w, --force-writes  enable tests that write to config memory (0xFD)")
     print ("")
 
 # To start option configuration, get the defaults.py file,
@@ -58,6 +60,8 @@ ownnodeid = defaults.ownnodeid
 checkpip = defaults.checkpip
 trace = defaults.trace
 skip_interactive = defaults.skip_interactive
+auto_reboot = defaults.auto_reboot
+force_writes = defaults.force_writes
 
 # Next override with local definitions.
 if os.path.isfile("./localoverrides.py") :
@@ -73,6 +77,8 @@ if os.path.isfile("./localoverrides.py") :
         if 'checkpip' in dir(localoverrides) :      checkpip = localoverrides.checkpip
         if 'trace' in dir(localoverrides) :         trace = localoverrides.trace
         if 'skip_interactive' in dir(localoverrides) : skip_interactive = localoverrides.skip_interactive
+        if 'auto_reboot' in dir(localoverrides) : auto_reboot = localoverrides.auto_reboot
+        if 'force_writes' in dir(localoverrides) : force_writes = localoverrides.force_writes
 
     except:
         pass  # no local overrides is a normal condition
@@ -84,7 +90,7 @@ import getopt, sys
 runimmediate = False
 
 try:
-    opts, remainder = getopt.getopt(sys.argv[1:], "d:n:o:t:T:a:pPhiIrv", ["host=", "device=", "ownnode=", "targetnode=", "trace=", "help", "version"])
+    opts, remainder = getopt.getopt(sys.argv[1:], "d:n:o:t:T:a:pPhiIrvw", ["host=", "device=", "ownnode=", "targetnode=", "trace=", "help", "version", "auto-reboot", "force-writes"])
 except getopt.GetoptError as err:
     # print help information and exit:
     print (str(err)) # will print something like "option -a not recognized"
@@ -107,6 +113,10 @@ for opt, arg in opts:
         skip_interactive = True
     elif opt == "-I":
         skip_interactive = False
+    elif opt == "--auto-reboot":
+        auto_reboot = True
+    elif opt in ("-w", "--force-writes"):
+        force_writes = True
     elif opt in ("-t", "--targetnode"):
         targetnodeid = arg
     elif opt in ("-d", "--device"):
