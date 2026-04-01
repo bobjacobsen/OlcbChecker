@@ -155,13 +155,13 @@ def check():
         logger.warning("Did not find null at end of FDI")
         retval = retval+1
     
-    # check length against memory space definition.
+    # check length against memory space definition of the highest valid address (i.e. length+1)
     # first, get definition - a previous check made sure it's there
     olcbchecker.sendMessage(Message(MTI.Datagram, NodeID(olcbchecker.ownnodeid()), destination, [0x20, 0x84, 0xFA]))
     reply = getReplyDatagram(destination)
-    
+
     if reply.data[1] == 0x87 :
-        length = reply.data[3]*256*256*256+reply.data[4]*256*256+reply.data[5]*256+reply.data[6]+1
+        length = reply.data[3]*256*256*256+reply.data[4]*256*256+reply.data[5]*256+reply.data[6]+1 # datagram is highest address, doesn't include location 0
     else :
         logger.warning("Failure - address space 0xFA did not verify")
         retval = retval+1

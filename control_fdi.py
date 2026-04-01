@@ -10,12 +10,14 @@ import olcbchecker.setup
 
 import check_fd10_valid
 import check_fd20_read
+import check_fd30_readonly
 
 def prompt() :
     print("\nFDI Standard checking")
     print(" a Run all in sequence")
     print(" 1 FDI valid checking")
     print(" 2 FDI read checking")
+    print(" 3 FDI read-only flag checking")
     print("  ")
     print(" q go back")
 
@@ -27,6 +29,9 @@ def checkAll(logger=logging.getLogger("FDI")) :
 
     logger.info("FDI read checking")
     result += check_fd20_read.check()
+
+    logger.info("FDI read-only flag checking")
+    result += check_fd30_readonly.check()
 
     if result == 0 :
         logger.info("Success - all FDI checks passed")
@@ -52,10 +57,14 @@ def main() :
                 print("\nFDI valid checking")
                 check_fd10_valid.check()
            
-            case "2" : 
+            case "2" :
                 print("\nFDI read checking")
                 check_fd20_read.check()
-           
+
+            case "3" :
+                print("\nFDI read-only flag checking")
+                check_fd30_readonly.check()
+
             case  "a" :
                 checkAll(logger)
             

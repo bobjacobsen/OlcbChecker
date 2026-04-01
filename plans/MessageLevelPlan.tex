@@ -134,6 +134,14 @@ The checker then looks for the well-known global event.  If it finds that, the c
 If not, it prompts the operator to confirm that indication has been made 
 ``using whatever indication technology is available'', e.g. via LEDs or other form.
 
+\subsection{Simple Protocol Bits}
+
+This checks message bits defined in Standard section 4.1.4
+
+This checks that the PIP Simple Protocol subset bit is consistent with the MTI
+used by the node.  Per the spec, Simple nodes use Init Complete 0x0101 and
+Verified Node ID 0x0171; Full nodes use 0x0100 and 0x0170.
+
 \section{Frame Level Procedure}
 
 This section is only applicable to implementations what use a CAN-format link layer

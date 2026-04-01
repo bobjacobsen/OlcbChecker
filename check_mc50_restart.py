@@ -39,9 +39,10 @@ def check():
     # checking sequence starts here
     ###############################
 
-    if olcbchecker.setup.configure.skip_interactive :
-        logger.info("Interactive check skipped")
-        return 0
+    if not olcbchecker.setup.configure.auto_reboot :
+        if olcbchecker.setup.configure.skip_interactive :
+            logger.info("Interactive check skipped")
+            return 0
 
     # check if PIP says this is present
     if olcbchecker.isCheckPip() : 

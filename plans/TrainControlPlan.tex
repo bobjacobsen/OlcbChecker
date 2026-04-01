@@ -272,13 +272,150 @@ This assumes that the node being checked has not been reserved by another node.
 \end{enumerate}
 
 
-\subsection{Check Listener Configuration command and response}
 
-This section is still to be written.
+\subsection {Controller Lifecycle}
+
+This check references interactions in Standard section 6.1
+
+Checks the Controller Assign/Release/Query lifecycle:
 
 \begin{enumerate}
 
-    \item 
+\item Query with no controller — Sends Query [0x20, 0x03] and verifies
+flags = 0x00 (no controller assigned).
+
+\item Assign controller — Sends Assign [0x20, 0x01, 0x00] with our Node ID
+and verifies reply [0x20, 0x01, 0x00] (accepted).
+
+\item Query with controller — Sends Query and verifies flags has bit 0 set
+plus our Node ID is returned.
+
+\item Release controller — Sends Release [0x20, 0x02, 0x00] with our Node ID.
+
+\item Query after release — Verifies flags = 0x00 again.
+
+\end{enumerate}
+
+
+\subsection{Reserve/Release}
+
+This references interactions in Standard section 4.3
+
+This checks the Train Control Reserve/Release management commands:
+
+\begin{enumerate}
+
+\item First reserve — Sends Reserve and expects success (result byte 0x00).
+
+\item Same-source re-reserve — Sends Reserve again from the same node and
+expects success (per Standard, a second reserve from the same source
+shall be accepted).
+
+\item Release — Sends Release and expects success.
+
+\item Reserve after release — Sends Reserve again and expects success
+(verifying the release actually freed the reservation).
+
+\end{enumerate}
+
+
+\subsection{Heartbeat}
+
+This references interactions in Standard section 6.6
+
+Checks the Heartbeat / Keep-alive mechanism:
+
+\begin{enumerate}
+
+\item Assign controller — Prerequisite setup.
+
+\item Set speed — Set speed to a non-zero value (required: spec says trains
+   shall not initiate heartbeat when Set Speed is zero).
+
+\item Wait for Heartbeat Request — Expect Management Reply [0x40, 0x03,
+   timeout] from the train node.  Extract the timeout value.  If no
+   heartbeat is received within 10 seconds, pass with "optional per spec".
+
+\item Keepalive check — Send No-op [0x40, 0x03] before deadline expires
+   and verify speed is still non-zero.
+
+\item Wait for second Heartbeat Request — Verify counter was reset by
+   the keepalive.
+
+\item Timeout check — Do NOT send keepalive and wait for the full heartbeat
+   timeout to expire.
+
+\item Query speed — Verify speed is 0 (train emergency-stopped due to
+   missed heartbeat).  Optionally checks E-Stop status bit.
+
+\item No heartbeat when speed is zero — Speed is already zero from step 7.
+   Wait past the heartbeat timeout and verify no Heartbeat Request is sent
+   (per Standard section 6.6: "Trains shall not initiate a Heartbeat Request
+   if the last Set Speed is zero").
+
+\item No heartbeat after Emergency Stop — Set speed non-zero, wait for a
+   heartbeat to confirm the counter is active, send Emergency Stop, then
+   verify no heartbeat is sent (per Standard section 6.6: trains in Emergency
+   Stop state shall not send heartbeat).
+
+\item Speed retained after controller release — Set speed non-zero,
+    release controller, wait past the heartbeat timeout, re-assign
+    controller, query speed.  Verify speed is still non-zero (per
+    Standard section 6.6: "In case there is no assigned Controller node,
+    the Train Node shall continue operating as last commanded").
+
+\end{enumerate}
+
+Note: This check is inherently slow since it must wait for real timeouts.
+
+
+\section {Checks in Development}
+
+\subsection{Check Controller Configuration command and response}
+
+\begin{enumerate}
+
+    \item Send a Set Speed 0 to the node being checked.
+    
+    \item Send a Train Control Assign Controller command with the checker's Node ID.
+    \item Check for a Train Control Assign Controller reply with OK in the flags.
+
+    \item Send a Train Control Query Controller command
+    \item Check for a Train Control Query Controller response with the checker's Node ID
+        in the Active Controller field.
+
+    \item Send a Train Control Release Controller command
+    \item Check for a Train Control Query Controller response with a zero Node ID
+        in the Active Controller field.
+
+    \item Send a Train Control Query Controller command
+    \item Check for a Train Control Query Controller response with zeros
+        in the Active Controller field.
+
+\end{enumerate}
+
+In any case, including if some check fails, end by sending a Train Control Release
+Controller command.
+
+
+\subsection{Check Train Control Management command and response}
+
+This assumes that the node being checked has not been reserved by another node.
+
+\begin{enumerate}
+
+    \item Send a Train Control Management Reserve command
+    \item Check for a Train Control Management Reserve response with an OK code in the flags.
+
+    \item Send a Train Control Management Release command.  No response is expected.
+
+    \item Send a Train Control Management Reserve command
+    \item Check for a Train Control Management Reserve response with an OK code in the flags.
+
+    \item Send a Train Control Management Reserve command
+    \item Check for a Train Control Management Reserve response with a fail code in the flags.
+    
+    \item Send a Train Control Management Release command.  No response is expected.
 
 \end{enumerate}
 

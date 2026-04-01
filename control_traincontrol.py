@@ -16,6 +16,9 @@ import check_tr050_gestop
 import check_tr060_geoff
 import check_tr070_memspaces
 import check_tr080_listener
+import check_tr090_controller
+import check_tr100_reserve
+import check_tr110_heartbeat
 
 def prompt() :
     print("\nTrain Control Standard checking")
@@ -28,6 +31,9 @@ def prompt() :
     print(" 6 Global emergency stop checking")
     print(" 7 Global emergency off checking")
     print(" 8 Memory space checking")
+    print(" 9 Reserve/Release checking")
+    print(" 10 Controller Assign/Release/Query checking")
+    print(" 11 Heartbeat checking")
     print("  ")
     print(" q go back")
 
@@ -57,6 +63,15 @@ def checkAll(logger=logging.getLogger("TRAIN_CONTROL")) :
 
     logger.info("Listener configuration checking")
     result += check_tr080_listener.check()
+
+    logger.info("Controller Assign/Release/Query checking")
+    result += check_tr090_controller.check()
+
+    logger.info("Reserve/Release checking")
+    result += check_tr100_reserve.check()
+
+    logger.info("Heartbeat checking")
+    result += check_tr110_heartbeat.check()
 
     if result == 0 :
         logger.info("Success - all Train Control checks passed")
@@ -109,6 +124,18 @@ def main() :
             case "8" :
                 print("\nListener configuration checking")
                 check_tr080_listener.check()
+
+            case "9" :
+                print("\nReserve/Release checking")
+                check_tr100_reserve.check()
+
+            case "10" :
+                print("\nController Assign/Release/Query checking")
+                check_tr090_controller.check()
+
+            case "11" :
+                print("\nHeartbeat checking")
+                check_tr110_heartbeat.check()
 
             case  "a" :
                 checkAll(logger)

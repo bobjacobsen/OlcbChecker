@@ -46,7 +46,7 @@ def check():
     
     # wait for a possible Initialization Complete
     timeout = 30
-    logger.info("Wait for {} seconds to make sure node doesn't reinitialize".format(timeout))
+    logger.info("Stability soak: monitoring node for {} seconds to verify no reinitialization".format(timeout))
     while True :
         try :
             received = olcbchecker.getMessage(timeout) # timeout if no entries
@@ -70,9 +70,7 @@ def check():
                 if selection.startswith('y') :
                     logger.warning("Failure - operator indicated issue")
                     return (3)
-            else :
-                logger.info("    Interactive checks skipped, so not checking for indication on node.")
-        
+
             logger.info("Passed")
             return 0
 

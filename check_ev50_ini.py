@@ -39,12 +39,15 @@ def check():
 
     # If not running interactive checks, this is considered to pass
     
-    if olcbchecker.setup.configure.skip_interactive :
-        logger.info("Interactive check skipped")
-        return 0
-        
-    # prompt operator to restart node to start process
-    print("Please reset/restart the checked node now")
+    if olcbchecker.setup.configure.auto_reboot :
+        message = Message(MTI.Datagram, NodeID(olcbchecker.ownnodeid()),
+                          destination, [0x20, 0xA9])
+        olcbchecker.sendMessage(message)
+    else :
+        if olcbchecker.setup.configure.skip_interactive :
+            logger.info("Interactive check skipped")
+            return 0
+        print("Please reset/restart the checked node now")
 
     # wait for Initialization Complete
     

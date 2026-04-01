@@ -57,5 +57,11 @@ This section's checks cover:
 This process is repeated for datagrams of length 1, 10 and 72 bytes to exercise the full
 range of datagram framing.
 
+\subsection{Unknown Protocol}
+
+This checks Standard section 6.
+
+It sends a datagram whose first byte is not a recognized protocol identifier and
+verifies the node rejects it with a permanent error code (0x1xxx range).
 
 \end{document}  

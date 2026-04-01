@@ -34,12 +34,15 @@ def check():
     # checking sequence starts here
     ###############################
 
-    if olcbchecker.setup.configure.skip_interactive :
-        logger.info("Interactive check skipped")
-        return 0  
-
-    # prompt operator to restart node
-    print("Please reset/restart the device being checked now")
+    if olcbchecker.setup.configure.auto_reboot :
+        message = Message(MTI.Datagram, NodeID(olcbchecker.ownnodeid()),
+                          destination, [0x20, 0xA9])
+        olcbchecker.sendMessage(message)
+    else :
+        if olcbchecker.setup.configure.skip_interactive :
+            logger.info("Interactive check skipped")
+            return 0
+        print("Please reset/restart the device being checked now")
 
     while True :
         try :

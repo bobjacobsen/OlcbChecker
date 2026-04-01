@@ -14,6 +14,7 @@ import check_me20_verify
 import check_me30_pip
 import check_me40_oir
 import check_me50_dup
+import check_me60_pip_simple
 
 def prompt() :
     print("\nMessage Network Standard checking")
@@ -23,6 +24,7 @@ def prompt() :
     print(" 3 Protocol Support Inquiry checking")
     print(" 4 Optional Interaction Rejected checking")
     print(" 5 Duplicate Node ID Discovery checking")
+    print(" 6 PIP Simple Bit Consistency checking")
     print("  ")
     print(" q go back")
 
@@ -47,6 +49,9 @@ def checkAll(logger=logging.getLogger("MESSAGE")) :
 
     logger.info("Duplicate Node ID Discovery checking")
     result += check_me50_dup.check()
+
+    logger.info("PIP Simple Bit Consistency checking")
+    result += check_me60_pip_simple.check()
 
     if result == 0 :
         logger.info("Success - all message checks passed")
@@ -83,7 +88,11 @@ def main() :
             case "5" :
                 print("\nDuplicate Node ID Discovery checking")
                 check_me50_dup.check()
-           
+
+            case "6" :
+                print("\nPIP Simple Bit Consistency checking")
+                check_me60_pip_simple.check()
+
             case  "a" :
                 checkAll(logger)
             

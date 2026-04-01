@@ -131,4 +131,56 @@ systems may need this as a prompt to recreate the virtual node.  The checker
 then waits for an AMR with the device being checked's node ID, followed by a 
 Node Initialization Complete message from that node.
 
+\subsection{Out-of-Range Write}
+
+This checks Standard sections 4.3, 4.5
+
+This sends a read request to an address beyond the highest address reported by
+the address space and verifies the node returns a Read Reply with the Fail
+bit set and an appropriate error code (0x1082 permanent out-of-bounds).
+
+\subsection{Write Under Mask}
+
+This checks Standard section 4.10.
+
+This checks the Write Under Mask command.  It only runs if the Configuration Options
+reply indicates write-under-mask support.  It uses alternating (mask, data) byte
+pairs to selectively modify bits in config memory, then reads back to
+verify the mask was applied correctly (mask=1 bits written, mask=0 bits
+preserved).  
+
+This check is skipped unless `-w` is specified because it writes to 0xFD.
+
+\subsection{Write Check}
+
+This checks Standard sections 4.3, 4.5, 4.14.
+
+This is a basic config memory (0xFD) write check.  It queries Address Space Information to
+determine boundaries and writability, then performs a read-write-verify-restore
+cycle on a single byte.
+
+This check is skipped unless `-w` is specified because it writes to 0xFD.
+
+\begin{enumerate}
+
+\item PIP check — Verifies Memory Configuration Protocol is present in PIP.
+
+\item Force-writes guard — Skips with "Passed" if `-w` is not specified.
+
+\item Address Space Info — Queries 0xFD space: verifies present (0x87),
+   extracts the highest address, checks read-only flag, extracts the low address
+   if the valid flag is set.
+
+\item Read original — Reads one byte at the low address.
+
+\item Write the new pattern — Writes the bitwise complement of the original.
+
+\item Verify write — Reads back and confirms the complement was stored.
+
+\item Restore original — Writes the original value back.
+
+\item Verify restore — Reads back and confirms the original was restored.
+
+\end{enumerate}
+
 \end{document}  

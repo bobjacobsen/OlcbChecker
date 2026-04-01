@@ -135,4 +135,47 @@ If the \xml{acdi} element is present, the contents of the
 \xml{identification} sub-elements are checked against the ACDI-defined
 contents of the 251 (0xFB) memory space up to the first zero byte.
 
+\subsection{Identification Element checking}
+
+This checks against the Configuration Description Information Standard section 5.1.2,
+and the Memory Configuration Standard section 4.14.
+
+This is a comprehensive ACDI conformance check covering consistency between PIP, Configuration
+Options, Address Space Information, SNIP, and the ACDI address spaces (0xFC and 0xFB).
+
+\begin{enumerate}
+
+\item PIP check — Verifies ACDI and Memory Configuration are both present in PIP.
+
+\item Configuration Options flags — Reads the Options reply and checks that the
+three ACDI flags (0x0800 Manufacturer Read, 0x0400 User Read, 0x0200 User Write)
+are all set consistently.  Also verifies that spaces 0xFC and 0xFB fall within
+the highest/lowest address space range reported in the Options reply.
+
+\item Address Space Info — For each ACDI space flagged as readable, queries Address
+Space Information and verifies: present, read-only (0xFC always; 0xFB only when
+User Write is not advertised), highest address (124 for 0xFC, 127 for 0xFB), and
+lowest address (0 for both).
+
+\item SNIP comparison — Reads all fields from 0xFC (manufacturer, model, hardware version,
+software version) and 0xFB (user name, user description) and compares each against the
+corresponding SNIP value.  Also compares the version bytes: ACDI 0xFC address 0
+vs SNIP manufacturer version, ACDI 0xFB address 0 vs SNIP user version.
+
+\item Writeback roundtrip — If User Write is flagged, saves the current user name
+from 0xFB address 1, writes the string "OLCB\_TST", reads it back and
+verifies, then restores the original value.
+
+\item Rejects write to read-only 0xFC — Attempts a write to the manufacturer
+space and verifies the node rejects it (either Datagram Rejected or Write Reply
+Fail).
+
+\item Rejects write to 0xFB version byte — Attempts a write to 0xFB address 0
+(the version byte) and verifies the node rejects it.
+
+\end{enumerate}
+
+
+
+
 \end{document}  

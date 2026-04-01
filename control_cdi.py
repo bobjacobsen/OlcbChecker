@@ -11,6 +11,7 @@ import olcbchecker.setup
 import check_cd10_valid
 import check_cd20_read
 import check_cd30_acdi
+import check_cd40_acdi_writeback
 
 def prompt() :
     print("\nCDI Standard checking")
@@ -18,6 +19,7 @@ def prompt() :
     print(" 1 CDI Memory Present checking")
     print(" 2 Validation checking")
     print(" 3 ACDI checking")
+    print(" 4 ACDI Write-Back checking")
     print("  ")
     print(" q go back")
 
@@ -32,6 +34,9 @@ def checkAll(logger=logging.getLogger("CDI")) :
 
     logger.info("ACDI checking")
     result += check_cd30_acdi.check()
+
+    logger.info("ACDI Write-Back checking")
+    result += check_cd40_acdi_writeback.check()
 
     if result == 0 :
         logger.info("Success - all CDI checks passed")
@@ -61,10 +66,14 @@ def main() :
                 print("\nValidation checking")
                 check_cd20_read.check()
                            
-            case "3" : 
+            case "3" :
                 print("\nACDI checking")
                 check_cd30_acdi.check()
-                           
+
+            case "4" :
+                print("\nACDI Write-Back checking")
+                check_cd40_acdi_writeback.check()
+
             case  "a" :
                 checkAll(logger)
             
