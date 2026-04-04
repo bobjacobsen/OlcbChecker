@@ -161,7 +161,7 @@ def check():
             return(0)
 
     # Guard: skip unless --force-writes (-w) is enabled
-    if not olcbchecker.isForceWrites() :
+    if not olcbchecker.setup.configure.force_writes :
         logger.info("Passed - skipped (use --force-writes to enable write tests)")
         return 0
 
