@@ -163,12 +163,53 @@ def check():
         return reply
 
     reply = sendAndCheckResponse(destination, [0x20, 0x40, 0,0,0,0, 0xFD, 64], 64)
-    if reply != 0 : 
+    if reply != 0 :
         logger.warning("   in read of 64 bytes from long-form read")
         return reply
-        
-            
-    logger.info("Passed")
+
+    logger.info("Passed (datagram)")
+
+    # --- Stream read pass ---
+    from olcbchecker.stream_utils import query_stream_support, read_via_stream
+    from openlcb.pip import PIP as PIP_enum
+
+    stream_ok = query_stream_support(destination)
+    if not stream_ok :
+        logger.info("Skipped (stream) - Config Options stream bit not set")
+        return 0
+
+    # Also verify PIP says stream protocol is available
+    if olcbchecker.isCheckPip() :
+        pipSet = olcbchecker.gatherPIP(destination)
+        if pipSet is not None and PIP_enum.STREAM_PROTOCOL not in pipSet :
+            logger.info("Skipped (stream) - Stream protocol not in PIP")
+            return 0
+
+    # Read 10 bytes from space 0xFD via stream and compare to datagram read
+    try :
+        # First get reference data via datagram
+        ref_request = [0x20, 0x41, 0,0,0,0, 10]
+        message = Message(MTI.Datagram, NodeID(olcbchecker.ownnodeid()), destination, ref_request)
+        olcbchecker.sendMessage(message)
+        ref_reply = getReplyDatagram(destination)
+        ref_data = ref_reply.data[6:]  # skip header bytes
+
+        # Now read same data via stream
+        stream_data = read_via_stream(logger, destination, 0xFD, 0, 10)
+
+        # Compare
+        if list(stream_data[:10]) != list(ref_data[:10]) :
+            logger.warning("Failure (stream) - stream data does not match "
+                           "datagram data: stream={}, datagram={}"
+                           .format(stream_data[:10], list(ref_data[:10])))
+            return 3
+
+        logger.info("Passed (stream)")
+
+    except Exception as e :
+        logger.warning("Failure (stream) - {}".format(str(e)))
+        return 3
+
     return 0
 
 if __name__ == "__main__":

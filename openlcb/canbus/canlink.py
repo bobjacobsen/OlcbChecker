@@ -246,6 +246,17 @@ class CanLink(LinkLayer):
             self.aliasToNodeID[frame.header & 0xFFF] = sourceID
             self.nodeIdToAlias[sourceID] = frame.header & 0xFFF
 
+        #    handle Stream Data Send (frame type 7) separately
+        if mti == MTI.Stream_Data_Send:
+            destAlias = (frame.header & 0x00_FFF_000) >> 12
+            if destAlias in self.aliasToNodeID:
+                destID = self.aliasToNodeID[destAlias]
+            else:
+                destID = NodeID(0)
+            msg = Message(mti, sourceID, destID, frame.data)
+            self.fireListeners(msg)
+            return
+
         destID = NodeID(0)
         #    handle destination for addressed messages
         dgCode = frame.header & 0x00F_000_000
@@ -367,6 +378,25 @@ class CanLink(LinkLayer):
             self.fireListeners(msg)
 
     def sendMessage(self, msg):
+        #    special case for stream data send (CAN frame type 7)
+        if msg.mti == MTI.Stream_Data_Send:
+            header = 0x1F_000_000
+            sssAlias = self.nodeIdToAlias.get(msg.source, 0)
+            dddAlias = self.nodeIdToAlias.get(msg.destination, 0)
+            header |= (sssAlias & 0xFFF)
+            header |= ((dddAlias & 0xFFF) << 12)
+            did = msg.data[0]
+            payload = msg.data[1:]
+            if len(payload) == 0:
+                frame = CanFrame(header, [did])
+                self.link.sendCanFrame(frame)
+            else:
+                for i in range(0, len(payload), 7):
+                    chunk = [did] + payload[i:i + 7]
+                    frame = CanFrame(header, chunk)
+                    self.link.sendCanFrame(frame)
+            return
+
         #    special case for datagram
         if msg.mti == MTI.Datagram:
             header = 0x10_00_00_00
@@ -618,7 +648,10 @@ class CanLink(LinkLayer):
             #    datagram type - we don't address the subtypes here
             return MTI.Datagram
 
-        #    not handling reserver and stream type except to log
+        if frameType == 7:
+            return MTI.Stream_Data_Send
+
+        #    not handling reserved type except to log
         logging.warning("unhandled canMTI: {}, marked Unknown"
                         "".format(frame))
         return MTI.Unknown

@@ -1,0 +1,134 @@
+\input{formattingHeader}
+
+\titleandheader{Checking the OpenLCB DCC Detection Protocol}
+
+\begin{document}
+\maketitle
+\thispagestyle{firststyle}
+
+\introductionCaveats
+    {https://nbviewer.org/github/openlcb/documents/blob/master/drafts/DccDetectorWN.pdf}
+    {DCC Detection Protocol Working Note}.
+
+\section{DCC Detection Protocol Procedure}
+
+\checkProcedure{DCC Detector Protocol Checking}
+
+There is no PIP bit allocated to this protocol.  The checks use Event
+Exchange support in PIP as a prerequisite, since the DCC Detection Protocol
+is built entirely on PCER messages with specially encoded Event IDs.
+
+A node which does not self-identify in PIP that it supports
+Event Exchange will be considered to have passed these checks.
+\pipsetFootnote
+
+Each detector Event ID packs three fields into the standard 8-byte Event ID:
+
+\begin{enumerate}
+\item 6 bytes: unique ID of the detector (normally the node's own Node ID).
+\item 2 bits: direction/occupancy status:
+    \begin{itemize}
+    \item 0b00 -- unoccupied (exit)
+    \item 0b01 -- occupied, forward (entry)
+    \item 0b10 -- occupied, reverse (entry)
+    \item 0b11 -- occupied, direction unknown (entry)
+    \end{itemize}
+\item 14 bits: DCC address, encoded per S-9.2.1.1 and RCN-218:
+    \begin{itemize}
+    \item High byte 0x38 -- DCC short address (0--127)
+    \item High byte 0x39 -- DCC consist address (0--127)
+    \item 0x3800 -- track empty sentinel (short address 0)
+    \item Otherwise -- DCC long address
+    \end{itemize}
+\end{enumerate}
+
+The auto-detection of detector events works by comparing the upper 6 bytes
+of each Producer Identified Event ID against the target node's Node ID.
+Events whose upper 6 bytes match are treated as detector events.
+
+\textbf{Note:}  These checks do not test live detection behaviour (PCER messages
+produced when a train enters or exits a monitored section), because that
+would require physical train movement which cannot be triggered remotely.
+The checks instead validate the Event ID encoding through the Identify Events
+and Identify Producer interactions.
+
+\subsection{Identify Detector Events}
+
+This section checks that the DBC produces detector-format Event IDs in
+response to an Identify Events Addressed message, as required by
+Working Note section 2.6:
+\textit{``A detector, acting as a producer, must reply to Verify Events
+and Identify Producers messages with the appropriate event(s) or range.''}
+
+The check sends an Identify Events Addressed message to the DBC.
+It then examines all Producer Identified and Producer Range Identified
+replies, looking for Event IDs whose upper 6 bytes match the DBC's Node ID.
+
+\begin{enumerate}
+\item That one or more Producer Identified messages are returned.
+\item That those show the DBC node as their source.
+\item That at least one of the returned Event IDs has its upper 6 bytes
+    equal to the DBC's Node ID (confirming it is a detector).
+\end{enumerate}
+
+\subsection{Event ID Format Validation}
+
+This section validates the encoding of all detector Event IDs discovered
+in the previous step.  It checks compliance with Working Note section 2.4.
+
+For each detector Event ID (upper 6 bytes matching the DBC's Node ID),
+the check validates:
+
+\begin{enumerate}
+\item That the 2-bit direction/occupancy field contains a valid value
+    (0x00 through 0x03).
+\item That the upper byte of the 14-bit address field does not use a
+    reserved prefix (0x3A through 0x3F).
+\item That short addresses (prefix 0x38) have an address value in the
+    range 0--127.
+\item That consist addresses (prefix 0x39) have an address value in the
+    range 0--127.
+\end{enumerate}
+
+\subsection{Identify Producer Replies}
+
+This section checks that the DBC replies to Identify Producer messages
+for each of its detector Event IDs, as required by Working Note section 2.6:
+\textit{``A detector, acting as a producer, must reply to Verify Events
+and Identify Producers messages with the appropriate event(s) or range.''}
+
+The check first gathers all individual (non-range) detector Event IDs
+via Identify Events Addressed.  For each such Event ID, it then sends
+an Identify Producer message and checks:
+
+\begin{enumerate}
+\item That a Producer Identified or Producer Range Identified reply is
+    received for each Identify Producer message sent.
+\item That the reply carries the same Event ID as the request (or a range
+    that encompasses it).
+\end{enumerate}
+
+Other messages received during this check are ignored.
+
+\subsection{Track-Empty Sentinel (Informational)}
+
+This section checks whether the DBC advertises Event IDs using the
+track-empty sentinel value (0x3800 in the 14-bit address field).
+
+Per the Working Note:
+\textit{``A detector may, but does not have to, use the 0x3800
+`track is empty' sentinel.''}
+
+This check is informational only and never fails.  It reports:
+
+\begin{enumerate}
+\item Whether any detector Event IDs with address field 0x3800 are
+    present among the Producer Identified replies.
+\item If present, which direction/occupancy variants (arrives, leaves)
+    are advertised.
+\end{enumerate}
+
+A detector that does not advertise track-empty events passes this check
+with an informational note.
+
+\end{document}

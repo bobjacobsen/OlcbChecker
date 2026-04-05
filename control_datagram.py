@@ -62,7 +62,7 @@ def main() :
             case "q" | "quit" : return
 
             case _ : continue
-                   
+
     return
 
 if __name__ == "__main__":

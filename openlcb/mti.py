@@ -46,6 +46,12 @@ class MTI(Enum):
     Datagram_Received_OK               = 0x0A28
     Datagram_Rejected                  = 0x0A48
 
+    Stream_Initiate_Request            = 0x0CC8
+    Stream_Initiate_Reply              = 0x0868
+    Stream_Data_Send                   = 0x1F88
+    Stream_Data_Proceed                = 0x0888
+    Stream_Data_Complete               = 0x08A8
+
     Unknown                            = 0x0008   # make this addressed so that it;s individually processed  # noqa: E501
 
     # These are used for internal signalling and are not present in the MTI

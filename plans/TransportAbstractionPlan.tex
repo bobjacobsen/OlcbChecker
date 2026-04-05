@@ -1,0 +1,327 @@
+\input{formattingHeader}
+
+\titleandheader{Modular Transport Abstraction for the OpenLCB Checker}
+
+\begin{document}
+\maketitle
+\thispagestyle{firststyle}
+
+\section{Introduction}
+
+This note documents a proposed design for making the OpenLCB Checker
+transport-layer--agnostic, so that the same test suite can run over
+CAN (GridConnect serial or TCP) or native OpenLCB TCP/IP, with a clean
+extension point for future physical layers.
+
+The design uses an abstract \texttt{TransportStack} base class with one
+concrete implementation per physical layer.  A factory in \texttt{setup.py}
+selects the correct stack based on a new \texttt{--transport} configuration
+option.
+
+\section{Current State}
+
+All 93 \texttt{check\_*.py} tests currently run through a single code path in
+\texttt{olcbchecker/setup.py} that hard-codes the CAN GridConnect stack:
+
+\begin{verbatim}
+CanPhysicalLayerGridConnect  ->  CanLink  ->  message listeners
+\end{verbatim}
+
+The underlying connection is either a TCP socket (GridConnect ASCII over TCP,
+port 12021) or a serial port, both carrying CAN GridConnect frames.
+
+A native TCP/IP link layer already exists in
+\texttt{openlcb/tcplink/tcplink.py} and \texttt{openlcb/tcplink/tcpsocket.py}
+but is not wired into the test infrastructure.
+
+\subsection{Test Transport Dependency Analysis}
+
+Of the 93 test files:
+
+\begin{itemize}
+\item \textbf{83 tests} use only \texttt{sendMessage()} and
+    \texttt{getMessage()} --- already transport-agnostic.
+\item \textbf{10 tests} use CAN-specific APIs and are inherently
+    CAN-only:
+\end{itemize}
+
+\begin{tabular}{|l|p{8cm}|}
+\hline
+\textbf{Test File} & \textbf{CAN APIs Used} \\
+\hline
+\texttt{check\_fr10\_init.py} & \texttt{getFrame}, header bit operations \\
+\hline
+\texttt{check\_fr20\_ame.py} & \texttt{CanFrame}, \texttt{sendCanFrame}, \texttt{getFrame}, \texttt{canLink.localAlias} \\
+\hline
+\texttt{check\_fr30\_collide.py} & \texttt{CanFrame}, \texttt{sendCanFrame}, \texttt{getFrame}, \texttt{canLink.localAlias} \\
+\hline
+\texttt{check\_fr40\_highbit.py} & \texttt{CanFrame}, \texttt{sendCanFrame}, \texttt{getFrame}, \texttt{canLink.localAlias} \\
+\hline
+\texttt{check\_fr50\_capacity.py} & \texttt{canLink.localAlias} \\
+\hline
+\texttt{check\_fr60\_standard.py} & \texttt{CanFrame}, \texttt{getFrame}, \texttt{canLink.localAlias} \\
+\hline
+\texttt{check\_ev60\_ewp.py} & \texttt{CanFrame}, \texttt{sendCanFrame}, \texttt{canLink.localAlias} \\
+\hline
+\texttt{check\_ev70\_lrn.py} & \texttt{CanFrame}, \texttt{canLink.localAlias} \\
+\hline
+\texttt{check\_mc50\_restart.py} & \texttt{CanFrame}, \texttt{sendCanFrame}, \texttt{canLink.localAlias} \\
+\hline
+\texttt{check\_st110\_concurrent\_multi\_node.py} & \texttt{CanFrame}, \texttt{sendCanFrame}, \texttt{getFrame}, \texttt{canLink.nodeIdToAlias} \\
+\hline
+\end{tabular}
+
+\section{Proposed Architecture}
+
+\subsection{TransportStack Abstract Base Class}
+
+A new file \texttt{olcbchecker/transportstack.py} defines the interface that
+every transport must implement:
+
+\begin{description}
+\item[\texttt{link\_layer}] Returns the \texttt{LinkLayer} subclass instance
+    (\texttt{CanLink}, \texttt{TcpLink}, etc.).
+\item[\texttt{message\_queue}] A \texttt{Queue} of received
+    \texttt{Message} objects.
+\item[\texttt{send\_message(msg)}] Send an OpenLCB \texttt{Message}.
+\item[\texttt{supports\_frames()}] Returns \texttt{True} if the transport
+    exposes raw frame access (e.g.\ CAN), \texttt{False} otherwise.
+\item[\texttt{frame\_queue}] A \texttt{Queue} of received frames, or
+    \texttt{None} if the transport has no frame concept.
+\item[\texttt{send\_frame(frame)}] Send a raw frame.  Raises
+    \texttt{NotImplementedError} for transports without frames.
+\item[\texttt{local\_alias}] The CAN alias of the local node, or
+    \texttt{None} if not applicable.
+\item[\texttt{node\_id\_to\_alias(node\_id)}] Resolve a NodeID to a CAN
+    alias, or \texttt{None} if not applicable.
+\item[\texttt{start()}] Start the background receive loop thread.
+\item[\texttt{close()}] Close the underlying connection.
+\end{description}
+
+\subsection{CAN GridConnect Stack}
+
+A new file \texttt{olcbchecker/can\_stack.py} containing class
+\texttt{CanStack(TransportStack)}.
+
+This extracts the existing logic from \texttt{setup.py}:
+\begin{enumerate}
+\item Creates \texttt{TcpSocket} (from \texttt{openlcb/canbus/tcpsocket.py})
+    or \texttt{SerialLink} based on \texttt{hostname} vs.\ \texttt{devicename}.
+\item Creates the \texttt{ReportingCanLink} subclass of
+    \texttt{CanPhysicalLayerGridConnect}.
+\item Creates \texttt{CanLink} with \texttt{localNodeID}.
+\item Wires listeners: frames go to \texttt{frame\_queue}, messages go to
+    \texttt{message\_queue}.
+\item \texttt{supports\_frames()} returns \texttt{True}.
+\item \texttt{local\_alias} and \texttt{node\_id\_to\_alias()} delegate to the
+    underlying \texttt{CanLink}.
+\item \texttt{start()} spawns the receive loop thread that calls
+    \texttt{receiveString()}.
+\end{enumerate}
+
+\subsection{Native TCP Stack}
+
+A new file \texttt{olcbchecker/tcp\_stack.py} containing class
+\texttt{TcpStack(TransportStack)}.
+
+\begin{enumerate}
+\item Creates \texttt{TcpSocket} (from \texttt{openlcb/tcplink/tcpsocket.py})
+    and connects to \texttt{hostname:portnumber}.
+\item Creates \texttt{TcpLink} with \texttt{localNodeID}.
+\item Wires \texttt{TcpLink.linkPhysicalLayer(tcpSocket.send)}.
+\item Registers a message listener that puts received messages into
+    \texttt{message\_queue}.
+\item \texttt{supports\_frames()} returns \texttt{False}.
+\item \texttt{frame\_queue} returns \texttt{None}.
+\item \texttt{start()} spawns a receive loop that calls
+    \texttt{tcpSocket.receive()} and feeds bytes to
+    \texttt{tcpLink.receiveListener()}, then calls \texttt{tcpLink.linkUp()}.
+\item \texttt{close()} calls \texttt{tcpLink.linkDown()} then
+    \texttt{tcpSocket.close()}.
+\end{enumerate}
+
+\subsection{Factory in setup.py}
+
+\texttt{olcbchecker/setup.py} is reduced to a thin factory:
+
+\begin{verbatim}
+if configure.transport == "tcp" :
+    from olcbchecker.tcp_stack import TcpStack
+    stack = TcpStack(configure)
+else :
+    from olcbchecker.can_stack import CanStack
+    stack = CanStack(configure)
+
+stack.start()
+\end{verbatim}
+
+Backward-compatible aliases (\texttt{canLink}, \texttt{sendCanFrame},
+\texttt{frameQueue}, \texttt{messageQueue}) are set from the stack's
+properties so that the 10 CAN-specific tests continue to work without
+modification when running in CAN mode.
+
+\subsection{Updates to olcbchecker/\_\_init\_\_.py}
+
+\begin{itemize}
+\item \texttt{sendMessage()} calls \texttt{setup.stack.send\_message()} instead
+    of \texttt{setup.canLink.sendMessage()}.
+\item New function \texttt{supports\_frames()} returns
+    \texttt{setup.stack.supports\_frames()}.
+\item \texttt{getFrame()} raises a clear \texttt{RuntimeError} when the
+    transport does not support frames.
+\item \texttt{purgeMessages()} only drains the frame queue when it exists.
+\end{itemize}
+
+\section{Configuration}
+
+\subsection{New Configuration Variable}
+
+\texttt{defaults.py} gains:
+
+\begin{verbatim}
+transport = "can"
+# "can" for CAN GridConnect (TCP or serial)
+# "tcp" for native OpenLCB TCP/IP
+\end{verbatim}
+
+This follows the existing pattern: \texttt{defaults.py} $\to$
+\texttt{localoverrides.py} $\to$ command-line arguments.
+
+\subsection{New Command-Line Option}
+
+\texttt{configure.py} gains:
+
+\begin{verbatim}
+--transport TYPE    "can" (default) or "tcp"
+\end{verbatim}
+
+When \texttt{transport} is \texttt{"tcp"}, the checker requires
+\texttt{hostname} to be set (native TCP has no serial mode).
+
+\section{Test Gating for CAN-Only Tests}
+
+\subsection{Frame Transport Suite}
+
+\texttt{control\_frame.py} --- the entire Frame Transport suite (6 tests) is
+CAN-only.  \texttt{checkAll()} checks \texttt{supports\_frames()} and returns
+0 with an informational log message if false.  The menu in
+\texttt{control\_master.py} hides option ``0 Frame Transport checking'' when
+frames are not supported.
+
+\subsection{Individual CAN-Specific Tests Outside Frame Suite}
+
+Three CAN-specific tests live in other suites:
+
+\begin{itemize}
+\item \texttt{check\_ev60\_ewp.py} (Event Transport)
+\item \texttt{check\_ev70\_lrn.py} (Event Transport)
+\item \texttt{check\_mc50\_restart.py} (Memory Configuration)
+\end{itemize}
+
+And one in Stream Transport:
+
+\begin{itemize}
+\item \texttt{check\_st110\_concurrent\_multi\_node.py}
+\end{itemize}
+
+\textbf{Open question:} Should these be gated in their respective controllers
+(\texttt{control\_events.py}, \texttt{control\_memory.py},
+\texttt{control\_stream.py}), or should each test file check
+\texttt{supports\_frames()} at the top of its \texttt{check()} function?
+Gating in the controller is cleaner (no test file changes) but less
+self-documenting.
+
+\section{Adding a Future Physical Layer}
+
+To add a new transport (e.g.\ USB, wireless):
+
+\begin{enumerate}
+\item Create one new file: \texttt{olcbchecker/usb\_stack.py} subclassing
+    \texttt{TransportStack}.
+\item Add one \texttt{elif} in \texttt{setup.py}'s factory.
+\item Add the transport name to the \texttt{--transport} help text in
+    \texttt{configure.py}.
+\item If the transport has its own unique test category, add a
+    \texttt{control\_usb.py} and wire it into \texttt{control\_master.py}.
+\end{enumerate}
+
+No other existing files require modification.
+
+\section{TCP-Specific Tests (Future Scope)}
+
+The native TCP specification defines link control messages (Status
+Request/Reply, Drop Link Request/Reply) that could have their own test suite
+analogous to the Frame Transport suite for CAN.  This would be a new
+\texttt{control\_tcplink.py} with \texttt{check\_tl*.py} files, shown in the
+menu only when \texttt{transport == "tcp"}.  This is out of scope for the
+initial implementation but the architecture supports it.
+
+\section{Files Changed Summary}
+
+\subsection{New Files (3)}
+
+\begin{tabular}{|l|p{9cm}|}
+\hline
+\textbf{File} & \textbf{Purpose} \\
+\hline
+\texttt{olcbchecker/transportstack.py} & Abstract base class defining the transport interface \\
+\hline
+\texttt{olcbchecker/can\_stack.py} & CAN GridConnect implementation (extracted from current \texttt{setup.py}) \\
+\hline
+\texttt{olcbchecker/tcp\_stack.py} & Native TCP/IP implementation (wires existing \texttt{TcpLink}) \\
+\hline
+\end{tabular}
+
+\subsection{Modified Files (5)}
+
+\begin{tabular}{|l|p{9cm}|}
+\hline
+\textbf{File} & \textbf{Change} \\
+\hline
+\texttt{defaults.py} & Add \texttt{transport = "can"} \\
+\hline
+\texttt{configure.py} & Add \texttt{--transport} CLI option and \texttt{localoverrides} chain entry \\
+\hline
+\texttt{olcbchecker/setup.py} & Replace hard-coded CAN stack with factory; add backward-compat aliases \\
+\hline
+\texttt{olcbchecker/\_\_init\_\_.py} & Use \texttt{stack.send\_message()}, add \texttt{supports\_frames()}, guard \texttt{getFrame()} \\
+\hline
+\texttt{control\_master.py} & Conditionally show/run Frame Transport suite based on \texttt{supports\_frames()} \\
+\hline
+\end{tabular}
+
+\subsection{Unchanged (93 test files)}
+
+No \texttt{check\_*.py} files are modified.  CAN-specific tests work
+unchanged in CAN mode via backward-compatible aliases.  In TCP mode they are
+skipped by the controllers.
+
+\section{Open Questions}
+
+\begin{enumerate}
+\item \textbf{Port number default:} Should \texttt{transport = "tcp"}
+    automatically switch the default port from 12021 to the native TCP port,
+    or should the user always specify it explicitly?
+\item \textbf{Gating CAN-specific tests outside the Frame suite:}
+    Gate in the controller files, or put a \texttt{supports\_frames()} guard
+    inside each of the 4 affected test files?
+\item \textbf{CLI flag:} Is \texttt{--transport can|tcp} acceptable, or
+    is a different naming preferred?
+\end{enumerate}
+
+\section{Verification}
+
+\begin{enumerate}
+\item Run with \texttt{--transport can -a localhost:12021} --- all 93 tests
+    must behave identically to today.
+\item Run with \texttt{--transport tcp -a host:port} against a native TCP
+    device --- 83 message-level tests run; 10 CAN-specific tests are skipped
+    with informational messages.
+\item Menu shows ``Frame Transport checking'' only in CAN mode.
+\item \texttt{checkAll()} reports correct section counts (skipped sections
+    do not count as failures).
+\item Running a CAN-specific test file directly on TCP gives a clear
+    error, not a silent pass.
+\end{enumerate}
+
+\end{document}
