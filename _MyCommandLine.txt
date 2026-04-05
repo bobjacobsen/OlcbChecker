@@ -1,0 +1,8 @@
+
+python3.13 ./control_master.py -d /dev/cu.usbmodemCC570003B1 -t 05.01.01.01.07.07
+python3.13 ./control_master.py -d /dev/cu.usbmodemCC570003B1 -t 05.01.01.01.07.07  -T30
+python3.13 ./control_master.py -d /dev/cu.usbmodemCC570003B1 -t 05.01.01.01.07.07  -T50
+
+
+python3.13 ./control_master.py -d /dev/cu.usbmodemCC570003B1 -t 05.01.01.01.94.07  -T50
+
