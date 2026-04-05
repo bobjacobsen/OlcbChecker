@@ -1,0 +1,356 @@
+\input{formattingHeader}
+
+\titleandheader{Checking the OpenLCB Stream Transport Protocol}
+
+\begin{document}
+\maketitle
+\thispagestyle{firststyle}
+
+\introductionCaveats
+    {https://nbviewer.org/github/openlcb/documents/blob/master/standards/StreamTransportS.pdf}
+    {Stream Transport Standard}.
+
+\section{Stream Transport Procedure}
+
+\checkProcedure{Stream Checking}
+
+A node which does not self-identify in PIP that it supports
+Stream Transport will be considered to have passed these checks.
+\pipsetFootnote
+
+The checker acts as the Source node (initiating streams to the DBC).
+The DBC is always the Destination node.  For nodes that do not support
+streams, we verify proper rejection.
+
+This plan does not check:
+\begin{enumerate}
+\item Streams initiated by the DBC as source.  Config-mem stream checks
+    exercise that path separately.
+\item CAN multi-frame assembly of 12-byte Initiate Requests.  The st040 check
+    sends a 12-byte request but does not explicitly verify CAN framing.
+\item Gateway buffer reduction (not testable from an end node).
+\item Early Proceed (implementation optimization, not a conformance requirement).
+\end{enumerate}
+
+All checks validated against PR \#189 (openlcb/documents), the authoritative
+spec revision.
+
+\subsection{Stream Initiate Request/Reply}
+
+This checks Standard sections 4.1, 4.2 and 7.1.
+
+The checker sends a Stream Initiate Request with a proposed buffer size of 256
+and Source Stream ID 0x01.  It then checks:
+\begin{enumerate}
+\item That a Stream Initiate Reply or Optional Interaction Rejected is received.
+\item If a Reply: length is at least 6 bytes, SID is echoed, DID is not 0xFF,
+    flags and buffer size are self-consistent.
+\item If accepted, the stream is closed with Stream Data Complete.
+\item A 30-second stability soak monitors for unexpected reboots.
+\end{enumerate}
+
+\subsection{Reject When Unsupported}
+
+This checks Standard section 7.1.
+
+If the DBC does not advertise Stream Transport in PIP, the checker sends a
+Stream Initiate Request and verifies the DBC rejects it with OIR or an error
+reply.
+
+\subsection{Buffer Negotiation}
+
+This checks Standard section 4.2.
+
+The checker opens streams with proposed buffer sizes of 64 and 1024.  For each:
+\begin{enumerate}
+\item Verifies the reply buffer size does not exceed the proposed size.
+\item Verifies the reply buffer size is greater than zero if accepted.
+\end{enumerate}
+
+\subsection{Minimum Buffer Size}
+
+This checks Standard section 4.2.
+
+The checker sends a Stream Initiate Request with buffer size 1.  Verifies
+acceptance with size 1 or a valid rejection.
+
+\subsection{Maximum Buffer Size}
+
+This checks Standard section 4.2.
+
+The checker sends a Stream Initiate Request with buffer size 0xFFFF.  Verifies
+the reply buffer does not exceed 0xFFFF and the node negotiates down to its
+capability.
+
+\subsection{Unknown Content UID}
+
+This checks Standard section 6.2.
+
+The checker sends a 12-byte Stream Initiate Request with a fabricated Content
+UID.  Accepts rejection with 0x1040 (unimplemented) or acceptance (both
+spec-legal).
+
+\subsection{Initiate Reply Format}
+
+This checks Standard sections 4.1 and 4.2.
+
+The checker sends an initiate with SID 0x42 and validates every field in the
+reply:
+\begin{enumerate}
+\item Length at least 6 bytes.
+\item Byte 4 echoes SID 0x42 exactly.
+\item Byte 5 (DID) in range 0x00--0xFE.
+\item If accept: flags 0x0000 or 0x8000, buffer greater than 0 and not
+    exceeding proposed.
+\item If reject: error code 0x1xxx or 0x2xxx, buffer 0.
+\end{enumerate}
+
+\subsection{Data Send and Proceed}
+
+This checks Standard sections 4.3, 4.4 and 6.3.
+
+The checker opens a stream, sends exactly MaxBufSize bytes, and verifies a
+Stream Data Proceed is received with correct SID and DID.  The stream is then
+closed.
+
+\subsection{Data Proceed Flow Control}
+
+This checks Standard section 6.3.
+
+The checker opens a stream and performs two consecutive buffer cycles:
+\begin{enumerate}
+\item Send MaxBufSize bytes, wait for Proceed.
+\item Send another MaxBufSize bytes, wait for second Proceed.
+\end{enumerate}
+Verifies no unsolicited errors during transfer.
+
+\subsection{Stream Completion}
+
+This checks Standard section 6.4.
+
+The checker opens a stream, sends a partial buffer (less than MaxBufSize),
+sends Stream Data Complete, verifies no errors, then reopens a new stream to
+confirm resources were freed.
+
+\subsection{Terminate Due To Error}
+
+This checks Standard section 6.4.
+
+The checker opens a stream, sends a Terminate Due To Error, verifies the node
+remains stable, then reopens a stream to confirm recovery.
+
+\subsection{Post-Stream Stability}
+
+This checks general robustness after stream operations.
+
+The checker opens and closes a stream, then monitors the node for 30 seconds,
+pinging every 10 seconds with Verify Node ID Addressed.  Watches for
+unexpected Initialization Complete messages.
+
+\subsection{OIR Fallback}
+
+This checks Standard section 7.1.
+
+When Stream Transport is in PIP, the checker sends a Stream Initiate Request
+and accepts either a Stream Initiate Reply or OIR as valid responses.
+
+\subsection{Concurrent Streams, Same Source Node}
+
+This checks Technical Note section 1 and section 2.3.1.
+
+The checker opens two concurrent streams (SID 0xA0 and 0xB0) to the DBC.
+If the second is rejected, the test passes with info (single-stream node).
+Otherwise:
+\begin{enumerate}
+\item Sends interleaved data on both streams.
+\item Verifies each Proceed carries the correct SID/DID for its stream.
+\item Repeats for a second cycle.
+\item Closes both streams.
+\end{enumerate}
+
+\subsection{Concurrent Streams, Different Source Nodes}
+
+This checks Technical Note section 2.3.1.
+
+The checker claims a second CAN alias (spoofed source node) and opens
+concurrent streams from both the real and spoofed nodes to the DBC, using the
+same SID (spec-legal since different source nodes).  Verifies the DBC tracks
+streams by (Source Node ID, SID) and does not confuse traffic from different
+sources.
+
+\subsection{Sustained Transfer}
+
+This checks Standard section 6.3.
+
+The checker opens a stream and runs 20 consecutive send/proceed cycles with
+zero delay between them.  Verifies the DBC does not leak memory, lose window
+count, or stall.  Reopens a stream afterward to confirm recovery.
+
+\subsection{Minimum Chunk Send}
+
+This checks Standard section 4.3.
+
+The checker sends MaxBufSize bytes as individual 1-byte payload Stream Data
+Send messages, maximizing the number of CAN frames per buffer window.
+Stresses the receive path and any internal reassembly.
+
+\subsection{Concurrent Sustained}
+
+This checks Standard section 6.3 and Technical Note section 1.
+
+Two concurrent streams both doing 10 sustained multi-cycle transfers
+simultaneously.  Stresses total buffer pool allocation.
+
+\subsection{Asymmetric Buffers}
+
+This checks Standard section 4.2.
+
+Two concurrent streams with different proposed buffer sizes (64 and 1024).
+Verifies the DBC tracks different window sizes and sends Proceed at the
+correct boundary for each stream independently.
+
+\subsection{Negotiation Enforcement}
+
+This checks Standard section 4.2.
+
+The checker proposes a large buffer (1024).  The DBC may negotiate down.
+The test sends exactly the negotiated amount and confirms Proceed arrives at
+the right boundary, not at the proposed size.
+
+\subsection{Zero-Payload Flush}
+
+This checks Standard section 6.3 and Technical Note section 2.4.3.
+
+The checker sends half a buffer window, then a zero-payload Stream Data Send
+(just the DID byte), then the remaining half.  Verifies Proceed arrives after
+the full MaxBufSize payload bytes (the flush does not count toward the buffer
+window).  Repeated for 2 cycles.
+
+\subsection{Interleaved Data Send}
+
+This checks Standard section 7.2 and Technical Note section 2.3.1.
+
+Two concurrent streams receive interleaved Stream Data Send messages within
+the same buffer window.  The checker alternates 32-byte chunks (A, B, A, B)
+until both windows are full.  Forces the DBC to track each stream's byte count
+independently.  Repeated for 2 cycles.
+
+\subsection{Suggested DID}
+
+This checks Standard section 4.1.
+
+The checker sends a Stream Initiate Request with a suggested DID of 0x42
+(byte 0 of the request).  Verifies the reply DID is in range 0x00--0xFE.
+The DBC may honor the suggestion or assign its own; both are valid.
+Then reopens with DID 0xFF (no suggestion) to confirm both paths work.
+
+\subsection{Complete with Byte Count}
+
+This checks Standard section 6.4.
+
+The checker tests both forms of Stream Data Complete:
+\begin{enumerate}
+\item With the optional 4-byte total byte count appended.
+\item Without the byte count (2 bytes only).
+\end{enumerate}
+For each form, sends one full buffer, waits for Proceed, sends Complete,
+verifies no errors, and reopens a stream to confirm resources were freed.
+
+\subsection{Reject Then Retry}
+
+This checks Standard section 6.2.
+
+The checker opens streams until one is rejected (up to 4 attempts).  If no
+rejection occurs, the test passes (deep pool node).  Otherwise:
+\begin{enumerate}
+\item Closes one open stream to free resources.
+\item Retries the rejected initiate.
+\item Verifies the retry succeeds.
+\item Closes all streams.
+\end{enumerate}
+
+\section{Compliance Matrix}
+
+The following table maps spec requirements to the checks that cover them.
+
+\subsection{Covered Requirements}
+
+\begin{tabular}{|p{8cm}|p{5cm}|}
+\hline
+\textbf{Spec Requirement} & \textbf{Check(s)} \\
+\hline
+S4.1 Stream Initiate Request format & st010, st050, st040 \\
+\hline
+S4.1 Suggested DID in Initiate Request & st190 \\
+\hline
+S4.2 Stream Initiate Reply format, error codes, SID echo, DID range & st010, st050, st060 \\
+\hline
+S4.2 Accept: buf $\leq$ proposed, buf $>$ 0 & st030, st035, st037, st155 \\
+\hline
+S4.2 Reject: permanent/temporary error codes, buf = 0 & st020, st050 \\
+\hline
+S4.3 Stream Data Send with DID byte 0 & st060, st065, st070 \\
+\hline
+S4.4 Stream Data Proceed: SID/DID correct & st060, st065, st100, st140 \\
+\hline
+S4.6 Stream Data Complete closes stream & st070, st080 \\
+\hline
+S5 States: Initiated $\rightarrow$ Open transition & st010 \\
+\hline
+S5 States: Open $\rightarrow$ Closed via Complete & st070 \\
+\hline
+S5 States: Open $\rightarrow$ Closed via TDE & st080 \\
+\hline
+S6.1 Opening with announcement (via config-mem) & (memory config stream checks) \\
+\hline
+S6.2 Opening without announcement (Content UID) & st040 \\
+\hline
+S6.2 Unknown Content UID $\rightarrow$ 0x1040 or accept & st040 \\
+\hline
+S6.2 Reject then retry after freeing resources & st210 \\
+\hline
+S6.3 Data transfer: send up to MaxBufSize, wait for Proceed & st060, st065 \\
+\hline
+S6.3 Proceed extends window by MaxBufSize & st065, st120, st155 \\
+\hline
+S6.4 Stream Data Complete closes stream & st070 \\
+\hline
+S6.4 Stream Data Complete with optional byte count & st200 \\
+\hline
+S6.4 TDE closes stream & st080 \\
+\hline
+S7.1 CAN Frame Type 7: DID in byte 0, payload in bytes 1--7 & st060, st110, st125 \\
+\hline
+S7.2 Message-level interleaving across concurrent streams & st180 \\
+\hline
+TN1 Up to 255 concurrent streams per node pair & st100 (2 streams) \\
+\hline
+TN2.3.1 Stream identified by (SrcNodeID, DstNodeID, SID) & st110 \\
+\hline
+TN2.4.3 Zero-payload flush & st170 \\
+\hline
+Post-operation stability & st085 \\
+\hline
+OIR as valid fallback & st090 \\
+\hline
+Resource recovery after close & st070, st120, st140 \\
+\hline
+\end{tabular}
+
+\subsection{Not Covered}
+
+\begin{tabular}{|p{4cm}|p{2.5cm}|p{6cm}|}
+\hline
+\textbf{Gap} & \textbf{Spec Ref} & \textbf{Notes} \\
+\hline
+12-byte Initiate Request CAN multi-frame & S7.2 & st040 sends it but does not explicitly verify CAN framing. \\
+\hline
+Gateway buffer reduction & S6.5 & Not testable from an end node. \\
+\hline
+Proceed sent early & TN2.4.4, S8.4 & Implementation optimization, not a conformance requirement. \\
+\hline
+Stream from DBC as source & S6.1, S6.3 & Config-mem stream checks cover this path. \\
+\hline
+\end{tabular}
+
+\end{document}

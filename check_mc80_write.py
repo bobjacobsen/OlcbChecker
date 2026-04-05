@@ -266,7 +266,69 @@ def check():
         logger.warning(str(e))
         return (3)
 
-    logger.info("Passed")
+    logger.info("Passed (datagram)")
+
+    # --- Stream write pass ---
+    from olcbchecker.stream_utils import query_stream_support, write_via_stream
+    from openlcb.pip import PIP as PIP_enum
+
+    stream_ok = query_stream_support(destination)
+    if not stream_ok :
+        logger.info("Skipped (stream) - Config Options stream bit not set")
+        return 0
+
+    if olcbchecker.isCheckPip() :
+        pipSet = olcbchecker.gatherPIP(destination)
+        if pipSet is not None and PIP_enum.STREAM_PROTOCOL not in pipSet :
+            logger.info("Skipped (stream) - Stream protocol not in PIP")
+            return 0
+
+    try :
+        # Read original value (for restore)
+        stream_original = readByte(destination, test_address, 0xFD)
+
+        # Compute test pattern
+        stream_test = (~stream_original) & 0xFF
+
+        # Write via stream
+        write_via_stream(logger, destination, 0xFD, test_address,
+                         [stream_test])
+
+        # Read back via datagram to verify
+        value = readByte(destination, test_address, 0xFD)
+        if value != stream_test :
+            logger.warning("Failure (stream) - write verify: wrote "
+                           "0x{:02X}, read back 0x{:02X}"
+                           .format(stream_test, value))
+            # Restore before failing
+            sendWriteDatagram(destination,
+                [0x20, 0x00, ad1, ad2, ad3, ad4, 0xFD, stream_original])
+            return 3
+
+        # Restore original value via datagram
+        sendWriteDatagram(destination,
+            [0x20, 0x00, ad1, ad2, ad3, ad4, 0xFD, stream_original])
+
+        # Verify restore
+        value = readByte(destination, test_address, 0xFD)
+        if value != stream_original :
+            logger.warning("Failure (stream) - restore verify: wrote "
+                           "0x{:02X}, read back 0x{:02X}"
+                           .format(stream_original, value))
+            return 3
+
+        logger.info("Passed (stream)")
+
+    except Exception as e :
+        # Best-effort restore
+        try :
+            sendWriteDatagram(destination,
+                [0x20, 0x00, ad1, ad2, ad3, ad4, 0xFD, original])
+        except Exception :
+            pass
+        logger.warning("Failure (stream) - {}".format(str(e)))
+        return 3
+
     return 0
 
 if __name__ == "__main__":

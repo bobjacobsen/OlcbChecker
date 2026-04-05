@@ -207,9 +207,45 @@ def check():
         return 3
     
     if retval == 0 :
-        logger.info("Passed")
+        logger.info("Passed (datagram)")
     else :
         logger.info("Failed {} checks, see above".format(str(retval)))
+        return retval
+
+    # --- Stream read pass ---
+    from olcbchecker.stream_utils import query_stream_support, read_via_stream
+    from openlcb.pip import PIP as PIP_enum
+
+    stream_ok = query_stream_support(destination)
+    if not stream_ok :
+        logger.info("Skipped (stream) - Config Options stream bit not set")
+        return 0
+
+    if olcbchecker.isCheckPip() :
+        pipSet = olcbchecker.gatherPIP(destination)
+        if pipSet is not None and PIP_enum.STREAM_PROTOCOL not in pipSet :
+            logger.info("Skipped (stream) - Stream protocol not in PIP")
+            return 0
+
+    try :
+        # Read entire CDI via stream (length=0 means read to end)
+        stream_data = read_via_stream(logger, destination, 0xFF, 0, 0)
+
+        # Compare stream data to datagram-read content (already in 'content')
+        # Both should contain the same bytes up to the null terminator
+        if list(stream_data[:len(content)]) != content :
+            logger.warning("Failure (stream) - CDI via stream does not match "
+                           "CDI via datagram ({} stream bytes vs {} "
+                           "datagram bytes)"
+                           .format(len(stream_data), len(content)))
+            return 3
+
+        logger.info("Passed (stream)")
+
+    except Exception as e :
+        logger.warning("Failure (stream) - {}".format(str(e)))
+        return 3
+
     return retval
 
 if __name__ == "__main__":

@@ -126,7 +126,14 @@ def check():
     if (reply.data[4]&0xFE) != 0xE2 :
         logger.warning ("Failure - improper write bits set")
         return (3)
-    
+
+    # Log stream support status for visibility
+    stream_supported = bool(reply.data[4] & 0x01)
+    if stream_supported :
+        logger.info("Note - stream read/write supported (bit 0x01 set)")
+    else :
+        logger.info("Note - stream read/write not supported")
+
     logger.info("Passed")
     return 0
 
