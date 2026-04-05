@@ -25,6 +25,7 @@ def prompt() :
     print(" 8 Train Search checking")
     print(" 9 Function Definition Information (FDI) checking")
     print("10 Broadcast Time Protocol checking")
+    print("11 Stream Transport checking")
     print("  ")
     print(" a Run all in sequence without three train protocols")
     print(" t Run all in sequence including three train protocols")
@@ -55,6 +56,8 @@ def checkAll() :
     total += min(control_fdi.checkAll(),1)
     import control_broadcasttime
     total += min(control_broadcasttime.checkAll(),1)
+    import control_stream
+    total += min(control_stream.checkAll(),1)
 
     logger = logging.getLogger("OLCBCHECKER")
     if total > 0 :
@@ -79,14 +82,16 @@ def checkAllNoTrains() :
     total += min(control_memory.checkAll(),1)
     import control_cdi
     total += min(control_cdi.checkAll(),1)
-    
+    import control_stream
+    total += min(control_stream.checkAll(),1)
+
     logger = logging.getLogger("OLCBCHECKER")
     if total > 0 :
         logger.info("{} sections had failures".format(total))
     else :
         logger.info("All sections passed")
     return total;
- 
+
 def main() :
 
     # if immediate running has been requested, do that
@@ -148,6 +153,10 @@ def main() :
             case "10" :
                 import control_broadcasttime
                 control_broadcasttime.main()
+
+            case "11" :
+                import control_stream
+                control_stream.main()
 
             case "a" : 
                 checkAllNoTrains()    

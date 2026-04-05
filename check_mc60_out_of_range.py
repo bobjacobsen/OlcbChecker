@@ -283,7 +283,105 @@ def check():
 
             last_ping = time.time()
 
-    logger.info("Passed")
+    logger.info("Passed (datagram)")
+
+    # --- Stream error path ---
+    from olcbchecker.stream_utils import (query_stream_support,
+                                          build_read_stream_command)
+
+    stream_ok = query_stream_support(destination)
+    if not stream_ok :
+        logger.info("Skipped (stream) - Config Options stream bit not set")
+        return 0
+
+    from openlcb.pip import PIP as PIP_enum
+    if olcbchecker.isCheckPip() :
+        pipSet = olcbchecker.gatherPIP(destination)
+        if pipSet is not None and PIP_enum.STREAM_PROTOCOL not in pipSet :
+            logger.info("Skipped (stream) - Stream protocol not in PIP")
+            return 0
+
+    # Send Read Stream Command to out-of-range address
+    olcbchecker.purgeMessages()
+
+    payload = build_read_stream_command(0xFD, out_of_range, 64, 0xFF)
+    message = Message(MTI.Datagram, NodeID(olcbchecker.ownnodeid()),
+                      destination, payload)
+    olcbchecker.sendMessage(message)
+
+    # Expect either:
+    # (a) Datagram Rejected -- node rejects at datagram level, or
+    # (b) Datagram OK followed by Read Stream Reply with Fail bit,
+    #     no stream opened
+    try :
+        while True :
+            try :
+                received = olcbchecker.getMessage(2.0)
+                if destination != received.source :
+                    continue
+                if NodeID(olcbchecker.ownnodeid()) != received.destination :
+                    continue
+
+                if received.mti == MTI.Datagram_Rejected :
+                    # Path (a): acceptable
+                    logger.info("Note (stream) - node rejected Read Stream "
+                                "Command datagram for out-of-range address")
+                    break
+
+                if received.mti == MTI.Datagram_Received_OK :
+                    # Path (b): wait for Read Stream Reply with Fail
+                    while True :
+                        try :
+                            received = olcbchecker.getMessage(3.0)
+                            if received.mti != MTI.Datagram :
+                                # Could be Stream Initiate -- that would be
+                                # wrong for an out-of-range read
+                                if received.mti == MTI.Stream_Initiate_Request :
+                                    logger.warning(
+                                        "Failure (stream) - node opened "
+                                        "stream for out-of-range address")
+                                    return 3
+                                continue
+                            if destination != received.source :
+                                continue
+
+                            # ACK the reply datagram
+                            ack = Message(MTI.Datagram_Received_OK,
+                                          NodeID(olcbchecker.ownnodeid()),
+                                          destination, [0])
+                            olcbchecker.sendMessage(ack)
+
+                            # Verify Fail bit
+                            if len(received.data) >= 2 :
+                                cmd = received.data[1]
+                                if (cmd & 0x08) == 0 :
+                                    logger.warning(
+                                        "Failure (stream) - Read Stream "
+                                        "Reply for out-of-range address "
+                                        "did not have Fail bit set")
+                                    return 3
+                            break
+                        except Empty :
+                            logger.warning(
+                                "Failure (stream) - no Read Stream Reply "
+                                "after Datagram OK for out-of-range read")
+                            return 3
+                    break
+
+                continue
+
+            except Empty :
+                logger.warning(
+                    "Failure (stream) - no response to Read Stream "
+                    "Command for out-of-range address")
+                return 3
+
+        logger.info("Passed (stream)")
+
+    except Exception as e :
+        logger.warning("Failure (stream) - {}".format(str(e)))
+        return 3
+
     return 0
 
 if __name__ == "__main__":
