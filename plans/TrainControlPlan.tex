@@ -195,32 +195,39 @@ to enquire about the status of space 0xFA.
 
 \end{enumerate}
     
-\subsection{Checking function to/from memory space connection}
+\subsection{Listener Configuration checking}
 
-This section assumes that the F0 function is available in the train node.
-The FDI is not used to confirm that.
+This checks the Listener Attach, Detach, and Query lifecycle
+defined in section 6.5 of the Train Control Protocol Standard.
 
-Note that the 0xF9 space is optional.  An info message is issued if the 0xF9 space
-is not present, but the check still passes.
-
-This uses the message definition from section 4.3 of the Standard 
-and the interaction defined in section 6.3.
+A cleanup block detaches all listeners regardless of test outcome.
 
 \begin{enumerate}
 
-    \item Set function 0 ``off'' with a Set Function command.
+    \item Query the listener list. Expect count = 0 (no listeners attached).
 
-    \item Write byte 0 in the 0xF9 memory space to 1.
+    \item Attach Listener~A with the REVERSE flag set. Expect an OK result.
 
-    \item Check that function 0 is ``on'' with a Query Function command.
+    \item Query the listener list. Expect count = 1. Verify Listener~A's
+          Node~ID and the REVERSE flag are returned.
+
+    \item Attach Listener~B with the LINK\_F0 flag set. Expect an OK result.
+
+    \item Query index~0. Expect Listener~A with REVERSE.
+
+    \item Query index~1. Expect Listener~B with LINK\_F0.
+
+    \item Detach Listener~A. Expect an OK result.
+
+    \item Query the listener list. Expect count = 1 with Listener~B remaining.
+
+    \item Detach Listener~A again (already detached). Expect a failure result.
+
+    \item Detach Listener~B. Expect an OK result.
+
+    \item Query the listener list. Expect count = 0.
 
 \end{enumerate}
-
-Note the language in the Standard that says 
-``A Train Node representing a DCC locomotive ... may, 
-but is not required to provide the last written data upon a read command.''
-This prevents checking that a Set Function command changes the corresponding
-value in the F9 memory space.
 
 
 \subsection{Check Controller Configuration command and response}
@@ -371,53 +378,32 @@ Note: This check is inherently slow since it must wait for real timeouts.
 
 \section {Checks in Development}
 
-\subsection{Check Controller Configuration command and response}
+\subsection{Checking function to/from memory space connection}
+
+This section assumes that the F0 function is available in the train node.
+The FDI is not used to confirm that.
+
+Note that the 0xF9 space is optional.  An info message is issued if the 0xF9 space
+is not present, but the check still passes.
+
+This uses the message definition from section 4.3 of the Standard
+and the interaction defined in section 6.3.
 
 \begin{enumerate}
 
-    \item Send a Set Speed 0 to the node being checked.
-    
-    \item Send a Train Control Assign Controller command with the checker's Node ID.
-    \item Check for a Train Control Assign Controller reply with OK in the flags.
+    \item Set function 0 ``off'' with a Set Function command.
 
-    \item Send a Train Control Query Controller command
-    \item Check for a Train Control Query Controller response with the checker's Node ID
-        in the Active Controller field.
+    \item Write byte 0 in the 0xF9 memory space to 1.
 
-    \item Send a Train Control Release Controller command
-    \item Check for a Train Control Query Controller response with a zero Node ID
-        in the Active Controller field.
-
-    \item Send a Train Control Query Controller command
-    \item Check for a Train Control Query Controller response with zeros
-        in the Active Controller field.
+    \item Check that function 0 is ``on'' with a Query Function command.
 
 \end{enumerate}
 
-In any case, including if some check fails, end by sending a Train Control Release
-Controller command.
-
-
-\subsection{Check Train Control Management command and response}
-
-This assumes that the node being checked has not been reserved by another node.
-
-\begin{enumerate}
-
-    \item Send a Train Control Management Reserve command
-    \item Check for a Train Control Management Reserve response with an OK code in the flags.
-
-    \item Send a Train Control Management Release command.  No response is expected.
-
-    \item Send a Train Control Management Reserve command
-    \item Check for a Train Control Management Reserve response with an OK code in the flags.
-
-    \item Send a Train Control Management Reserve command
-    \item Check for a Train Control Management Reserve response with a fail code in the flags.
-    
-    \item Send a Train Control Management Release command.  No response is expected.
-
-\end{enumerate}
+Note the language in the Standard that says
+``A Train Node representing a DCC locomotive ... may,
+but is not required to provide the last written data upon a read command.''
+This prevents checking that a Set Function command changes the corresponding
+value in the F9 memory space.
 
 
 \end{document}  
