@@ -94,7 +94,7 @@ def check():
 
     if buf_size is None :
         logger.info("Passed - node does not accept streams, cannot "
-                     "test data transfer")
+                     "check data transfer")
         return 0
 
     # Send exactly MaxBufSize bytes of payload

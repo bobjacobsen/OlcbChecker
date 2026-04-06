@@ -133,7 +133,7 @@ def check():
 
     if buf_size is None :
         logger.info("Passed - node does not accept streams, cannot "
-                     "test flow control")
+                     "check flow control")
         return 0
 
     # Cycle 1: send buffer, wait for Proceed

@@ -2,7 +2,7 @@
 '''
 Check Listener Configuration command and response
 
-Tests the full listener lifecycle per Train Control Standard Section 6.5:
+Checks the full listener lifecycle per Train Control Standard Section 6.5:
   1. Query Listeners (index 0) -> count=0
   2. Attach Listener A with REVERSE flag -> OK
   3. Query Listeners (index 0) -> count=1, A with REVERSE
@@ -426,7 +426,7 @@ def check():
         return (3)
 
     finally:
-        # Cleanup: detach both listeners in case test failed mid-way
+        # Cleanup: detach both listeners in case check failed mid-way
         message = Message(MTI.Traction_Control_Command, NodeID(olcbchecker.ownnodeid()), destination,
                     [LISTENER_CONFIG, LISTENER_DETACH, 0x00] + listenerA)
         olcbchecker.sendMessage(message)

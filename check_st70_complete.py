@@ -87,7 +87,7 @@ def check():
 
     if buf_size is None :
         logger.info("Passed - node does not accept streams, cannot "
-                     "test completion")
+                     "check completion")
         return 0
 
     # Send a small amount of data (less than MaxBufSize)

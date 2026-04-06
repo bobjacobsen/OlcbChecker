@@ -3,8 +3,8 @@
 This checks that the DUT correctly handles interleaved Stream Data Send
 messages on two concurrent streams within the same buffer window.
 
-Existing concurrent tests (st100, st110) send a full buffer on stream A,
-wait for Proceed, then send a full buffer on stream B. This test
+Existing concurrent checks (st100, st110) send a full buffer on stream A,
+wait for Proceed, then send a full buffer on stream B. This check
 alternates 32-byte chunks between streams A and B before either window
 completes, forcing the DUT to track each stream's byte count
 independently.
@@ -14,7 +14,7 @@ overlapping [streams] from different source nodes, the states shall be
 independent." This extends to interleaved data within the same source
 when multiple SIDs are in use.
 
-A DUT that rejects the second stream is spec-legal -- this test passes
+A DUT that rejects the second stream is spec-legal -- this check passes
 with info in that case.
 
 Usage:
@@ -177,7 +177,7 @@ def check():
 
     if buf_a is None :
         logger.info("Passed - node does not accept streams, cannot "
-                     "test interleaved data send")
+                     "check interleaved data send")
         return 0
 
     # Open stream B

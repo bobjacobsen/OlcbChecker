@@ -124,7 +124,7 @@ def check():
             logger.info("Passed - due to Stream protocol not in PIP")
             return(0)
 
-    # Test with buffer size 64
+    # Check with buffer size 64
     sid = 0x10
     result, did = _send_initiate_and_check(logger, destination, 64, sid)
     if result != 0 :
@@ -134,7 +134,7 @@ def check():
 
     olcbchecker.purgeMessages()
 
-    # Test with buffer size 1024
+    # Check with buffer size 1024
     sid = 0x11
     result, did = _send_initiate_and_check(logger, destination, 1024, sid)
     if result != 0 :

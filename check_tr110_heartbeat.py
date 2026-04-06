@@ -183,7 +183,7 @@ def check():
 
 
         # =====================================================
-        # Step 4: Keepalive test — send NOOP before deadline,
+        # Step 4: Keepalive check — send NOOP before deadline,
         # then verify speed is still non-zero
         # =====================================================
         message = Message(MTI.Traction_Control_Command, NodeID(olcbchecker.ownnodeid()), destination,
@@ -226,7 +226,7 @@ def check():
 
 
         # =====================================================
-        # Step 6: Timeout test — do NOT send keepalive.
+        # Step 6: Timeout check — do NOT send keepalive.
         # Wait for the full heartbeat timeout to expire.
         # =====================================================
         time.sleep(hb_timeout + 1)

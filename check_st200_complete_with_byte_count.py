@@ -158,13 +158,13 @@ def check():
             logger.info("Passed - due to Stream protocol not in PIP")
             return(0)
 
-    # --- Test 1: Complete WITH 4-byte byte count ---
+    # --- Check 1: Complete WITH 4-byte byte count ---
     sid1 = 0xC0
     buf_size, did1 = _open_stream(logger, destination, 256, sid1)
 
     if buf_size is None :
         logger.info("Passed - node does not accept streams, cannot "
-                     "test Complete with byte count")
+                     "check Complete with byte count")
         return 0
 
     _send_buffer(destination, did1, buf_size)
@@ -206,7 +206,7 @@ def check():
     olcbchecker.sendMessage(message)
     time.sleep(0.3)
 
-    # --- Test 2: Complete WITHOUT byte count (2 bytes only) ---
+    # --- Check 2: Complete WITHOUT byte count (2 bytes only) ---
     olcbchecker.purgeMessages()
     sid2 = 0xC1
     buf_size2, did2 = _open_stream(logger, destination, 256, sid2)

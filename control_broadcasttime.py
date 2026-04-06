@@ -3,9 +3,9 @@
 '''
 Simple runner for broadcast time protocol checks.
 
-The node under test must be either a Clock Producer (generator) or a
-Clock Consumer (display).  The tester selects which role is being
-tested and only the applicable checks are run.
+The node being checked must be either a Clock Producer (generator) or a
+Clock Consumer (display).  The checker selects which role is being
+used and only the applicable checks are run.
 '''
 import sys
 import logging
@@ -26,7 +26,7 @@ import check_bt120_consumer_startstop
 import check_bt130_consumer_rate
 
 def promptNodeType() :
-    print("\nBroadcast Time Protocol - Select node type under test")
+    print("\nBroadcast Time Protocol - Select node type being checked")
     print(" p Clock Producer (generator)")
     print(" c Clock Consumer (display)")
     print(" q go back")
@@ -88,7 +88,7 @@ def checkAllConsumer(logger=logging.getLogger("BCAST_TIME")) :
     return result
 
 def checkAll(logger=logging.getLogger("BCAST_TIME")) :
-    '''Ask the tester which node type is under test and run the
+    '''Ask the operator which node type is being checked and run the
     applicable checks.  Returns the accumulated result.'''
 
     while True :
@@ -116,7 +116,7 @@ def main() :
     loop to check against Broadcast Time Protocol Standard
     '''
 
-    # First, select the node type under test
+    # First, select the node type being checked
     node_type = None
     while node_type is None :
         promptNodeType()

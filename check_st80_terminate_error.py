@@ -7,10 +7,10 @@ Per StreamTransportS section 7.4, a stream is closed if the remote node
 sends a Terminate Due To Error whose rejected MTI is Stream Data Send
 or Stream Data Proceed.
 
-Test A: TDE with rejected MTI = Stream Data Proceed (0x0888)
-Test B: TDE with rejected MTI = Stream Data Send (0x1F88)
+Check A: TDE with rejected MTI = Stream Data Proceed (0x0888)
+Check B: TDE with rejected MTI = Stream Data Send (0x1F88)
 
-Both tests verify that the stream slot is freed (re-open succeeds)
+Both checks verify that the stream slot is freed (re-open succeeds)
 and the node does not reboot.
 
 Usage:
@@ -90,10 +90,10 @@ def check():
 
     if buf_size is None :
         logger.info("Passed - node does not accept streams, cannot "
-                     "test error termination")
+                     "check error termination")
         return 0
 
-    # --- Test A: TDE with rejected MTI = Stream Data Proceed (0x0888) ---
+    # --- Check A: TDE with rejected MTI = Stream Data Proceed (0x0888) ---
 
     # Send Terminate Due To Error to close the stream abruptly.
     # Per Message Network Standard, TDE payload is:
@@ -167,14 +167,14 @@ def check():
     olcbchecker.sendMessage(complete)
     time.sleep(0.3)
 
-    # --- Test B: TDE with rejected MTI = Stream Data Send (0x1F88) ---
+    # --- Check B: TDE with rejected MTI = Stream Data Send (0x1F88) ---
 
     sid3 = 0x82
     buf_size3, did3 = _open_stream(logger, destination, 256, sid3)
 
     if buf_size3 is None :
-        logger.info("Passed - Test A passed but node declined second "
-                    "stream for Test B, skipping Send variant")
+        logger.info("Passed - Check A passed but node declined second "
+                    "stream for Check B, skipping Send variant")
         return 0
 
     rejected_mti_send = MTI.Stream_Data_Send.value

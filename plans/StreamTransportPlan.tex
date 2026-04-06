@@ -28,7 +28,7 @@ This plan does not check:
     exercise that path separately.
 \item CAN multi-frame assembly of 12-byte Initiate Requests.  The st040 check
     sends a 12-byte request but does not explicitly verify CAN framing.
-\item Gateway buffer reduction (not testable from an end node).
+\item Gateway buffer reduction (not checkable from an end node).
 \item Early Proceed (implementation optimization, not a conformance requirement).
 \end{enumerate}
 
@@ -159,7 +159,7 @@ and accepts either a Stream Initiate Reply or OIR as valid responses.
 This checks Technical Note section 1 and section 2.3.1.
 
 The checker opens two concurrent streams (SID 0xA0 and 0xB0) to the DBC.
-If the second is rejected, the test passes with info (single-stream node).
+If the second is rejected, the check passes with info (single-stream node).
 Otherwise:
 \begin{enumerate}
 \item Sends interleaved data on both streams.
@@ -214,7 +214,7 @@ correct boundary for each stream independently.
 This checks Standard section 4.2.
 
 The checker proposes a large buffer (1024).  The DBC may negotiate down.
-The test sends exactly the negotiated amount and confirms Proceed arrives at
+The check sends exactly the negotiated amount and confirms Proceed arrives at
 the right boundary, not at the proposed size.
 
 \subsection{Zero-Payload Flush}
@@ -248,7 +248,7 @@ Then reopens with DID 0xFF (no suggestion) to confirm both paths work.
 
 This checks Standard section 6.4.
 
-The checker tests both forms of Stream Data Complete:
+This checks both forms of Stream Data Complete:
 \begin{enumerate}
 \item With the optional 4-byte total byte count appended.
 \item Without the byte count (2 bytes only).
@@ -261,7 +261,7 @@ verifies no errors, and reopens a stream to confirm resources were freed.
 This checks Standard section 6.2.
 
 The checker opens streams until one is rejected (up to 4 attempts).  If no
-rejection occurs, the test passes (deep pool node).  Otherwise:
+rejection occurs, the check passes (deep pool node).  Otherwise:
 \begin{enumerate}
 \item Closes one open stream to free resources.
 \item Retries the rejected initiate.
@@ -345,7 +345,11 @@ Resource recovery after close & st070, st120, st140 \\
 \hline
 12-byte Initiate Request CAN multi-frame & S7.2 & st040 sends it but does not explicitly verify CAN framing. \\
 \hline
+<<<<<<< HEAD
 Gateway buffer reduction & S6.5 & Not testable from an end node. \\
+=======
+Gateway buffer reduction & S6.5 & Not checkable from an end node. \\
+>>>>>>> upstream/main
 \hline
 Proceed sent early & TN2.4.4, S8.4 & Implementation optimization, not a conformance requirement. \\
 \hline
