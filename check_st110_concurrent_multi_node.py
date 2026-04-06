@@ -12,7 +12,7 @@ Per StreamTransportTN section 2.3.1, a stream is uniquely identified by
 need not be unique -- the same SID from two different source nodes
 identifies two distinct streams.
 
-A DUT that rejects either stream is spec-legal -- this test passes with
+A DUT that rejects either stream is spec-legal -- this check passes with
 info in that case.
 
 Usage:
@@ -366,7 +366,7 @@ def check():
 
     if buf_a is None :
         logger.info("Passed - node does not accept streams, cannot "
-                     "test multi-node concurrent streams")
+                     "check multi-node concurrent streams")
         return 0
 
     # Claim spoofed alias

@@ -149,7 +149,7 @@ def check():
 
     if buf_a is None :
         logger.info("Passed - node does not accept streams, cannot "
-                     "test asymmetric buffers")
+                     "check asymmetric buffers")
         return 0
 
     # Open stream B with large buffer

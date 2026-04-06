@@ -99,7 +99,7 @@ def check():
             logger.info("Passed - due to Stream protocol not in PIP")
             return(0)
 
-    # Test 1: suggest DID = 0x42
+    # Check 1: suggest DID = 0x42
     sid1 = 0x90
     suggested = 0x42
     buf_size, did, flags = _open_stream_with_did(
@@ -107,7 +107,7 @@ def check():
 
     if buf_size is None :
         logger.info("Passed - node does not accept streams, cannot "
-                     "test suggested DID")
+                     "check suggested DID")
         return 0
 
     if did == 0xFF :
@@ -123,7 +123,7 @@ def check():
 
     _close_stream(destination, sid1, did)
 
-    # Test 2: no suggestion (0xFF) to confirm both paths work
+    # Check 2: no suggestion (0xFF) to confirm both paths work
     olcbchecker.purgeMessages()
     sid2 = 0x91
     buf_size2, did2, flags2 = _open_stream_with_did(

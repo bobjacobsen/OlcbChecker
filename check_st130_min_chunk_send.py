@@ -128,7 +128,7 @@ def check():
 
     if buf_size is None :
         logger.info("Passed - node does not accept streams, cannot "
-                     "test minimum chunk send")
+                     "check minimum chunk send")
         return 0
 
     # Cycle 1: send buf_size individual 1-byte frames

@@ -8,7 +8,7 @@ contain zero payload bytes. This is considered a flush, and should result
 in the destination node (and any gateways in between) flushing any
 internal buffering for efficiency that may be occurring."
 
-The test sends half the buffer window, then a zero-payload flush, then
+The check sends half the buffer window, then a zero-payload flush, then
 the remaining half. The DUT must not crash, not send an error, and must
 send Proceed at the correct byte boundary (the flush does not count
 toward the buffer window).
@@ -164,7 +164,7 @@ def check():
 
     if buf_size is None :
         logger.info("Passed - node does not accept streams, cannot "
-                     "test zero-payload flush")
+                     "check zero-payload flush")
         return 0
 
     # Two cycles: send half, flush, send other half, wait for Proceed

@@ -40,8 +40,8 @@ def options() :
     print ("-P do check results against PIP bits")
     print ("-I execute interactive checks")
     print ("-i skip interactive checks")
-    print ("--auto-reboot  use restart datagram for reboot tests instead of prompting operator")
-    print ("-w, --force-writes  enable tests that write to config memory (0xFD)")
+    print ("--auto-reboot  use restart datagram for reboot checks instead of prompting operator")
+    print ("-w, --force-writes  enable checks that write to config memory (0xFD)")
     print ("")
 
 # To start option configuration, get the defaults.py file,

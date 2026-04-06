@@ -66,7 +66,7 @@ def check():
             if (len(received.data) > 3) and (received.data[3] != 0) :
                 logger.warning ("Failure - Unexpected contents in 4th byte; 0x{:02X}".format(received.data[3]))
                 return(3)
-            # if doing interactive tests, prompt for checking against documentation
+            # if doing interactive checks, prompt for checking against documentation
             if not olcbchecker.setup.configure.skip_interactive :
                 logger.info("Does the above match the DBC documentation? y or n")
                 selection = input(">> ").lower()

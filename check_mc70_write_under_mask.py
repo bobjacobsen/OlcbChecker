@@ -6,7 +6,7 @@ Per MemoryConfigurationS section 4.10, Write Under Mask uses alternating
 (mask, data) byte pairs.  Bits where mask=1 are written from the data byte;
 bits where mask=0 are preserved from the current value.
 
-This test is only run if Config Options indicates write-under-mask support.
+This check is only run if Config Options indicates write-under-mask support.
 
 Usage:
 python3.10 check_mc70_write_under_mask.py
@@ -160,7 +160,7 @@ def check():
 
     # Guard: skip unless --force-writes (-w) is enabled
     if not olcbchecker.setup.configure.force_writes :
-        logger.info("Passed - skipped (use --force-writes to enable write tests)")
+        logger.info("Passed - skipped (use --force-writes to enable write checks)")
         return 0
 
     # Step 1: Get Config Options to check write-under-mask support

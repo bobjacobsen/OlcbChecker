@@ -9,7 +9,7 @@ SID/DID pair for its stream.
 
 Per StreamTransportTN section 1, a pair of nodes may maintain up to
 255 simultaneously open streams.  A DUT that rejects the second stream
-is spec-legal -- this test passes with info in that case.
+is spec-legal -- this check passes with info in that case.
 
 Usage:
 python3.10 check_st100_concurrent_same_node.py
@@ -149,7 +149,7 @@ def check():
 
     if buf_a is None :
         logger.info("Passed - node does not accept streams, cannot "
-                     "test concurrent streams")
+                     "check concurrent streams")
         return 0
 
     # Open stream B

@@ -136,7 +136,7 @@ def check():
 
     if buf_size is None :
         logger.info("Passed - node does not accept streams, cannot "
-                     "test sustained transfer")
+                     "check sustained transfer")
         return 0
 
     # Run 22 consecutive send/proceed cycles with zero delay

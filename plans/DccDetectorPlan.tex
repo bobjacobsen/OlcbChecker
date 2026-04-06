@@ -46,7 +46,7 @@ The auto-detection of detector events works by comparing the upper 6 bytes
 of each Producer Identified Event ID against the target node's Node ID.
 Events whose upper 6 bytes match are treated as detector events.
 
-\textbf{Note:}  These checks do not test live detection behaviour (PCER messages
+\textbf{Note:}  These do not check live detection behaviour (PCER messages
 produced when a train enters or exits a monitored section), because that
 would require physical train movement which cannot be triggered remotely.
 The checks instead validate the Event ID encoding through the Identify Events

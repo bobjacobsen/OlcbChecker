@@ -15,7 +15,7 @@ Per the CDI Standard section 5.1.2, ACDI address spaces:
     Address 1:   User-supplied name (63 bytes)
     Address 64:  User-supplied description (64 bytes)
 
-The test:
+The check:
   1) Verifies the ACDI-related Configuration Options flags are consistent
      with PIP and address space presence
   2) For each ACDI space flagged as readable, reads all fields and
@@ -443,14 +443,14 @@ def check():
         # Save original user name
         original_name = readMemoryString(destination, ACDI_USER_NAME_ADDR, ACDI_USER_NAME_LEN, 0xFB)
 
-        # Write test pattern
-        test_name = "OLCB_TST"
-        test_data = [ord(c) for c in test_name] + [0x00]
+        # Write check data pattern
+        check_name = "OLCB_TST"
+        check_data = [ord(c) for c in check_name] + [0x00]
 
         try :
-            writeMemorySpace(destination, ACDI_USER_NAME_ADDR, 0xFB, test_data)
+            writeMemorySpace(destination, ACDI_USER_NAME_ADDR, 0xFB, check_data)
         except Exception as e:
-            logger.warning("Failure writing test name to ACDI space: " + str(e))
+            logger.warning("Failure writing check name to ACDI space: " + str(e))
             return (3)
 
         # Read back and verify
@@ -466,8 +466,8 @@ def check():
                 pass
             return (3)
 
-        if readback != test_name :
-            logger.warning("Failure - wrote '{}' to ACDI 0xFB but read back '{}'".format(test_name, readback))
+        if readback != check_name :
+            logger.warning("Failure - wrote '{}' to ACDI 0xFB but read back '{}'".format(check_name, readback))
             # restore
             restore_data = [ord(c) for c in original_name] + [0x00]
             try :

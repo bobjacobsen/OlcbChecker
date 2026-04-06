@@ -50,7 +50,7 @@ def check():
                       NodeID(olcbchecker.ownnodeid()), destination)
     olcbchecker.sendMessage(message)
 
-    # does not include range replies -- we test individual events
+    # does not include range replies -- we check individual events
     producerIdMTIs = [MTI.Producer_Identified_Unknown,
                       MTI.Producer_Identified_Active,
                       MTI.Producer_Identified_Inactive]

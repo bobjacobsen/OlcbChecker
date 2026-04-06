@@ -112,7 +112,7 @@ def check():
 
         if rejected and len(open_streams) == 0 :
             logger.info("Passed - node does not accept streams, "
-                         "cannot test reject-then-retry")
+                         "cannot check reject-then-retry")
             return 0
 
         if rejected :

@@ -4,7 +4,7 @@ This checks that the DUT sends Stream Data Proceed based on its own
 negotiated buffer size, not the proposed size.
 
 The checker proposes a large buffer (1024).  The DUT may negotiate down
-to a smaller value.  The test sends exactly the negotiated amount and
+to a smaller value.  The check sends exactly the negotiated amount and
 verifies Proceed arrives at the right boundary.
 
 Per StreamTransportS section 7.1, the Max Buffer Size in the reply is
@@ -137,7 +137,7 @@ def check():
 
     if buf_size is None :
         logger.info("Passed - node does not accept streams, cannot "
-                     "test negotiation enforcement")
+                     "check negotiation enforcement")
         return 0
 
     if buf_size < proposed :

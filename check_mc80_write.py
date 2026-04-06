@@ -6,7 +6,7 @@ Performs a read-write-verify-restore cycle on a single byte in the 0xFD
 address space, respecting the published Address Space Information for
 boundaries and writability.
 
-This test is gated behind the --force-writes (-w) flag because it
+This check is gated behind the --force-writes (-w) flag because it
 physically writes to configuration memory.
 
 Usage:
@@ -162,7 +162,7 @@ def check():
 
     # Guard: skip unless --force-writes (-w) is enabled
     if not olcbchecker.setup.configure.force_writes :
-        logger.info("Passed - skipped (use --force-writes to enable write tests)")
+        logger.info("Passed - skipped (use --force-writes to enable write checks)")
         return 0
 
     # Step 1: Query Address Space Information for 0xFD
@@ -197,7 +197,7 @@ def check():
 
     # Bit 0 = read-only; if set, we cannot write
     if flags & 0x01 :
-        logger.info("Passed - 0xFD space is read-only, cannot test writes")
+        logger.info("Passed - 0xFD space is read-only, cannot check writes")
         return 0
 
     # Bit 1 = low address valid
@@ -214,33 +214,33 @@ def check():
         logger.warning ("Failure - low address (0x{:X}) > highest address (0x{:X})".format(low_address, highest_address))
         return (3)
 
-    # Step 2: Pick test address — use low_address
-    test_address = low_address
+    # Step 2: Pick check address — use low_address
+    check_address = low_address
 
     # Step 3: Read original value
     try :
-        original = readByte(destination, test_address, 0xFD)
+        original = readByte(destination, check_address, 0xFD)
     except Exception as e:
         logger.warning(str(e))
         return (3)
 
-    # Compute test pattern: bitwise complement of original
-    test_value = (~original) & 0xFF
+    # Compute new pattern: bitwise complement of original
+    check_value = (~original) & 0xFF
 
     try :
-        # Step 4: Write test pattern
-        ad1 = (test_address >> 24) & 0xFF
-        ad2 = (test_address >> 16) & 0xFF
-        ad3 = (test_address >> 8) & 0xFF
-        ad4 = test_address & 0xFF
+        # Step 4: Write check pattern
+        ad1 = (check_address >> 24) & 0xFF
+        ad2 = (check_address >> 16) & 0xFF
+        ad3 = (check_address >> 8) & 0xFF
+        ad4 = check_address & 0xFF
 
         sendWriteDatagram(destination,
-            [0x20, 0x00, ad1, ad2, ad3, ad4, 0xFD, test_value])
+            [0x20, 0x00, ad1, ad2, ad3, ad4, 0xFD, check_value])
 
         # Step 5: Read back and verify write
-        value = readByte(destination, test_address, 0xFD)
-        if value != test_value :
-            logger.warning ("Failure - write verify: wrote 0x{:02X}, read back 0x{:02X}".format(test_value, value))
+        value = readByte(destination, check_address, 0xFD)
+        if value != check_value :
+            logger.warning ("Failure - write verify: wrote 0x{:02X}, read back 0x{:02X}".format(check_value, value))
             return (3)
 
         # Step 6: Restore original value
@@ -248,7 +248,7 @@ def check():
             [0x20, 0x00, ad1, ad2, ad3, ad4, 0xFD, original])
 
         # Step 7: Read back and verify restore
-        value = readByte(destination, test_address, 0xFD)
+        value = readByte(destination, check_address, 0xFD)
         if value != original :
             logger.warning ("Failure - restore verify: wrote 0x{:02X}, read back 0x{:02X}".format(original, value))
             return (3)
@@ -256,10 +256,10 @@ def check():
     except Exception as e:
         # Best-effort restore on failure
         try :
-            ad1 = (test_address >> 24) & 0xFF
-            ad2 = (test_address >> 16) & 0xFF
-            ad3 = (test_address >> 8) & 0xFF
-            ad4 = test_address & 0xFF
+            ad1 = (check_address >> 24) & 0xFF
+            ad2 = (check_address >> 16) & 0xFF
+            ad3 = (check_address >> 8) & 0xFF
+            ad4 = check_address & 0xFF
             sendWriteDatagram(destination, [0x20, 0x00, ad1, ad2, ad3, ad4, 0xFD, original])
         except Exception :
             pass
@@ -285,21 +285,21 @@ def check():
 
     try :
         # Read original value (for restore)
-        stream_original = readByte(destination, test_address, 0xFD)
+        stream_original = readByte(destination, check_address, 0xFD)
 
-        # Compute test pattern
-        stream_test = (~stream_original) & 0xFF
+        # Compute check pattern
+        stream_check_value = (~stream_original) & 0xFF
 
         # Write via stream
-        write_via_stream(logger, destination, 0xFD, test_address,
-                         [stream_test])
+        write_via_stream(logger, destination, 0xFD, check_address,
+                         [stream_check_value])
 
         # Read back via datagram to verify
-        value = readByte(destination, test_address, 0xFD)
-        if value != stream_test :
+        value = readByte(destination, check_address, 0xFD)
+        if value != stream_check_value :
             logger.warning("Failure (stream) - write verify: wrote "
                            "0x{:02X}, read back 0x{:02X}"
-                           .format(stream_test, value))
+                           .format(stream_check_value, value))
             # Restore before failing
             sendWriteDatagram(destination,
                 [0x20, 0x00, ad1, ad2, ad3, ad4, 0xFD, stream_original])
@@ -310,7 +310,7 @@ def check():
             [0x20, 0x00, ad1, ad2, ad3, ad4, 0xFD, stream_original])
 
         # Verify restore
-        value = readByte(destination, test_address, 0xFD)
+        value = readByte(destination, check_address, 0xFD)
         if value != stream_original :
             logger.warning("Failure (stream) - restore verify: wrote "
                            "0x{:02X}, read back 0x{:02X}"
